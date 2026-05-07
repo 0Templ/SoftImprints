@@ -1,0 +1,52 @@
+{
+  "layers": [
+    {
+      "value": 1,
+      "enable": true,
+      "expand": 0,
+      "innerJitter": 0.0,
+      "outerJitter": 0.05,
+      "erosion": 0.25
+    },
+    {
+      "value": 2,
+      "enable": true,
+      "expand": 2,
+      "innerJitter": 0.0,
+      "outerJitter": 0.4,
+      "erosion": 0.1
+    },
+    {
+      "value": 3,
+      "enable": true,
+      "expand": 1,
+      "innerJitter": 0.05,
+      "outerJitter": 0.35,
+      "erosion": 0.3
+    }
+  ],
+  "supportedBlocks": [
+    "minecraft:snow",
+    "minecraft:snow_block"
+  ],
+  "surface": {
+    "mode": "TOP",
+    "zeroLayerSource": "SURFACE"
+  },
+  "textureSets": {
+    "selected": "standard",
+    "initLayer": "minecraft:block/snow",
+    "texturesByValue": {
+      "standard": {
+        "1": "softimprints:block/imprints/snow/standard_snow_layer_1",
+        "2": "softimprints:block/imprints/snow/standard_snow_layer_2",
+        "3": "softimprints:block/imprints/snow/standard_snow_layer_3"
+      },
+      "icy": {
+        "1": "softimprints:block/imprints/snow/icy_snow_layer_1",
+        "2": "softimprints:block/imprints/snow/icy_snow_layer_2",
+        "3": "softimprints:block/imprints/snow/icy_snow_layer_3"
+      }
+    }
+  }
+}

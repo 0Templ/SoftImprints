@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "softimprints",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "mixins": [
+    "softimprints.fabric.mixins.json",
+    "softimprints.mixins.json"
+  ],
+  "contact": {
+    "homepage": "${homepage}",
+    "sources": "${sources}",
+    "issues": "${issues}"
+  },
+  "license": "${license}",
+  "icon": "assets/softimprints/textures/icon/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.nine.softimprints.SIFabricClient"
+    ],
+    "modmenu": [
+      "com.nine.softimprints.compat.modmenu.ModMenuSetup"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric-api": ">=${fabric_version}",
+    "minecraft": "${minecraft_version_constraint}",
+    "java": ">=${java_version}"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "layers": [
+    {
+      "value": 1,
+      "enable": true,
+      "expand": 0,
+      "innerJitter": 0.0,
+      "outerJitter": 0.15,
+      "erosion": 0.2
+    },
+    {
+      "value": 2,
+      "enable": true,
+      "expand": 1,
+      "innerJitter": 0.22,
+      "outerJitter": 0.65,
+      "erosion": 0.35
+    },
+    {
+      "value": 3,
+      "enable": true,
+      "expand": 1,
+      "innerJitter": 0.0,
+      "outerJitter": 0.4,
+      "erosion": 0.55
+    }
+  ]
+,
+  "supportedBlocks": [
+    "minecraft:sand"
+  ],
+  "surface": {
+    "mode": "TOP",
+    "zeroLayerSource": "SURFACE"
+  },
+  "textureSets": {
+    "selected": "standard",
+    "initLayer": "minecraft:block/sand",
+    "texturesByValue": {
+      "standard": {
+        "1": "softimprints:block/imprints/sand/standard_sand_layer_1",
+        "2": "softimprints:block/imprints/sand/standard_sand_layer_2",
+        "3": "softimprints:block/imprints/sand/standard_sand_layer_3"
+      },
+      "pale": {
+        "1": "softimprints:block/imprints/sand/pale_sand_layer_1",
+        "2": "softimprints:block/imprints/sand/pale_sand_layer_2",
+        "3": "softimprints:block/imprints/sand/pale_sand_layer_3"
+      },
+      "warm": {
+        "1": "softimprints:block/imprints/sand/warm_sand_layer_1",
+        "2": "softimprints:block/imprints/sand/warm_sand_layer_2",
+        "3": "softimprints:block/imprints/sand/warm_sand_layer_3"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.nine.softimprints.mixin",
+  "refmap": "softimprints.refmap.json",
+  "compatibilityLevel": "JAVA_18",
+  "mixins": [],
+  "client": [
+    "feature.cache.ClientLevelMixin",
+    "feature.model.EntityRendererMixin",
+    "feature.model.EntityRenderStateMixin",
+    "feature.model.GameRendererMixin",
+    "feature.model.LivingEntityRendererMixin",
+    "feature.model.ModelPartAccessor",
+    "feature.model.ModelPartMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

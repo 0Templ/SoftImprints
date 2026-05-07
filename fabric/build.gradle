@@ -1,0 +1,77 @@
+plugins {
+    id 'multiloader-loader'
+    id 'com.gradleup.shadow'
+    id 'me.shedaniel.unified-publishing'
+    id 'net.fabricmc.fabric-loom'
+}
+
+def shadowedDeps = [
+        "com.electronwill.night-config:core:${night_config_version}",
+        "com.electronwill.night-config:toml:${night_config_version}"
+]
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-renderer-api-v1:${fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-renderer-indigo:${fabric_version}"
+
+    //Mod Menu
+    implementation("com.terraformersmc:modmenu:${mod_menu_version}")
+
+    shadowedDeps.each {
+        implementation it
+        shadow it
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    destinationDirectory = layout.buildDirectory.dir("libs").get().asFile
+    archiveClassifier = ''
+    relocate 'com.electronwill.nightconfig', "${project.group}.shadow.nightconfig"
+}
+
+tasks.named('jar', Jar) {
+    archiveClassifier = 'slim'
+}
+
+assemble.dependsOn shadowJar
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath = aw
+    }
+
+    mixin.defaultRefmapName = "${mod_id}.refmap.json"
+
+    runs {
+        client {
+            client()
+            configName = 'Fabric Client'
+            ideConfigGenerated = true
+            runDir = 'runs/client'
+        }
+        server {
+            server()
+            configName = 'Fabric Server'
+            ideConfigGenerated = true
+            runDir = 'runs/server'
+        }
+    }
+}
+
+configureUnifiedPublishing(project, [
+        loaderName: 'Fabric',
+        gameLoader: 'fabric',
+        releaseType: rootProject.fabric_release_type,
+        publicationTask: 'shadowJar',
+        relations: {
+            depends {
+                modrinth = 'fabric-api'
+                curseforge = 'fabric-api'
+            }
+        }
+])
