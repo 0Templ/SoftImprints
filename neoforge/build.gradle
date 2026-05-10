@@ -58,6 +58,11 @@ dependencies {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+tasks.named('jar', Jar) {
+    includeEmptyDirs = false
+    exclude '.cache/**'
+}
+
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
 def markNeoForge = { String configName ->
     configurations.named(configName) {

@@ -31,6 +31,11 @@ shadowJar {
     destinationDirectory = layout.buildDirectory.dir("libs").get().asFile
     archiveClassifier = ''
     relocate 'com.electronwill.nightconfig', "${project.group}.shadow.nightconfig"
+
+    from(rootProject.file('LICENSE')) {
+        rename { "${it}_${mod_name}" }
+    }
+    includeEmptyDirs = false
 }
 
 tasks.named('jar', Jar) {

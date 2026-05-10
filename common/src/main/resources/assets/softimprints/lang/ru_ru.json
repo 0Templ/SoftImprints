@@ -138,5 +138,11 @@
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Позволяет заснеженным поверхностям Ecliptic Seasons автоматически использовать подходящие профили следов",
 
+
+  "profile.debug_imprints.debug": "Отладка",
+  "profile.debug_imprints.debug.default": "Стандартный",
+  "pack.softimprints.debug": "Следы отладки",
+  "pack.softimprints.debug.desc": "Тестовый профиль",
+
   "___end.": ""
 }
