@@ -5,9 +5,13 @@ import com.nine.softimprints.client.api.plugin.ImprintPluginLoader;
 import com.nine.softimprints.client.profile.resource.ImprintsResourceReloadListener;
 import com.nine.softimprints.event.FabricClientEvents;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.fabric.api.resource.v1.reloader.ResourceReloaderKeys;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
@@ -18,8 +22,10 @@ public class SIFabricClient implements ClientModInitializer {
         SICommon.init();
 
         loadPlugins();
-        registerResourceListener();
         FabricClientEvents.init();
+
+        registerResourceListener();
+        registerBuiltinPacks();
     }
 
     private void loadPlugins() {
@@ -36,6 +42,16 @@ public class SIFabricClient implements ClientModInitializer {
         // Tests
         loader.addListenerOrdering(id, ResourceReloaderKeys.Client.MODELS);
         loader.addListenerOrdering(id, ResourceReloaderKeys.BEFORE_VANILLA);
+    }
+
+    private void registerBuiltinPacks() {
+        var container = FabricLoader.getInstance().getModContainer(SICommon.MODID).orElseThrow();
+        ResourceLoader.registerBuiltinPack(
+                Identifier.fromNamespaceAndPath(SICommon.MODID, "debug"),
+                container,
+                Component.translatable("pack.softimprints.debug"),
+                PackActivationType.NORMAL
+        );
     }
 
 }

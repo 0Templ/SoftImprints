@@ -53,6 +53,8 @@ public final class FirstPersonContactCapturer {
                     new PoseStack(),
                     NoopSubmitNodeCollector.INSTANCE
             );
+        } catch (Exception e) {
+            ModelContactSnapshotCache.clearLivingCapture();
         } finally {
             ModelContactSnapshotCache.finishLivingCapture();
         }

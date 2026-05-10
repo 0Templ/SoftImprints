@@ -191,6 +191,10 @@ public final class ModelContactSnapshotCache {
         ));
     }
 
+    public static void clearLivingCapture() {
+        ACTIVE_SESSION.remove();
+    }
+
     public static void finishLivingCapture() {
         ModelContactCaptureSession session = ACTIVE_SESSION.get();
         if (session == null) {
