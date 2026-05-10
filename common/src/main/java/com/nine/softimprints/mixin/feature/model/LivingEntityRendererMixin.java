@@ -50,7 +50,7 @@ public abstract class LivingEntityRendererMixin {
         this.model.setupAnim(renderState);
         this.model.renderToBuffer(
                 poseStack,
-                NoopVertexConsumer.INSTANCE,
+                new NoopVertexConsumer(),
                 0,
                 0,
                 -1
