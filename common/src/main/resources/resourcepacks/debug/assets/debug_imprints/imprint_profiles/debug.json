@@ -49,10 +49,10 @@
   },
   "textureSets": {
     "selected": "default",
-    "initLayer": "debug_imprints:block/imprints/debug/debug_layer_0",
+    "initLayer": "softimprints:block/imprints/debug/debug_layer_0",
     "texturesByValue": {
       "default": {
-        "1": "softimprints:block/imprints/debug/debug_layer_2",
+        "1": "softimprints:block/imprints/debug/debug_layer_1",
         "2": "softimprints:block/imprints/debug/debug_layer_2",
         "3": "softimprints:block/imprints/debug/debug_layer_3",
         "4": "softimprints:block/imprints/debug/debug_layer_4",

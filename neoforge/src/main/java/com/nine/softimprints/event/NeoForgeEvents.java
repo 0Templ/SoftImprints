@@ -11,7 +11,11 @@ import com.nine.softimprints.model.NeoBaseNeoImprintableStateModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -24,6 +28,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.client.event.lifecycle.ClientStoppingEvent;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 
@@ -34,6 +39,18 @@ public final class NeoForgeEvents {
 
     @EventBusSubscriber(modid = SICommon.MODID, value = Dist.CLIENT)
     public static final class ClientEvents {
+
+        @SubscribeEvent
+        public static void addPackFinders(AddPackFindersEvent event) {
+            event.addPackFinders(
+                    Identifier.fromNamespaceAndPath(SICommon.MODID, "resourcepacks/debug"),
+                    PackType.CLIENT_RESOURCES,
+                    Component.translatable("pack.softimprints.debug"),
+                    PackSource.BUILT_IN,
+                    false,
+                    Pack.Position.TOP
+            );
+        }
 
         @SubscribeEvent
         public static void onClientSetup(FMLCommonSetupEvent event) {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+- Added debug Resource Pack
+- Fixed bugs
+
+
 ## 2.0.0
 - Added a profile-based imprint system
 - Added built-in Sand and Red Sand imprint profiles
