@@ -2,9 +2,7 @@ package com.nine.softimprints.client.core.contact.model.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-public enum NoopVertexConsumer implements VertexConsumer {
-
-    INSTANCE;
+public class NoopVertexConsumer implements VertexConsumer {
 
     @Override
     public VertexConsumer addVertex(float x, float y, float z) {

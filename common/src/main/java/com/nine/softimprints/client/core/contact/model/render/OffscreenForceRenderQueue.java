@@ -107,7 +107,12 @@ public final class OffscreenForceRenderQueue {
                         new PoseStack(),
                         NoopSubmitNodeCollector.INSTANCE
                 );
-            } finally {
+            }
+            catch (Exception e) {
+                ModelContactSnapshotCache.clearLivingCapture();
+                return;
+            }
+            finally {
                 ModelContactSnapshotCache.finishLivingCapture();
             }
             processed++;

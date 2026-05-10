@@ -60,7 +60,7 @@ public enum NoopSubmitNodeCollector implements SubmitNodeCollector {
 
     @Override
     public void submitModelPart(ModelPart modelPart, PoseStack poseStack, RenderType renderType, int packedLight, int packedOverlay, TextureAtlasSprite textureAtlasSprite, boolean renderWithPose, boolean useTextureAtlas, int color, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, int outlineColor) {
-        modelPart.render(poseStack, NoopVertexConsumer.INSTANCE, packedLight, packedOverlay, color);
+        modelPart.render(poseStack, new NoopVertexConsumer(), packedLight, packedOverlay, color);
     }
 
     @Override
