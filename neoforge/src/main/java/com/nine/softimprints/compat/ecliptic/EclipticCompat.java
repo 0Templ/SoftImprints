@@ -1,13 +1,8 @@
 package com.nine.softimprints.compat.ecliptic;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.client.config.SIConfig;
 import com.nine.softimprints.client.model.SurfaceMode;
-import com.nine.softimprints.client.profile.ImprintRenderOverrides;
-import com.nine.softimprints.client.profile.ImprintResolveContext;
-import com.nine.softimprints.client.profile.ImprintResolveResult;
-import com.nine.softimprints.client.profile.ProfileResolver;
-import com.nine.softimprints.client.profile.SIImprintProfiles;
+import com.nine.softimprints.client.profile.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;

@@ -7,7 +7,6 @@ import com.nine.softimprints.client.core.contact.model.capture.ModelContactCaptu
 import com.nine.softimprints.client.core.contact.model.render.OffscreenForceRenderQueue;
 import com.nine.softimprints.client.core.contact.model.snapshot.ModelContactSnapshot;
 import com.nine.softimprints.client.core.contact.model.snapshot.ModelContactSnapshotStore;
-import com.nine.softimprints.mixin.feature.model.LivingEntityRendererMixin;
 import com.nine.softimprints.mixin.feature.model.ModelPartAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;

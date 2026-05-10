@@ -1,8 +1,8 @@
 package com.nine.softimprints.client.core.contact.model;
 
-import com.nine.softimprints.client.config.SIConfig;
 import com.nine.softimprints.client.config.ModelContactFallbackPolicy;
 import com.nine.softimprints.client.config.ModelContactOffscreenPolicy;
+import com.nine.softimprints.client.config.SIConfig;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 

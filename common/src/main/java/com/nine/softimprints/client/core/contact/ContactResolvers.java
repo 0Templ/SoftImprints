@@ -1,7 +1,7 @@
 package com.nine.softimprints.client.core.contact;
 
-import com.nine.softimprints.client.core.contact.model.ModelContactResolver;
 import com.nine.softimprints.client.core.contact.bb.BoundingBoxContactResolver;
+import com.nine.softimprints.client.core.contact.model.ModelContactResolver;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 

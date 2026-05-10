@@ -1,11 +1,11 @@
 package com.nine.softimprints.client.core.placement;
 
 import com.nine.softimprints.client.core.Constants;
+import com.nine.softimprints.client.core.contact.ContactArea;
+import com.nine.softimprints.client.core.stamp.StampMask;
 import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.profile.util.ProfileSurfaceMatcher;
-import com.nine.softimprints.client.core.stamp.StampMask;
-import com.nine.softimprints.client.core.contact.ContactArea;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;

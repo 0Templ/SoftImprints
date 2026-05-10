@@ -1,8 +1,8 @@
 package com.nine.softimprints.client.core.contact.bb;
 
 import com.nine.softimprints.client.core.Constants;
-import com.nine.softimprints.client.core.contact.ContactResolver;
 import com.nine.softimprints.client.core.contact.ContactArea;
+import com.nine.softimprints.client.core.contact.ContactResolver;
 import com.nine.softimprints.client.core.contact.ContactResult;
 import net.minecraft.world.entity.Entity;
 

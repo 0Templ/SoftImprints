@@ -1,6 +1,9 @@
 package com.nine.softimprints.client.config;
 
-import com.nine.softimprints.client.config.option.*;
+import com.nine.softimprints.client.config.option.ConfigComment;
+import com.nine.softimprints.client.config.option.ConfigRange;
+import com.nine.softimprints.client.config.option.ConfigSection;
+import com.nine.softimprints.client.config.option.ConfigSide;
 
 import java.util.ArrayList;
 import java.util.List;

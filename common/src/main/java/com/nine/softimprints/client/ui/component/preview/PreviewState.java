@@ -1,7 +1,10 @@
 package com.nine.softimprints.client.ui.component.preview;
 
 import com.nine.softimprints.client.core.contact.ContactResult;
-import com.nine.softimprints.client.core.stamp.*;
+import com.nine.softimprints.client.core.stamp.StampGenerator;
+import com.nine.softimprints.client.core.stamp.StampMask;
+import com.nine.softimprints.client.core.stamp.StampProperties;
+import com.nine.softimprints.client.core.stamp.StampSeedHelper;
 import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.ui.component.preview.brush.BrushHistory;
 import com.nine.softimprints.client.ui.component.preview.brush.BrushStroke;

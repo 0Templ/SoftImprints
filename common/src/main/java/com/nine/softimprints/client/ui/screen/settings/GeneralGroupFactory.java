@@ -1,8 +1,8 @@
 package com.nine.softimprints.client.ui.screen.settings;
 
-import com.nine.softimprints.client.config.SIConfig;
 import com.nine.softimprints.client.config.ModelContactFallbackPolicy;
 import com.nine.softimprints.client.config.ModelContactOffscreenPolicy;
+import com.nine.softimprints.client.config.SIConfig;
 import com.nine.softimprints.client.ui.component.list.GroupBuilder;
 import com.nine.softimprints.client.ui.component.list.ListGroup;
 import com.nine.softimprints.client.ui.util.constant.SIText;

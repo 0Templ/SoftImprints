@@ -2,8 +2,6 @@ package com.nine.softimprints.client.profile;
 
 import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
 
-import java.util.Objects;
-
 public record ResolvedImprintProfile(
         ImprintProfile profile,
         ImprintSurfaceSettings surface,

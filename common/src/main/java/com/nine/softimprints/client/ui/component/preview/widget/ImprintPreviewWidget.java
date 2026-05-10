@@ -1,7 +1,7 @@
 package com.nine.softimprints.client.ui.component.preview.widget;
 
-import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.config.SIConfig;
+import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSet;
 import com.nine.softimprints.client.ui.cache.UICache;
 import com.nine.softimprints.client.ui.component.preview.PreviewState;

@@ -1,8 +1,8 @@
 package com.nine.softimprints.client.profile.io;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.platform.Platform;
+import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;

@@ -1,7 +1,6 @@
 package com.nine.softimprints;
 
 import com.nine.softimprints.client.ui.screen.SIConfigScreen;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
