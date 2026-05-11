@@ -5,7 +5,7 @@ import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.profile.SIImprintProfiles;
 import com.nine.softimprints.client.profile.util.ImprintProfilePair;
 import com.nine.softimprints.client.ui.cache.UICache;
-import com.nine.softimprints.client.ui.component.ProfileSwitchWidget;
+import com.nine.softimprints.client.ui.component.profile.ProfileSwitchWidget;
 import com.nine.softimprints.client.ui.component.group.GroupEntry;
 import com.nine.softimprints.client.ui.component.group.GroupSwitcher;
 import com.nine.softimprints.client.ui.component.list.ConfigListWidget;
@@ -45,7 +45,7 @@ public class SIConfigScreen extends Screen {
     private static final double RIGHT_COLUMN_RATIO = 0.18D;
     private static final int COLUMN_GAP = 2;
 
-    private static final int SWITCHER_HEIGHT = 22;
+    private static int SWITCHER_HEIGHT = 42;
     private static final int LEFT_SWITCHER_INSET = 6;
     private static final int PREVIEW_SWITCHER_INSET = 6;
     private static final int RIGHT_SWITCHER_INSET = 6;
@@ -443,8 +443,9 @@ public class SIConfigScreen extends Screen {
             int previewX, int previewW,
             int rightX, int rightW
     ) {
+
         int switcherY() {
-            return y - SWITCHER_HEIGHT;
+            return y - 23;
         }
 
         LayoutRect settingsList() {
@@ -462,21 +463,21 @@ public class SIConfigScreen extends Screen {
         LayoutRect leftSwitcher() {
             return new LayoutRect(
                     settingsX + LEFT_SWITCHER_INSET, switcherY(),
-                    settingsW - LEFT_SWITCHER_INSET * 2, SWITCHER_HEIGHT
+                    settingsW - LEFT_SWITCHER_INSET * 2, 23
             );
         }
 
         LayoutRect previewSwitcher() {
             return new LayoutRect(
                     previewX + PREVIEW_SWITCHER_INSET, switcherY(),
-                    previewW - PREVIEW_SWITCHER_INSET * 2, SWITCHER_HEIGHT
+                    previewW - PREVIEW_SWITCHER_INSET * 2, ((23))
             );
         }
 
         LayoutRect rightSwitcher() {
             return new LayoutRect(
                     rightX + RIGHT_SWITCHER_INSET, switcherY(),
-                    rightW - RIGHT_SWITCHER_INSET * 2 - 1, SWITCHER_HEIGHT
+                    rightW - RIGHT_SWITCHER_INSET * 2 - 1, ((23))
             );
         }
 
