@@ -17,10 +17,9 @@ import java.util.Objects;
 
 public class StampColumnHelper {
 
-    private static final int BLOCK_MAP_SIZE = 16;
+    private static final int BLOCK_MAP_SIZE = Constants.BASIC_RESOLUTION;
     private static final int BLOCK_MAP_AREA = BLOCK_MAP_SIZE * BLOCK_MAP_SIZE;
 
-    // StampMask must be generated from this ContactArea
     public static List<ColumnMask> slice(ContactArea area, StampMask stampMask) {
         int stampSize = stampMask.size();
         byte[] stamp = stampMask.mask();

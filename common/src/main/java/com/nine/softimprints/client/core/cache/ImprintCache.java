@@ -1,6 +1,7 @@
 package com.nine.softimprints.client.core.cache;
 
 import com.nine.softimprints.client.config.SIConfig;
+import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.core.map.IImprintMap;
 import com.nine.softimprints.client.core.map.ImprintMap;
 import com.nine.softimprints.client.core.placement.BlockMask;
@@ -26,13 +27,13 @@ public class ImprintCache {
         var bytes = maps.getOrDefault(pos, null);
         if (bytes == null) return null;
 
-        return new ImprintMap(16, Arrays.copyOf(bytes, bytes.length));
+        return new ImprintMap(Constants.BASIC_RESOLUTION, Arrays.copyOf(bytes, bytes.length));
     }
 
     public void apply(List<BlockMask> masks, long gameTime){
         boolean changed = false;
         for (var mask : masks){
-            byte[] map = maps.computeIfAbsent(mask.blockPos(), pos -> new byte[16*16]);
+            byte[] map = maps.computeIfAbsent(mask.blockPos(), pos -> new byte[Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION]);
             if (rasterize(map, mask)){
                 dirtySections.add(sectionOf(mask.blockPos()));
                 lastTouchedTick.put(mask.blockPos(), gameTime);
@@ -100,7 +101,7 @@ public class ImprintCache {
         byte[] src = mask.map();
         boolean changed = false;
 
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < (Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION); i++) {
             byte s = src[i];
             if (s == 0) continue;
 

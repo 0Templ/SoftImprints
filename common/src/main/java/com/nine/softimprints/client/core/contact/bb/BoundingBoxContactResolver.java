@@ -21,7 +21,7 @@ public class BoundingBoxContactResolver implements ContactResolver {
         double maxDiff = Math.max(xW, zW);
 
         int size = (int) Math.ceil(maxDiff * Constants.BASIC_RESOLUTION);
-        double cellSize = (double) 1 / 16;
+        double cellSize = (double) 1 / Constants.BASIC_RESOLUTION;
         boolean[] bits = new boolean[size * size];
 
         int cellsX = Math.max(1, Math.min(size, (int) Math.ceil(xW / maxDiff * size)));

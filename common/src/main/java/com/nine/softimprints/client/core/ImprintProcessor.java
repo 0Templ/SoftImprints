@@ -25,8 +25,6 @@ public class ImprintProcessor {
 
         List<BlockMask> ret = new ArrayList<>();
         IntSet applied = new IntOpenHashSet();
-        List<ContactArea> rawAreas = new ArrayList<>();
-        List<ContactArea> clippedAreas = new ArrayList<>();
 
         for (int id : ids) {
             var entity = level.getEntity(id);
@@ -41,12 +39,10 @@ public class ImprintProcessor {
                 continue;
             }
             applied.add(id);
-            rawAreas.add(result.area());
             var resolvedAreas = ProfileAreaResolver.resolveProfileAreas(level, result.area());
             for (var data : resolvedAreas.entrySet()) {
                 ImprintProfile profile = data.getKey();
                 ContactArea clippedArea = data.getValue();
-                clippedAreas.add(clippedArea);
 
                 // TODO: implement dependence between fallDistance/deltaMovenet.y() and stamp props
                 var stampProps = StampPropertiesFactory.create(entity);

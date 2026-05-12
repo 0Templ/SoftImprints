@@ -62,6 +62,7 @@ public class SIConfigScreen extends Screen {
     private static final int BOTTOM_BUTTON_BOTTOM_INSET = 28;
 
     private static final int MIN_PREVIEW_RESOLUTION = 32;
+    
     private static final int MIN_BRUSH_SIZE = 1;
     private static final int MAX_BRUSH_SIZE = 48;
 
@@ -241,8 +242,6 @@ public class SIConfigScreen extends Screen {
         return Component.translatable("config.softimprints.preview.debug", SIText.onOffState(previewSettings.debugMode()));
     }
 
-    // ── widget placement helpers ─────────────────────────────────────────
-
     private int addStackedControl(AbstractWidget widget, LayoutRect controls, int y) {
         place(widget, controls.x(), y, controls.width());
         this.addRenderableWidget(widget);
@@ -254,8 +253,6 @@ public class SIConfigScreen extends Screen {
         widget.setY(y);
         widget.setWidth(width);
     }
-
-    // ── lifecycle ────────────────────────────────────────────────────────
 
     private void onSelectedProfileChanged() {
         if (settingsNavigation != null) {
@@ -432,10 +429,6 @@ public class SIConfigScreen extends Screen {
         );
     }
 
-    /**
-     * Geometry of all major regions on the screen. Three columns:
-     * settings (left), preview (centre), right-side controls.
-     */
     private record Layout(
             int y,
             int height,
