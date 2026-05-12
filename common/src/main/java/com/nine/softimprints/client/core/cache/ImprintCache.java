@@ -22,14 +22,6 @@ public class ImprintCache {
 
     }
 
-    public ConcurrentHashMap<Long, byte[]> getMaps() {
-        return maps;
-    }
-
-    public static ImprintCache createDefault() {
-        return new ImprintCache();
-    }
-
     public IImprintMap getImprintMap(Long pos){
         var bytes = maps.getOrDefault(pos, null);
         if (bytes == null) return null;
@@ -61,13 +53,7 @@ public class ImprintCache {
                 .sorted(Map.Entry.comparingByValue())
                 .limit(toRemove)
                 .map(Map.Entry::getKey)
-                .forEach(this::removeMapAndMarkDirty);
-    }
-
-    private void removeMapAndMarkDirty(long blockPos) {
-        maps.remove(blockPos);
-        lastTouchedTick.remove(blockPos);
-        dirtySections.add(sectionOf(blockPos));
+                .forEach(m -> removeMap(m, true));
     }
 
     public List<Long> drainSections(int amount) {
@@ -91,11 +77,23 @@ public class ImprintCache {
     }
 
     public void clearAt(Long pos){
-        maps.remove(pos);
+        removeMap(pos, true);
     }
 
     public void clearIf(LongPredicate predicate) {
-        maps.keySet().removeIf(predicate::test);
+        for (long pos : List.copyOf(maps.keySet())) {
+            if (predicate.test(pos)) {
+                removeMap(pos, true);
+            }
+        }
+    }
+
+    private void removeMap(long blockPos, boolean markDirty) {
+        maps.remove(blockPos);
+        lastTouchedTick.remove(blockPos);
+        if (markDirty) {
+            dirtySections.add(sectionOf(blockPos));
+        }
     }
 
     private boolean rasterize(byte[] dst, BlockMask mask) {
