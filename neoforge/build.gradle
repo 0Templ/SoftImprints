@@ -52,6 +52,9 @@ dependencies {
 
     compileOnly "com.electronwill.night-config:core:${night_config_version}"
     compileOnly "com.electronwill.night-config:toml:${night_config_version}"
+
+    // Aether
+    implementation "curse.maven:aether-ii-223796:8045002"
     
 
 }

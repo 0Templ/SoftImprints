@@ -1,8 +1,9 @@
 # Changelog
 
 ## 2.1.0
+- Changed Profile Switcher widget
+- Updated some textures and imprint profiles
 - Added debug Resource Pack
-- Fixed bugs
 
 
 ## 2.0.0

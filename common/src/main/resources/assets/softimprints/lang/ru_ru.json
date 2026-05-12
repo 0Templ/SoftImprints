@@ -9,6 +9,9 @@
   "gui.softimprints.search.tab.selected": "Выбрано",
   "gui.softimprints.search.row.add": "Добавить",
   "gui.softimprints.search.row.remove": "Убрать",
+  "gui.softimprints.profile_switch.group.tooltip.all": "ЛКМ - показать профили выбранного набора",
+  "gui.softimprints.profile_switch.group.tooltip.filtered": "ЛКМ - следующий набор профилей",
+  "gui.softimprints.profile_switch.group.tooltip.filtered_all": "ПКМ - показать все наборы",
 
   "config.softimprints.reset": "Сброс",
   "config.softimprints.reset.approve": "Точно?",
@@ -79,7 +82,6 @@
   "config.softimprints.group.general.snapshot_interval": "Интервал снапшотов: %s",
   "config.softimprints.group.general.accumulate_snapshots": "Накапливать снапшоты: %s",
   "config.softimprints.group.general.contact_band_height": "Вертикльный порог контакта: %s",
-  "config.softimprints.group.general.contact_band_height.tooltip": "Лимит высоты над поверхностью для сэмплинга контакта по модели",
 
   "config.softimprints.group.general.rotation_step_degrees": "Шаг поворота: %s",
   "config.softimprints.group.general.rotation_step_degrees.tooltip": "Минимальный поворот тела перед постановкой нового штампа контакта по модели",
@@ -88,6 +90,7 @@
   "config.softimprints.group.general.model_contact.tooltip.on": "Использовать рендер-снапшоты модели, чтобы ставить следы по реальной модели сущности",
   "config.softimprints.group.general.model_contact.tooltip.off": "Использовать контакт по bounding box для постановки штампов",
   "config.softimprints.group.general.accumulate_snapshots.tooltip": "Объединяет снапшоты модели, снятые в пределах одного игрового тика",
+  "config.softimprints.group.general.contact_band_height.tooltip": "Лимит высоты над поверхностью для сэмплинга контакта по модели",
 
   "config.softimprints.group.storage.title": "Производительность",
   "config.softimprints.group.storage.section.entities": "Отслеживание сущностей",
@@ -121,6 +124,27 @@
   "config.softimprints.unlimited": "Без лимита",
   "config.softimprints.disabled": "Отключено",
 
+  "imprint_profile.softimprints.red_sand": "Красный песок",
+  "imprint_profile.softimprints.red_sand.standard": "Стандартный",
+  "imprint_profile.softimprints.red_sand.warm": "Тёплый",
+
+  "imprint_profile.softimprints.sand": "Песок",
+  "imprint_profile.softimprints.sand.standard": "Стандартный",
+  "imprint_profile.softimprints.sand.warm": "Тёплый",
+  "imprint_profile.softimprints.sand.pale": "Бледный",
+
+  "imprint_profile.softimprints.snow": "Снег",
+  "imprint_profile.softimprints.snow.standard": "Стандартный",
+  "imprint_profile.softimprints.snow.icy": "Ледяной",
+  "imprint_profile.softimprints.snow.slush": "Рыхлый",
+
+  "imprint_pack.all": "Все профили",
+  "imprint_pack.unknown": "Профили",
+  "imprint_pack.softimprints": "Стандартные профили",
+  "imprint_pack.minecraft": "Minecraft",
+  "imprint_pack.debug_imprints": "Отладочные следы",
+  "imprint_pack.debug_imprints.desc": "Тестовый профиль следов",
+
   "profile.softimprints.red_sand": "Красный песок",
   "profile.softimprints.red_sand.standard": "Стандартный",
   "profile.softimprints.red_sand.warm": "Тёплый",
@@ -139,10 +163,6 @@
   "plugin.softimprints.ecliptic_seasons.tooltip": "Позволяет заснеженным поверхностям Ecliptic Seasons автоматически использовать подходящие профили следов",
 
 
-  "profile.debug_imprints.debug": "Отладка",
-  "profile.debug_imprints.debug.default": "Стандартный",
-  "pack.softimprints.debug": "Следы отладки",
-  "pack.softimprints.debug.desc": "Тестовый профиль",
 
   "___end.": ""
 }

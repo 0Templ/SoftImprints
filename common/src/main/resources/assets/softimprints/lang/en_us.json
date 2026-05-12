@@ -9,6 +9,9 @@
   "gui.softimprints.search.tab.selected": "Selected",
   "gui.softimprints.search.row.add": "Add",
   "gui.softimprints.search.row.remove": "Remove",
+  "gui.softimprints.profile_switch.group.tooltip.all": "LBM to filter by profile pack",
+  "gui.softimprints.profile_switch.group.tooltip.filtered": "LBM to switch profile pack",
+  "gui.softimprints.profile_switch.group.tooltip.filtered_all": "RBM to show all packs",
 
   "config.softimprints.reset": "Reset",
   "config.softimprints.reset.approve": "Sure?",
@@ -121,30 +124,37 @@
   "config.softimprints.unlimited": "Unlimited",
   "config.softimprints.disabled": "Disabled",
 
-  "profile.softimprints.red_sand": "Red Sand",
-  "profile.softimprints.red_sand.standard": "Standard",
-  "profile.softimprints.red_sand.warm": "Warm",
+  "imprint_profile.softimprints.red_sand": "Red Sand",
+  "imprint_profile.softimprints.red_sand.standard": "Standard",
+  "imprint_profile.softimprints.red_sand.warm": "Warm",
+
+  "imprint_profile.softimprints.sand": "Sand",
+  "imprint_profile.softimprints.sand.standard": "Standard",
+  "imprint_profile.softimprints.sand.warm": "Warm",
+  "imprint_profile.softimprints.sand.pale": "Pale",
+
+  "imprint_profile.softimprints.snow": "Snow",
+  "imprint_profile.softimprints.snow.standard": "Standard",
+  "imprint_profile.softimprints.snow.icy": "Icy",
+  "imprint_profile.softimprints.snow.slush": "Slush",
 
 
-  "profile.softimprints.sand": "Sand",
-  "profile.softimprints.sand.standard": "Standard",
-  "profile.softimprints.sand.warm": "Warm",
-  "profile.softimprints.sand.pale": "Pale",
+  "imprint_pack.all": "All Profiles",
 
-  "profile.softimprints.snow": "Snow",
-  "profile.softimprints.snow.standard": "Standard",
-  "profile.softimprints.snow.icy": "Icy",
-  "profile.softimprints.snow.slush": "Slush",
+  "imprint_pack.unknown": "Unknow pack",
+
+  "imprint_pack.softimprints": "Default Profiles",
+
+  "imprint_pack.debug_imprints": "Debug Imprints",
+  "imprint_pack.debug_imprints.desc": "Test imprint profile",
+
 
 
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Lets Ecliptic Seasons snowy surfaces use matching imprint profiles automatically",
 
 
-  "profile.debug_imprints.debug": "Debug",
-  "profile.debug_imprints.debug.default": "Standard",
-  "pack.softimprints.debug": "Debug Imprints",
-  "pack.softimprints.debug.desc": "Test imprint profile",
+
 
   "___end.": ""
 }

@@ -57,7 +57,7 @@ public class SIConfig {
         public static final ConfigValue<ModelContactFallbackPolicy> MODEL_CONTACT_FALLBACK_POLICY =
                 ConfigImpl.register(
                         "model_contact_fallback_policy",
-                        ModelContactFallbackPolicy.SKIP,
+                        ModelContactFallbackPolicy.BOUNDING_BOX,
                         ConfigSection.GENERAL,
                         ConfigSide.CLIENT,
                         ConfigComment.of("What to do when model-contact cannot produce a usable contact area.")
@@ -79,7 +79,7 @@ public class SIConfig {
         public static final ConfigValue<Double> IMPRINT_CONTACT_BAND_HEIGHT =
                 ConfigImpl.register(
                         "imprint_contact_band_height",
-                        0.15D,
+                        0.12D,
                         ConfigSection.GENERAL,
                         ConfigSide.CLIENT,
                         new ConfigRange<>(0.00D, 0.50D),
@@ -218,7 +218,7 @@ public class SIConfig {
         public static final ConfigValue<List<String>> IMPRINT_TARGET_WHITELIST =
                 ConfigImpl.register(
                         "imprint_target_whitelist",
-                        List.of("minecraft:boat"),
+                        new ArrayList<>(),
                         ConfigSection.GENERAL,
                         ConfigSide.CLIENT,
                         ConfigComment.of("Entity type ids allowed to leave imprints in WHITELIST mode.")

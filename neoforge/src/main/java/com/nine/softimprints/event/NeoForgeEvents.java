@@ -45,7 +45,7 @@ public final class NeoForgeEvents {
             event.addPackFinders(
                     Identifier.fromNamespaceAndPath(SICommon.MODID, "resourcepacks/debug"),
                     PackType.CLIENT_RESOURCES,
-                    Component.translatable("pack.softimprints.debug"),
+                    Component.translatable("imprint_pack.softimprints.debug"),
                     PackSource.BUILT_IN,
                     false,
                     Pack.Position.TOP

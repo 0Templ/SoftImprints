@@ -115,7 +115,7 @@ public class LayersGroupFactory implements SettingsGroupFactory {
     }
 
     private static Component textureSetText(Identifier currentProfile, ImprintTextureSets textureSets) {
-        var setTrId = ("profile.") + currentProfile.toLanguageKey() + ("." + textureSets.selected());
+        var setTrId = ("imprint_profile.") + currentProfile.toLanguageKey() + ("." + textureSets.selected());
         return Component.translatable("config.softimprints.group.layers.texture_set",
                 Component.translatable(setTrId)
         );

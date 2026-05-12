@@ -281,7 +281,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
     private static String profileTranslationKey(Identifier id) {
-        return "profile." + id.toLanguageKey();
+        return "imprint_profile." + id.toLanguageKey();
     }
 
     private void rebuildVisibleProfiles() {

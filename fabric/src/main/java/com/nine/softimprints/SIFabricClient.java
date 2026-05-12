@@ -47,7 +47,7 @@ public class SIFabricClient implements ClientModInitializer {
         ResourceLoader.registerBuiltinPack(
                 Identifier.fromNamespaceAndPath(SICommon.MODID, "debug"),
                 container,
-                Component.translatable("pack.softimprints.debug"),
+                Component.translatable("imprint_pack.softimprints.debug"),
                 PackActivationType.NORMAL
         );
     }
