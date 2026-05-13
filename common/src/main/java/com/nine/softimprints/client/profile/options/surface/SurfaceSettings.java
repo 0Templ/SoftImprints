@@ -2,17 +2,17 @@ package com.nine.softimprints.client.profile.options.surface;
 
 import com.nine.softimprints.client.model.SurfaceMode;
 
-public record ImprintSurfaceSettings(
+public record SurfaceSettings(
         SurfaceMode mode,
         ZeroLayerSource zeroLayerSource
 ) {
 
-    public static final ImprintSurfaceSettings DEFAULT = new ImprintSurfaceSettings(
+    public static final SurfaceSettings DEFAULT = new SurfaceSettings(
             SurfaceMode.TOP,
             ZeroLayerSource.SURFACE
     );
 
-    public ImprintSurfaceSettings {
+    public SurfaceSettings {
         if (mode == null) {
             mode = DEFAULT.mode;
         }
@@ -25,15 +25,15 @@ public record ImprintSurfaceSettings(
         return zeroLayerSource == ZeroLayerSource.SURFACE;
     }
 
-    public ImprintSurfaceSettings withMode(SurfaceMode mode) {
-        return new ImprintSurfaceSettings(mode, zeroLayerSource);
+    public SurfaceSettings withMode(SurfaceMode mode) {
+        return new SurfaceSettings(mode, zeroLayerSource);
     }
 
-    public ImprintSurfaceSettings withZeroLayerSource(ZeroLayerSource zeroLayerSource) {
-        return new ImprintSurfaceSettings(mode, zeroLayerSource);
+    public SurfaceSettings withZeroLayerSource(ZeroLayerSource zeroLayerSource) {
+        return new SurfaceSettings(mode, zeroLayerSource);
     }
 
-    public ImprintSurfaceSettings toggleZeroLayerSource() {
+    public SurfaceSettings toggleZeroLayerSource() {
         return withZeroLayerSource(useOriginalZeroLayer()
                 ? ZeroLayerSource.PROFILE
                 : ZeroLayerSource.SURFACE);

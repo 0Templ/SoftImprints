@@ -1,10 +1,9 @@
 package com.nine.softimprints.client.profile;
 
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
-import com.nine.softimprints.client.profile.options.layer.ImprintInitLayer;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
 import com.nine.softimprints.client.profile.util.ProfilesHelper;
 import net.minecraft.resources.Identifier;
@@ -19,7 +18,7 @@ public final class ImprintProfile {
 
     public final Set<SurfaceBlock> supportedBlocks;
 
-    public final ImprintSurfaceSettings surface;
+    public final SurfaceSettings surface;
 
     public final ImprintTextureSets textureSets;
 
@@ -32,14 +31,14 @@ public final class ImprintProfile {
             ImprintTextureSets textureSets,
             ImprintResolution resolution
     ) {
-        this(id, layers, supportedBlocks, ImprintSurfaceSettings.DEFAULT, textureSets, resolution);
+        this(id, layers, supportedBlocks, SurfaceSettings.DEFAULT, textureSets, resolution);
     }
 
     public ImprintProfile(
             Identifier id,
             List<ImprintLayer> layers,
             Set<SurfaceBlock> supportedBlocks,
-            ImprintSurfaceSettings surface,
+            SurfaceSettings surface,
             ImprintTextureSets textureSets,
 
             ImprintResolution resolution
@@ -81,7 +80,7 @@ public final class ImprintProfile {
         return this.textureSets;
     }
 
-    public ImprintSurfaceSettings surface() {
+    public SurfaceSettings surface() {
         return this.surface;
     }
 
@@ -121,9 +120,8 @@ public final class ImprintProfile {
 
         private final Identifier id;
         private List<ImprintLayer> layers;
-        private ImprintInitLayer initLayer;
         private Set<SurfaceBlock> supportedBlocks;
-        private ImprintSurfaceSettings surface;
+        private SurfaceSettings surface;
         private ImprintTextureSets textureSets;
         private ImprintResolution resolution;
 
@@ -162,11 +160,6 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder mutateInitLayer(UnaryOperator<ImprintInitLayer> fn) {
-            this.initLayer = fn.apply(this.initLayer);
-            return this;
-        }
-
         public Builder setSupportedBlocks(Set<SurfaceBlock> blocks) {
             this.supportedBlocks = new HashSet<>(blocks);
             return this;
@@ -177,12 +170,12 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder setSurface(ImprintSurfaceSettings surface) {
+        public Builder setSurface(SurfaceSettings surface) {
             this.surface = surface;
             return this;
         }
 
-        public Builder mutateSurface(UnaryOperator<ImprintSurfaceSettings> fn) {
+        public Builder mutateSurface(UnaryOperator<SurfaceSettings> fn) {
             this.surface = fn.apply(this.surface);
             return this;
         }

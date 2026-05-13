@@ -1,10 +1,10 @@
 package com.nine.softimprints.client.profile;
 
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 
 public record ResolvedImprintProfile(
         ImprintProfile profile,
-        ImprintSurfaceSettings surface,
+        SurfaceSettings surface,
         ImprintRenderOverrides renderOverrides
 ) {
 

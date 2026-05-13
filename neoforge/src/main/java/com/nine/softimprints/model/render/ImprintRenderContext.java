@@ -3,7 +3,7 @@ package com.nine.softimprints.model.render;
 import com.nine.softimprints.client.core.map.IImprintMap;
 import com.nine.softimprints.client.model.BlockRenderData;
 import com.nine.softimprints.client.profile.ImprintProfile;
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -27,7 +27,7 @@ public record ImprintRenderContext(
         BlockState state,
         RandomSource random,
         ImprintProfile profile,
-        ImprintSurfaceSettings surface,
+        SurfaceSettings surface,
         IImprintMap map,
         BlockRenderData blockRenderData
 ) {}

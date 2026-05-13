@@ -1,12 +1,15 @@
 package com.nine.softimprints.client.profile.io.json;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
 import java.util.Objects;
 
 public record JsonTextureSets(
         String selected,
+        @SerializedName("init_layer")
         String initLayer,
-        Boolean useOriginalZeroLayer,
+        @SerializedName("textures_by_value")
         Map<String, Map<String, String>> texturesByValue
 ) {
 
@@ -16,7 +19,6 @@ public record JsonTextureSets(
                 return new JsonTextureSets(
                         with.selected != null ? with.selected : this.selected,
                         with.initLayer != null ? with.initLayer : this.initLayer,
-                        with.useOriginalZeroLayer != null ? with.useOriginalZeroLayer : this.useOriginalZeroLayer,
                         with.texturesByValue != null ? with.texturesByValue : this.texturesByValue
                 );
         }
@@ -27,7 +29,6 @@ public record JsonTextureSets(
                 return new JsonTextureSets(
                         Objects.equals(with.selected, this.selected) ? null : this.selected,
                         Objects.equals(with.initLayer, this.initLayer) ? null : this.initLayer,
-                        Objects.equals(with.useOriginalZeroLayer, this.useOriginalZeroLayer) ? null : this.useOriginalZeroLayer,
                         Objects.equals(with.texturesByValue, this.texturesByValue) ? null : this.texturesByValue
                 );
         }

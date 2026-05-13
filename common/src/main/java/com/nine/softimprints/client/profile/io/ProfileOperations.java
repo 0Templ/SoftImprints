@@ -15,7 +15,7 @@ import com.nine.softimprints.client.profile.migrations.ProfileMigrations;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.client.profile.options.surface.ZeroLayerSource;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSet;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
@@ -54,7 +54,7 @@ public class ProfileOperations {
     @Nullable
     public static JsonProfile parseFromJsonToRaw(JsonElement json) {
         JsonObject obj = json.getAsJsonObject();
-        int version = obj.has(JsonProfile.SCHEMA_KEY) ? obj.get(JsonProfile.SCHEMA_KEY).getAsInt() : 1; // Throw here?
+        int version = obj.has(JsonProfile.SCHEMA_KEY) ? obj.get(JsonProfile.SCHEMA_KEY).getAsInt() : 1;
         if (version > JsonProfile.CURRENT_SCHEMA){
             throw new IllegalArgumentException(
                     "Profile schema " + version + " is newer than supported " + JsonProfile.CURRENT_SCHEMA
@@ -63,6 +63,7 @@ public class ProfileOperations {
         JsonElement toParse = version < JsonProfile.CURRENT_SCHEMA
                 ? ProfileMigrations.migrate(obj, version, JsonProfile.CURRENT_SCHEMA)
                 : obj;
+
 
         return GSON.fromJson(toParse, JsonProfile.class);
     }
@@ -76,10 +77,6 @@ public class ProfileOperations {
                 .map(jl -> new ImprintLayer(jl.value(), jl.enable(), jl.expand(), jl.innerJitter(), jl.outerJitter(), jl.erosion()))
                 .toList();
 
-        Set<SurfaceBlock> blocks = jp.supportedBlocks().stream()
-                .map(Identifier::parse)
-                .map(SurfaceBlock::of)
-                .collect(Collectors.toSet());
 
         ImprintTextureSets textureSets = ImprintTextureSets.fromSets(
                 jp.textureSets().selected(),
@@ -99,7 +96,11 @@ public class ProfileOperations {
                         }).toList()
         );
 
-        ImprintSurfaceSettings surface = parseSurfaceSettings(jp);
+        Set<SurfaceBlock> blocks = jp.supportedBlocks().stream()
+                .map(Identifier::parse)
+                .map(SurfaceBlock::of)
+                .collect(Collectors.toSet());
+        SurfaceSettings surface = parseSurfaceSettings(jp);
 
         ImprintResolution resolution = parseResolution(jp);
 
@@ -116,7 +117,6 @@ public class ProfileOperations {
         JsonTextureSets sets = new JsonTextureSets(
                 profile.textureSets.selected(),
                 profile.textureSets.zeroLayer().toString(),
-                null,
                 profile.textureSets.map().entrySet().stream()
                         .sorted(Map.Entry.comparingByKey())
                         .collect(Collectors.toMap(
@@ -146,18 +146,18 @@ public class ProfileOperations {
         return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution);
     }
 
-    private static ImprintSurfaceSettings parseSurfaceSettings(JsonProfile jp) {
+    private static SurfaceSettings parseSurfaceSettings(JsonProfile jp) {
         JsonSurfaceSettings surface = jp.surface();
 
         SurfaceMode mode = surface != null && surface.mode() != null
                 ? surface.mode()
-                : ImprintSurfaceSettings.DEFAULT.mode();
+                : SurfaceSettings.DEFAULT.mode();
 
         ZeroLayerSource zeroLayerSource = surface != null && surface.zeroLayerSource() != null
                 ? surface.zeroLayerSource()
-                : legacyZeroLayerSource(jp.textureSets());
+                : ZeroLayerSource.SURFACE;
 
-        return new ImprintSurfaceSettings(mode, zeroLayerSource);
+        return new SurfaceSettings(mode, zeroLayerSource);
     }
 
     private static ImprintResolution parseResolution(JsonProfile jp) {
@@ -176,12 +176,4 @@ public class ProfileOperations {
     }
 
 
-    private static ZeroLayerSource legacyZeroLayerSource(JsonTextureSets textureSets) {
-        if (textureSets == null || textureSets.useOriginalZeroLayer() == null) {
-            return ImprintSurfaceSettings.DEFAULT.zeroLayerSource();
-        }
-        return textureSets.useOriginalZeroLayer()
-                ? ZeroLayerSource.SURFACE
-                : ZeroLayerSource.PROFILE;
-    }
 }

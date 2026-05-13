@@ -1,7 +1,7 @@
 package com.nine.softimprints.client.profile;
 
 import com.nine.softimprints.client.model.SurfaceMode;
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.client.profile.options.surface.ZeroLayerSource;
 
 import javax.annotation.Nullable;
@@ -20,11 +20,11 @@ public record ImprintRenderOverrides(
         return surfaceMode == null && zeroLayerSource == null && forcedOverlayY == null;
     }
 
-    public ImprintSurfaceSettings applyTo(ImprintSurfaceSettings base) {
+    public SurfaceSettings applyTo(SurfaceSettings base) {
         if (empty()) {
             return base;
         }
-        return new ImprintSurfaceSettings(
+        return new SurfaceSettings(
                 surfaceMode != null ? surfaceMode : base.mode(),
                 zeroLayerSource != null ? zeroLayerSource : base.zeroLayerSource()
         );

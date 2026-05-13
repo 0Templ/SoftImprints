@@ -1,10 +1,14 @@
 package com.nine.softimprints.client.profile.options.layer;
 
+import com.google.gson.annotations.SerializedName;
+
 public record ImprintLayer (
         byte value,
         boolean enable,
         int expand,
+        @SerializedName("inner_jitter")
         float innerJitter,
+        @SerializedName("outer_jitter")
         float outerJitter,
         float erosion
 ){

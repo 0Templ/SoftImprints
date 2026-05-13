@@ -3,7 +3,7 @@ package com.nine.softimprints.client.ui.screen.settings;
 import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
-import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
+import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
 import com.nine.softimprints.client.ui.component.list.GroupBuilder;
 import com.nine.softimprints.client.ui.component.list.ListGroup;
@@ -121,11 +121,11 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
-    private static void addLayerTypeButtons(GroupBuilder builder, GroupBuildContext context, ImprintSurfaceSettings surface) {
+    private static void addLayerTypeButtons(GroupBuilder builder, GroupBuildContext context, SurfaceSettings surface) {
 
         var zeroLayerButton = Button.builder(zeroLayerSourceText(surface), b ->
                         context.editorContext().currentProfile().updateDraft(profile -> {
-                    ImprintSurfaceSettings next = profile.surface().toggleZeroLayerSource();
+                    SurfaceSettings next = profile.surface().toggleZeroLayerSource();
                     b.setMessage(zeroLayerSourceText(next));
                     b.setTooltip(Tooltip.create(zeroLayerSourceTooltip(next)));
                             return profile.toBuilder()
@@ -140,7 +140,7 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         var surfaceModeButton = Button.builder(surfaceModeText(surface), b ->
                 context.editorContext().currentProfile().updateDraft(profile -> {
                     var current = profile.surface().mode();
-                    ImprintSurfaceSettings next = profile.surface().withMode(
+                    SurfaceSettings next = profile.surface().withMode(
                             current == SurfaceMode.TOP ? SurfaceMode.OVERLAY : SurfaceMode.TOP
                     );
                     zeroLayerButton.active = next.mode() == SurfaceMode.TOP;
@@ -159,7 +159,7 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
-    private static Component surfaceModeText(ImprintSurfaceSettings surface) {
+    private static Component surfaceModeText(SurfaceSettings surface) {
         var type = surface.mode().toString().toLowerCase();
         return Component.translatable(
                 "config.softimprints.group.layers.emit_strategy",
@@ -167,18 +167,18 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
-    private static Component surfaceModeTooltip(ImprintSurfaceSettings surface) {
+    private static Component surfaceModeTooltip(SurfaceSettings surface) {
         var type = surface.mode().toString().toLowerCase();
         return Component.translatable("config.softimprints.group.layers.emit_strategy." + type + ".tooltip");
     }
 
-    private static Component zeroLayerSourceTooltip(ImprintSurfaceSettings surface) {
+    private static Component zeroLayerSourceTooltip(SurfaceSettings surface) {
         return surface.useOriginalZeroLayer() ?
                 Component.translatable("config.softimprints.group.layers.zero_layer_source.original.tooltip") :
                 Component.translatable("config.softimprints.group.layers.zero_layer_source.profile.tooltip");
     }
 
-    private static Component zeroLayerSourceText(ImprintSurfaceSettings surface) {
+    private static Component zeroLayerSourceText(SurfaceSettings surface) {
         return Component.translatable(
                 "config.softimprints.group.layers.zero_layer_source",
                 Component.translatable(surface.useOriginalZeroLayer()

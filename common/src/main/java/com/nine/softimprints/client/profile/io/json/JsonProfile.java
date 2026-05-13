@@ -7,25 +7,27 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public record JsonProfile(
-        int version,
-        List<ImprintLayer> layers,
-        Set<String> supportedBlocks,
-        JsonSurfaceSettings surface,
-        JsonTextureSets textureSets,
-
-        @SerializedName("resolution")
-        JsonImprintResolution resolution
-) {
+    public record JsonProfile(
+            int version,
+            List<ImprintLayer> layers,
+            @SerializedName("supported_blocks")
+            Set<String> supportedBlocks,
+            @SerializedName("surface")
+            JsonSurfaceSettings surface,
+            @SerializedName("texture_sets")
+            JsonTextureSets textureSets,
+            @SerializedName("resolution")
+            JsonImprintResolution resolution
+    ) {
 
     public static final String SCHEMA_KEY = "version";
-    public static final int CURRENT_SCHEMA = 1;
+    public static final int CURRENT_SCHEMA = 2;
 
     public JsonProfile merge(JsonProfile with){
         return new JsonProfile(this.version,
                 with.layers() != null ? with.layers() : this.layers(),
                 with.supportedBlocks() != null ? with.supportedBlocks() : this.supportedBlocks(),
-                with.surface() != null ? mergeSurface(with.surface()) : this.surface,
+                with.surface() != null ? mergeSurface(with.surface()) : this.surface(),
                 with.textureSets() != null ? this.textureSets().merge(with.textureSets()) : this.textureSets(),
                 with.resolution() != null ? mergeResolution(with.resolution()) : this.resolution()
         );

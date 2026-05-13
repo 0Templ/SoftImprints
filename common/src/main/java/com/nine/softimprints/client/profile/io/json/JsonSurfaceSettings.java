@@ -1,5 +1,6 @@
 package com.nine.softimprints.client.profile.io.json;
 
+import com.google.gson.annotations.SerializedName;
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.options.surface.ZeroLayerSource;
 
@@ -7,6 +8,7 @@ import java.util.Objects;
 
 public record JsonSurfaceSettings(
         SurfaceMode mode,
+        @SerializedName("zero_layer_source")
         ZeroLayerSource zeroLayerSource
 ) {
 
