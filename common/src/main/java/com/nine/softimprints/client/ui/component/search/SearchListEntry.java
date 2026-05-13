@@ -236,12 +236,12 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         }
     }
 
-    /** Left X of the row content area (after the frame inset). */
+    /** Left X of the row content shape (after the frame inset). */
     private static int rowsContentX(int lx) {
         return lx + LIST_FRAME_INSET_X;
     }
 
-    /** Width of the row content area, accounting for scrollbar reservation. */
+    /** Width of the row content shape, accounting for scrollbar reservation. */
     private static int rowsContentWidth(int lw, boolean withScroll) {
         int base = lw - LIST_FRAME_INSET_X * 2;
         return withScroll ? base - SCROLLBAR_WIDTH - SCROLLBAR_GAP : base;
@@ -374,7 +374,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     private int computeHeight() {
-        // The frame visually overflows the list area by LIST_FRAME_INSET_Y on each side,
+        // The frame visually overflows the list shape by LIST_FRAME_INSET_Y on each side,
         // so the bottom inset must be reserved as well.
         return modeSwitcherSlotHeight()
                 + TAB_HEIGHT + TAB_GAP + SEARCH_BOX_HEIGHT + INNER_GAP

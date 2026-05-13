@@ -3,6 +3,7 @@ package com.nine.softimprints.client.profile;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
 import com.nine.softimprints.client.profile.options.layer.ImprintInitLayer;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
+import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
 import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
 import com.nine.softimprints.client.profile.util.ProfilesHelper;
@@ -22,13 +23,16 @@ public final class ImprintProfile {
 
     public final ImprintTextureSets textureSets;
 
+    public final ImprintResolution resolution;
+
     public ImprintProfile(
             Identifier id,
             List<ImprintLayer> layers,
             Set<SurfaceBlock> supportedBlocks,
-            ImprintTextureSets textureSets
+            ImprintTextureSets textureSets,
+            ImprintResolution resolution
     ) {
-        this(id, layers, supportedBlocks, ImprintSurfaceSettings.DEFAULT, textureSets);
+        this(id, layers, supportedBlocks, ImprintSurfaceSettings.DEFAULT, textureSets, resolution);
     }
 
     public ImprintProfile(
@@ -36,7 +40,9 @@ public final class ImprintProfile {
             List<ImprintLayer> layers,
             Set<SurfaceBlock> supportedBlocks,
             ImprintSurfaceSettings surface,
-            ImprintTextureSets textureSets
+            ImprintTextureSets textureSets,
+
+            ImprintResolution resolution
     ) {
         this.id = id;
         this.layers = List.copyOf(Objects.requireNonNull(layers, "layers")).stream()
@@ -45,6 +51,9 @@ public final class ImprintProfile {
         this.supportedBlocks = Set.copyOf(supportedBlocks);
         this.surface = Objects.requireNonNull(surface, "surface");
         this.textureSets = Objects.requireNonNull(textureSets, "textureSets");
+
+
+        this.resolution = resolution;
 
         ProfilesHelper.validateLayersAndTextures(this);
     }
@@ -55,7 +64,8 @@ public final class ImprintProfile {
                 new ArrayList<>(this.layers),
                 new HashSet<>(this.supportedBlocks),
                 this.surface,
-                this.textureSets
+                this.textureSets,
+                this.resolution
         );
     }
 
@@ -79,6 +89,10 @@ public final class ImprintProfile {
         return this.id;
     }
 
+    public ImprintResolution resolution() {
+        return this.resolution;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -89,6 +103,7 @@ public final class ImprintProfile {
                 && this.surface.equals(other.surface)
                 && this.textureSets.equals(other.textureSets)
                 && this.layers.equals(other.layers)
+                && this.resolution == other.resolution()
 
                 ;
     }
@@ -110,6 +125,7 @@ public final class ImprintProfile {
         private Set<SurfaceBlock> supportedBlocks;
         private ImprintSurfaceSettings surface;
         private ImprintTextureSets textureSets;
+        private ImprintResolution resolution;
 
         private Builder(ImprintProfile src) {
             this.id = src.id;
@@ -117,6 +133,7 @@ public final class ImprintProfile {
             this.supportedBlocks = new HashSet<>(src.supportedBlocks);
             this.surface = src.surface;
             this.textureSets = src.textureSets;
+            this.resolution = src.resolution;
         }
 
         public Builder setLayers(List<ImprintLayer> layers) {
@@ -175,8 +192,13 @@ public final class ImprintProfile {
             return this;
         }
 
+        public Builder setResolution(UnaryOperator<ImprintResolution> fn) {
+            this.resolution = fn.apply(this.resolution);
+            return this;
+        }
+
         public ImprintProfile build() {
-            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets);
+            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets, resolution);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.nine.softimprints.client.core.contact;
+package com.nine.softimprints.client.core.contact.legacy;
 
 public class ContactArea {
 
@@ -28,7 +28,7 @@ public class ContactArea {
             boolean[] bits
     ) {
         if (bits.length != size * size) {
-            throw new IllegalArgumentException("bits length must match size * size");
+            throw new IllegalArgumentException("bits length must match mapSize * mapSize");
         }
         return new ContactArea(originX, originZ, y, cellSize, size, bits);
     }

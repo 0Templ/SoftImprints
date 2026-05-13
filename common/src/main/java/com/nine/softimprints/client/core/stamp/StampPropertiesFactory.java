@@ -1,15 +1,17 @@
 package com.nine.softimprints.client.core.stamp;
 
-import com.nine.softimprints.client.core.contact.ContactArea;
+import com.nine.softimprints.client.core.contact.legacy.ContactArea;
+import com.nine.softimprints.client.core.contact.raster.ContactRaster;
+import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import net.minecraft.world.entity.Entity;
 
 public class StampPropertiesFactory {
 
-    public static int createSeed(Entity entity, ContactArea area, int entityId) {
+    public static int createSeed(Entity entity, ContactRaster raster, double y, int entityId) {
         return StampSeedHelper.mixSeed(entityId,
-                Double.hashCode(area.y),
-                Double.hashCode(area.originX),
-                Double.hashCode(area.originZ));
+                Double.hashCode(raster.originX()),
+                Double.hashCode(raster.originZ()),
+                Double.hashCode(y));
     }
 
     public static StampProperties create(Entity entity) {

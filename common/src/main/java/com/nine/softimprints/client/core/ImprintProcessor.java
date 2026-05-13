@@ -1,14 +1,17 @@
 package com.nine.softimprints.client.core;
 
-import com.nine.softimprints.client.core.contact.ContactArea;
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import com.nine.softimprints.client.core.contact.ContactResolvers;
+import com.nine.softimprints.client.core.contact.raster.ContactRaster;
+import com.nine.softimprints.client.core.contact.raster.ContactRasterizer;
+import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import com.nine.softimprints.client.core.placement.BlockMask;
 import com.nine.softimprints.client.core.placement.StampColumnHelper;
 import com.nine.softimprints.client.core.stamp.StampGenerator;
 import com.nine.softimprints.client.core.stamp.StampMask;
 import com.nine.softimprints.client.core.stamp.StampPropertiesFactory;
 import com.nine.softimprints.client.profile.ImprintProfile;
-import com.nine.softimprints.client.profile.util.ProfileAreaResolver;
+import com.nine.softimprints.client.core.contact.util.ProfileShapesResolver;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -39,26 +42,32 @@ public class ImprintProcessor {
                 continue;
             }
             applied.add(id);
-            var resolvedAreas = ProfileAreaResolver.resolveProfileAreas(level, result.area());
-            for (var data : resolvedAreas.entrySet()) {
-                ImprintProfile profile = data.getKey();
-                ContactArea clippedArea = data.getValue();
+            var resolvedShape = ProfileShapesResolver.resolveProfileAreas(level, result.shape());
 
-                // TODO: implement dependence between fallDistance/deltaMovenet.y() and stamp props
+            for (var profileShape : resolvedShape) {
+                ImprintProfile profile = profileShape.profile();
+                CompositeContactShape shape = profileShape.shape();
+
+                ContactRaster contact = ContactRasterizer.rasterize(
+                        shape,
+                        profile.resolution().mapSize()
+                );
+                if (contact == null) continue;
+
                 var stampProps = StampPropertiesFactory.create(entity);
-                var seed = StampPropertiesFactory.createSeed(entity, clippedArea, id);
-
-                StampMask mask = StampGenerator.generate(
+                var seed = StampPropertiesFactory.createSeed(entity, contact, shape.y(), id);
+                StampRaster stamp = StampGenerator.generate(
                         profile,
-                        clippedArea.bits,
-                        clippedArea.size,
-                        seed, result.strategy(),
+                        contact,
+                        seed,
+                        result.strategy(),
                         stampProps
                 );
 
-                var columnSlices = StampColumnHelper.slice(clippedArea, mask);
 
-                ret.addAll(StampColumnHelper.columnsToBlocks(level, columnSlices, profile, clippedArea.y));
+                var columnSlices = StampColumnHelper.slice(profile, stamp);
+                var blockMasks = StampColumnHelper.columnsToBlocks(level, columnSlices, profile, shape.y());
+                ret.addAll(blockMasks);
             }
         }
 

@@ -14,7 +14,7 @@ import java.util.function.LongPredicate;
 
 public class ImprintCache {
 
-    private final ConcurrentHashMap<Long, byte[]> maps = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, ImprintBlockMap> maps = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, Long> lastTouchedTick = new ConcurrentHashMap<>();
 
     private final Set<Long> dirtySections = new HashSet<>();
@@ -24,16 +24,21 @@ public class ImprintCache {
     }
 
     public IImprintMap getImprintMap(Long pos){
-        var bytes = maps.getOrDefault(pos, null);
-        if (bytes == null) return null;
+        var map = maps.getOrDefault(pos, null);
+        if (map == null) return null;
 
-        return new ImprintMap(Constants.BASIC_RESOLUTION, Arrays.copyOf(bytes, bytes.length));
+        return new ImprintMap(map.mapSize(), Arrays.copyOf(map.values(), map.values().length));
     }
 
     public void apply(List<BlockMask> masks, long gameTime){
         boolean changed = false;
         for (var mask : masks){
-            byte[] map = maps.computeIfAbsent(mask.blockPos(), pos -> new byte[Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION]);
+            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
+                    pos -> {
+                        return new ImprintBlockMap(
+                                mask.mapSize(),
+                                new byte[Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION]);
+                    });
             if (rasterize(map, mask)){
                 dirtySections.add(sectionOf(mask.blockPos()));
                 lastTouchedTick.put(mask.blockPos(), gameTime);
@@ -97,11 +102,12 @@ public class ImprintCache {
         }
     }
 
-    private boolean rasterize(byte[] dst, BlockMask mask) {
+    private boolean rasterize(ImprintBlockMap map, BlockMask mask) {
+        var dst = map.values();
         byte[] src = mask.map();
         boolean changed = false;
 
-        for (int i = 0; i < (Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION); i++) {
+        for (int i = 0; i < (map.mapSize() * map.mapSize()); i++) {
             byte s = src[i];
             if (s == 0) continue;
 

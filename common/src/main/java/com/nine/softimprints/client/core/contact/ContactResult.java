@@ -1,7 +1,9 @@
 package com.nine.softimprints.client.core.contact;
 
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
+
 public record ContactResult(
-        ContactArea area,
+        CompositeContactShape shape,
         StampStrategy strategy
 ) {
 
@@ -12,7 +14,6 @@ public record ContactResult(
         EXACT,
 
         ;
-
     }
 
 }

@@ -1,6 +1,5 @@
 package com.nine.softimprints.client.ui.component.profile;
 
-import com.nine.softimprints.client.profile.ImprintProfile;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;

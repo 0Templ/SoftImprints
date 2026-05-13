@@ -1,6 +1,8 @@
 package com.nine.softimprints.client.core.stamp;
 
 import com.nine.softimprints.client.core.contact.ContactResult;
+import com.nine.softimprints.client.core.contact.raster.ContactRaster;
+import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import com.nine.softimprints.client.profile.ImprintProfile;
 
 public final class StampGenerator {
@@ -13,27 +15,38 @@ public final class StampGenerator {
     private StampGenerator() {
     }
 
-    public static StampMask generate(
+    public static StampRaster generate(
             ImprintProfile profile,
-            boolean[] contactMask, int size,
+            ContactRaster raster,
+            // Todo: move to params class
             int seed,
             ContactResult.StampStrategy stampStrategy,
             StampProperties properties
     ) {
-        int padding = totalPadding(profile);
-        int stampSize = size + padding * 2;
+        double cellSize = raster.cellSize();
 
-        byte[] values = new byte[stampSize * stampSize];
+        int padding = totalPadding(profile);
+
+        double originX = raster.originX() - padding * cellSize;
+        double originZ = raster.originZ() - padding * cellSize;
+
+        int width = raster.width() + padding * 2;
+        int height = raster.height() + padding * 2;
+
+        boolean[] contactMask = raster.mask();
+        byte[] values = new byte[width * height];
 
         boolean[] coverage = switch (stampStrategy) {
             case EXACT -> embedExact(
-                    contactMask, size,
-                    stampSize,
+                    contactMask,
+                    raster.width(), raster.height(),
+                    width, height,
                     padding
             );
             case ELLIPSE -> embedEllipse(
-                    contactMask, size,
-                    stampSize,
+                    contactMask,
+                    raster.width(), raster.height(),
+                    width, height,
                     padding,
                     properties.stretchX(), properties.stretchZ(),
                     properties.degree()
@@ -43,16 +56,21 @@ public final class StampGenerator {
         var step = new LayerStep(
                 coverage.clone(),
                 coverage.clone(),
-                new boolean[stampSize * stampSize]
+                new boolean[width * height]
         );
 
-        applyLayers(values, step, coverage, profile, stampSize, seed);
+        applyLayers(values, step, coverage, profile, width, height, seed);
 
-        return new StampMask(values, stampSize, padding);
+        return new StampRaster(
+                originX, originZ,
+                raster.cellSize(),
+                width, height,
+                values
+        );
     }
 
-    private static void applyMask(byte[] mask, boolean[] coverage, int size, byte value) {
-        for (int i = 0; i < size * size; i++) {
+    private static void applyMask(byte[] mask, boolean[] coverage, int width, int height, byte value) {
+        for (int i = 0; i < width * height; i++) {
             if (!coverage[i]) continue;
             mask[i] = value;
         }
@@ -73,7 +91,8 @@ public final class StampGenerator {
             LayerStep step,
             boolean[] coverage,
             ImprintProfile profile,
-            int stampSize,
+            int width,
+            int height,
             int seed
     ) {
         boolean firstProcessed = false;
@@ -83,20 +102,20 @@ public final class StampGenerator {
             firstProcessed = true;
 
             if (isFirst) {
-                step = dilate(step, layer.expand(), stampSize);
-                step = unionPaintWith(step, coverage, stampSize);
+                step = dilate(step, layer.expand(), width, height);
+                step = unionPaintWith(step, coverage, width, height);
             } else {
-                step = dilate(step, layer.expand(), stampSize);
+                step = dilate(step, layer.expand(), width, height);
             }
-            step = applyErosion(step, layer.erosion(), stampSize, seed, layer.value());
-            step = applyJitter(step, layer.innerJitter(), layer.outerJitter(), stampSize, seed, layer.value());
-            applyMask(values, step.paint(), stampSize, layer.value());
+            step = applyErosion(step, layer.erosion(), width, height, seed, layer.value());
+            step = applyJitter(step, layer.innerJitter(), layer.outerJitter(), width, height, seed, layer.value());
+            applyMask(values, step.paint(), width, height, layer.value());
         }
     }
 
-    private static LayerStep unionPaintWith(LayerStep step, boolean[] coverage, int size) {
+    private static LayerStep unionPaintWith(LayerStep step, boolean[] coverage, int width, int height) {
         boolean[] paint = step.paint().clone();
-        for (int i = 0; i < size * size; i++) {
+        for (int i = 0; i < width * height; i++) {
             if (coverage[i]) paint[i] = true;
         }
         return new LayerStep(step.body(), step.cleanBody(), paint);
@@ -106,7 +125,8 @@ public final class StampGenerator {
             LayerStep step,
             float innerJitter,
             float outerJitter,
-            int size,
+            int width,
+            int height,
             int seed,
             byte layerValue
     ) {
@@ -117,17 +137,17 @@ public final class StampGenerator {
         int innerSeed = StampSeedHelper.mixSeed(seed, layerValue, INNER_JITTER_SALT);
         int outerSeed = StampSeedHelper.mixSeed(seed, layerValue, OUTER_JITTER_SALT);
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                int i = y * size + x;
-                if (!step.paint()[i] && !step.body()[i] && hasNeighbor(step.paint(), size, x, y)) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int i = y * width + x;
+                if (!step.paint()[i] && !step.body()[i] && hasNeighbor(step.paint(), width, height, x, y)) {
                     double outerNoise = StampSeedHelper.createNoise(y, x, outerSeed);
                     if (outerNoise < outerJitter) {
                         body[i] = true;
                         paint[i] = true;
                     }
                 }
-                if (step.body()[i] && !paint[i] && hasNeighbor(step.paint(), size, x, y)) {
+                if (step.body()[i] && !paint[i] && hasNeighbor(step.paint(), width, height, x, y)) {
                     double innerNoise = StampSeedHelper.createNoise(x, y, innerSeed);
                     if (innerNoise < innerJitter) {
                         paint[i] = true;
@@ -142,7 +162,8 @@ public final class StampGenerator {
     private static LayerStep applyErosion(
             LayerStep step,
             float erosion,
-            int size,
+            int width,
+            int height,
             int seed,
             byte layerValue
     ) {
@@ -151,11 +172,11 @@ public final class StampGenerator {
         boolean[] paint = step.paint().clone();
         int erosionSeed = StampSeedHelper.mixSeed(seed, layerValue, EROSION_SALT);
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                int index = y * size + x;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = y * width + x;
                 if (!paint[index]) continue;
-                double exposure = edgeExposure(step.body(), size, x, y);
+                double exposure = edgeExposure(step.body(), width, height, x, y);
                 if (exposure <= 0.0D) continue;
 
                 double noise = StampSeedHelper.createNoise(x, y, erosionSeed);
@@ -168,45 +189,49 @@ public final class StampGenerator {
         return new LayerStep(step.body(), step.cleanBody(), paint);
     }
 
-    private static boolean hasNeighbor(boolean[] body, int size, int x, int y) {
+    private static boolean hasNeighbor(boolean[] body, int width, int height, int x, int y) {
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
                 if (dx == 0 && dy == 0) continue;
                 int nx = x + dx;
                 int ny = y + dy;
-                if (nx < 0 || nx >= size || ny < 0 || ny >= size) continue;
-                if (body[ny * size + nx]) return true;
+                if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                if (body[ny * width + nx]) return true;
             }
         }
         return false;
     }
 
-    private static double edgeExposure(boolean[] body, int size, int x, int y) {
+    private static double edgeExposure(boolean[] body, int width, int height, int x, int y) {
         int openSides = 0;
-        if (!isFilled(body, size, x - 1, y)) openSides++;
-        if (!isFilled(body, size, x + 1, y)) openSides++;
-        if (!isFilled(body, size, x, y - 1)) openSides++;
-        if (!isFilled(body, size, x, y + 1)) openSides++;
+        if (!isFilled(body, width, height, x - 1, y)) openSides++;
+        if (!isFilled(body, width, height, x + 1, y)) openSides++;
+        if (!isFilled(body, width, height, x, y - 1)) openSides++;
+        if (!isFilled(body, width, height, x, y + 1)) openSides++;
         return openSides / 4.0D;
     }
 
-    private static boolean isFilled(boolean[] body, int size, int x, int y) {
-        return x >= 0 && x < size
-                && y >= 0 && y < size
-                && body[y * size + x];
+    private static boolean isFilled(boolean[] body, int width, int height, int x, int y) {
+        return x >= 0 && x < width
+                && y >= 0 && y < height
+                && body[y * width + x];
     }
 
     private record LayerStep(boolean[] body, boolean[] cleanBody, boolean[] paint) {
 
     }
 
-    // Todo: redo: custom rules, and smth else
-    private static boolean[] embedExact(boolean[] mask, int size, int stampSize, int padding) {
-        boolean[] ret = new boolean[stampSize * stampSize];
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (mask[y * size + x]) {
-                    ret[(y + padding) * stampSize + (x + padding)] = true;
+    private static boolean[] embedExact(
+            boolean[] mask,
+            int oldW, int oldH,
+            int w, int h,
+            int padding
+    ) {
+        boolean[] ret = new boolean[w * h];
+        for (int y = 0; y < oldH; y++) {
+            for (int x = 0; x < oldW; x++) {
+                if (mask[y * oldW + x]) {
+                    ret[(y + padding) * w + (x + padding)] = true;
                 }
             }
         }
@@ -214,37 +239,42 @@ public final class StampGenerator {
     }
 
     private static boolean[] embedEllipse(
-            boolean[] mask, int size, int stampSize, int padding,
+            boolean[] mask,
+            int oldW, int oldH,
+            int w, int h,
+            int padding,
             double scaleX, double scaleZ, double angleDeg
     ) {
-        boolean[] ret = new boolean[stampSize * stampSize];
-        double cx = (size - 1) / 2.0;
-        double cz = (size - 1) / 2.0;
+        boolean[] ret = new boolean[w * h];
+        double cx = (oldW - 1) / 2.0D;
+        double cz = (oldH - 1) / 2.0D;
+        double rx = Math.max(0.5D, cx * scaleX);
+        double rz = Math.max(0.5D, cz * scaleZ);
 
         double rad = Math.toRadians(angleDeg);
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (!mask[y * size + x]) continue;
+        for (int y = 0; y < oldH; y++) {
+            for (int x = 0; x < oldW; x++) {
+                if (!mask[y * oldW + x]) continue;
 
                 double dx = x - cx;
                 double dz = y - cz;
 
-                double lx = (dx * cos + dz * sin) / (cx * scaleX);
-                double lz = (-dx * sin + dz * cos) / (cz * scaleZ);
+                double lx = (dx * cos + dz * sin) / rx;
+                double lz = (-dx * sin + dz * cos) / rz;
 
                 if (lx * lx + lz * lz > 1.0) continue;
 
-                ret[(y + padding) * stampSize + (x + padding)] = true;
+                ret[(y + padding) * w + (x + padding)] = true;
             }
         }
         return ret;
     }
 
-    private static LayerStep dilate(LayerStep step, int expand, int size) {
-        boolean[] paint = new boolean[size * size];
+    private static LayerStep dilate(LayerStep step, int expand, int width, int height) {
+        boolean[] paint = new boolean[width * height];
         if (expand <= 0) {
             return new LayerStep(step.body().clone(), step.cleanBody().clone(), paint);
         }
@@ -254,27 +284,27 @@ public final class StampGenerator {
         boolean[] cleanBody = origClean.clone();
         boolean[] body = origBody.clone();
 
-        boolean[] tmp = new boolean[size * size];
-        for (int y = 0; y < size; y++) {
-            int rowStart = y * size;
-            for (int x = 0; x < size; x++) {
+        boolean[] tmp = new boolean[width * height];
+        for (int y = 0; y < height; y++) {
+            int rowStart = y * width;
+            for (int x = 0; x < width; x++) {
                 if (!origClean[rowStart + x]) continue;
                 int xMin = Math.max(0, x - expand);
-                int xMax = Math.min(size - 1, x + expand);
+                int xMax = Math.min(width - 1, x + expand);
                 for (int nx = xMin; nx <= xMax; nx++) {
                     tmp[rowStart + nx] = true;
                 }
             }
         }
 
-        for (int y = 0; y < size; y++) {
-            int rowStart = y * size;
-            for (int x = 0; x < size; x++) {
+        for (int y = 0; y < height; y++) {
+            int rowStart = y * width;
+            for (int x = 0; x < width; x++) {
                 if (!tmp[rowStart + x]) continue;
                 int yMin = Math.max(0, y - expand);
-                int yMax = Math.min(size - 1, y + expand);
+                int yMax = Math.min(height - 1, y + expand);
                 for (int ny = yMin; ny <= yMax; ny++) {
-                    int index = ny * size + x;
+                    int index = ny * width + x;
                     if (!origClean[index] && !origBody[index]) {
                         paint[index] = true;
                     }

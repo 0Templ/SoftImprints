@@ -60,7 +60,7 @@ public class SIConfig {
                         ModelContactFallbackPolicy.BOUNDING_BOX,
                         ConfigSection.GENERAL,
                         ConfigSide.CLIENT,
-                        ConfigComment.of("What to do when model-contact cannot produce a usable contact area.")
+                        ConfigComment.of("What to do when model-contact cannot produce a usable contact shape.")
                                 .line("SKIP = skip this entity's imprint tick.")
                                 .line("BOUNDING_BOX = use the entity bounding box for this stamp.")
                 );

@@ -1,8 +1,9 @@
 package com.nine.softimprints.client.ui.component.preview;
 
 import com.nine.softimprints.client.core.contact.ContactResult;
+import com.nine.softimprints.client.core.contact.raster.ContactRaster;
+import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import com.nine.softimprints.client.core.stamp.StampGenerator;
-import com.nine.softimprints.client.core.stamp.StampMask;
 import com.nine.softimprints.client.core.stamp.StampProperties;
 import com.nine.softimprints.client.core.stamp.StampSeedHelper;
 import com.nine.softimprints.client.profile.ImprintProfile;
@@ -145,35 +146,43 @@ public class PreviewState {
         boolean[] contactMask = new boolean[contactSize * contactSize];
         Arrays.fill(contactMask, true);
 
-        StampMask stamp = StampGenerator.generate(
+        double contactOriginX = Math.floor(stroke.x() - contactSize / 2.0D);
+        double contactOriginY = Math.floor(stroke.y() - contactSize / 2.0D);
+
+        ContactRaster contact = new ContactRaster(
+                contactOriginX, contactOriginY, 1.0D,
+                contactSize, contactSize,
+                contactMask
+        );
+
+        StampRaster stamp = StampGenerator.generate(
                 profile,
-                contactMask,
-                contactSize,
+                contact,
                 stroke.seed(),
                 ContactResult.StampStrategy.ELLIPSE,
                 new StampProperties(0, 1, 1)
         );
 
-        int originX = (int) Math.floor(stroke.x() - contactSize / 2.0) - stamp.padding();
-        int originY = (int) Math.floor(stroke.y() - contactSize / 2.0) - stamp.padding();
-
-        pasteStamp(stamp, originX, originY);
+        pasteStamp(stamp);
     }
 
 
-    private void pasteStamp(StampMask stampMask, int originX, int originY){
-        var src = stampMask.mask();
-        int stampSize = stampMask.size();
-        for (int sy = 0; sy < stampSize; sy++){
+    private void pasteStamp(StampRaster stampRaster){
+        var src = stampRaster.mask();
+        int originX = (int) Math.floor(stampRaster.originX());
+        int originY = (int) Math.floor(stampRaster.originZ());
+        int w = stampRaster.width();
+        int h = stampRaster.height();
+        for (int sy = 0; sy < h; sy++){
             int dy = sy + originY;
             if (dy < 0) continue;
             if (dy >= activeHeight) break;
-            for (int sx = 0; sx < stampSize; sx++) {
+            for (int sx = 0; sx < w; sx++) {
                 int dx = sx + originX;
                 if (dx < 0) continue;
                 if (dx >= activeWidth) break;
 
-                int srcIndex = sy * stampSize + sx;
+                int srcIndex = sy * w + sx;
                 int dstIndex = dy * size + dx;
 
                 var value = src[srcIndex];

@@ -2,6 +2,7 @@ package com.nine.softimprints.client.core.contact.model;
 
 import com.nine.softimprints.client.core.contact.ContactResolver;
 import com.nine.softimprints.client.core.contact.ContactResult;
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import com.nine.softimprints.client.core.contact.model.area.ModelContactAreaAdapter;
 import com.nine.softimprints.client.core.contact.model.snapshot.ModelContactSnapshot;
 import net.minecraft.world.entity.Entity;
@@ -25,8 +26,8 @@ public final class ModelContactResolver implements ContactResolver {
             return resolveFallback(entity);
         }
 
-        ContactResult result = ModelContactAreaAdapter.adapt(snapshot, entity);
-        return result != null ? result : resolveFallback(entity);
+        CompositeContactShape shape = ModelContactAreaAdapter.adapt(snapshot, entity);
+        return shape != null ? new ContactResult(shape, ContactResult.StampStrategy.EXACT) : resolveFallback(entity);
     }
 
     private ContactResult resolveFallback(Entity entity) {

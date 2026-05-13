@@ -1,8 +1,8 @@
 package com.nine.softimprints.client.core.contact.model.area;
 
 import com.nine.softimprints.client.core.Constants;
-import com.nine.softimprints.client.core.contact.ContactArea;
-import com.nine.softimprints.client.core.contact.ContactResult;
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
+import com.nine.softimprints.client.core.contact.bounds.ContactBounds;
 import com.nine.softimprints.client.core.contact.model.ModelContactSupport;
 import com.nine.softimprints.client.core.contact.model.snapshot.ModelContactSnapshot;
 import com.nine.softimprints.client.core.contact.model.snapshot.ModelContactSnapshotBox;
@@ -26,7 +26,7 @@ public final class ModelContactAreaAdapter {
     private ModelContactAreaAdapter() {
     }
 
-    public static ContactResult adapt(ModelContactSnapshot snapshot, Entity entity) {
+    public static CompositeContactShape adapt(ModelContactSnapshot snapshot, Entity entity) {
         if (snapshot == null || snapshot.isEmpty() || entity == null) {
             return null;
         }
@@ -51,69 +51,87 @@ public final class ModelContactAreaAdapter {
         double minWorldZ = Double.POSITIVE_INFINITY;
         double maxWorldZ = Double.NEGATIVE_INFINITY;
 
-        for (ModelContactSnapshotBox box : contactBoxes) {
-            minWorldX = Math.min(minWorldX, box.minX() + originEntityX);
-            maxWorldX = Math.max(maxWorldX, box.maxX() + originEntityX);
-            minWorldZ = Math.min(minWorldZ, box.minZ() + originEntityZ);
-            maxWorldZ = Math.max(maxWorldZ, box.maxZ() + originEntityZ);
+        for (var box : contactBoxes) {
+            double minX = box.minX() + originEntityX;
+            double minZ = box.minZ() + originEntityZ;
+            double maxX = box.maxX() + originEntityX;
+            double maxZ = box.maxZ() + originEntityZ;
+
+            minWorldX = Math.min(minWorldX, minX);
+            maxWorldX = Math.max(maxWorldX, maxX);
+            minWorldZ = Math.min(minWorldZ, minZ);
+            maxWorldZ = Math.max(maxWorldZ, maxZ);
         }
 
-        double spanX = maxWorldX - minWorldX;
-        double spanZ = maxWorldZ - minWorldZ;
-        double shortSpan = Math.min(spanX, spanZ);
-        double longSpan = Math.max(spanX, spanZ);
-        if (shortSpan <= 1.0E-6D) {
+        if (maxWorldX <= minWorldX || maxWorldZ <= minWorldZ) {
             return null;
         }
 
-        int shortCells = Math.max(1, (int) Math.ceil(shortSpan * Constants.BASIC_RESOLUTION));
-        double cellSize = shortSpan / shortCells;
-        int size = Math.max(shortCells, (int) Math.ceil(longSpan / cellSize));
+        int resolution = Constants.BASIC_RESOLUTION;
+        double cellSize = 1.0D / resolution;
 
-        double centerX = (minWorldX + maxWorldX) * 0.5D;
-        double centerZ = (minWorldZ + maxWorldZ) * 0.5D;
-        double half = size * cellSize * 0.5D;
-        double originX = centerX - half;
-        double originZ = centerZ - half;
+        int minCellX = (int) Math.floor(minWorldX * resolution);
+        int maxCellX = (int) Math.ceil(maxWorldX * resolution);
+        int minCellZ = (int) Math.floor(minWorldZ * resolution);
+        int maxCellZ = (int) Math.ceil(maxWorldZ * resolution);
 
-        boolean[] bits = new boolean[size * size];
-        boolean hasAny = false;
+        int width = maxCellX - minCellX;
+        int height = maxCellZ - minCellZ;
+        if (width <= 0 || height <= 0) {
+            return null;
+        }
+
+        double originX = minCellX * cellSize;
+        double originZ = minCellZ * cellSize;
 
         int totalSamples = SAMPLE_SUBDIVISIONS * SAMPLE_SUBDIVISIONS;
         int minCoveredSamples = Math.max(1, (int) Math.ceil(totalSamples * COVERAGE_THRESHOLD));
 
-        for (int z = 0; z < size; z++) {
-            int row = z * size;
+        var builder = new CompositeContactShape.Builder();
+
+        for (int z = 0; z < height; z++) {
             double cellWorldMinZ = originZ + z * cellSize;
             double cellWorldMaxZ = cellWorldMinZ + cellSize;
             double cellLocalMinZ = cellWorldMinZ - originEntityZ;
             double cellLocalMaxZ = cellWorldMaxZ - originEntityZ;
-            for (int x = 0; x < size; x++) {
-                double cellWorldMinX = originX + x * cellSize;
-                double cellWorldMaxX = cellWorldMinX + cellSize;
-                double cellLocalMinX = cellWorldMinX - originEntityX;
-                double cellLocalMaxX = cellWorldMaxX - originEntityX;
-                if (passesCoverageThreshold(
-                        contactBoxes,
-                        cellLocalMinX, cellLocalMaxX,
-                        cellLocalMinZ, cellLocalMaxZ,
-                        localBandMinY, localBandMaxY,
-                        minCoveredSamples
-                )) {
-                    bits[row + x] = true;
-                    hasAny = true;
+            int runStart = -1;
+
+            for (int x = 0; x <= width; x++) {
+                boolean filled = false;
+                if (x < width) {
+                    double cellWorldMinX = originX + x * cellSize;
+                    double cellWorldMaxX = cellWorldMinX + cellSize;
+                    double cellLocalMinX = cellWorldMinX - originEntityX;
+                    double cellLocalMaxX = cellWorldMaxX - originEntityX;
+
+                    filled = passesCoverageThreshold(
+                            contactBoxes,
+                            cellLocalMinX, cellLocalMaxX,
+                            cellLocalMinZ, cellLocalMaxZ,
+                            localBandMinY, localBandMaxY,
+                            minCoveredSamples
+                    );
+                }
+
+                if (filled && runStart < 0) {
+                    runStart = x;
+                }
+                if ((!filled || x == width) && runStart >= 0) {
+                    builder.add(new ContactBounds(
+                            originX + runStart * cellSize,
+                            cellWorldMinZ,
+                            originX + x * cellSize,
+                            cellWorldMaxZ
+                    ));
+                    runStart = -1;
                 }
             }
         }
 
-        if (!hasAny) {
+        if (builder.isEmpty()) {
             return null;
         }
-
-        return new ContactResult(
-                ContactArea.create(originX, originZ, stampY, cellSize, size, bits),
-                ContactResult.StampStrategy.EXACT
-        );
+        return builder.build(stampY);
     }
 
     private static double resolveGroundY(Entity entity, double x, double y, double z) {

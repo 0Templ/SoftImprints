@@ -8,11 +8,13 @@ import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
+import com.nine.softimprints.client.profile.io.json.JsonImprintResolution;
 import com.nine.softimprints.client.profile.io.json.JsonSurfaceSettings;
 import com.nine.softimprints.client.profile.io.json.JsonTextureSets;
 import com.nine.softimprints.client.profile.migrations.ProfileMigrations;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
+import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
 import com.nine.softimprints.client.profile.options.surface.ImprintSurfaceSettings;
 import com.nine.softimprints.client.profile.options.surface.ZeroLayerSource;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSet;
@@ -99,7 +101,9 @@ public class ProfileOperations {
 
         ImprintSurfaceSettings surface = parseSurfaceSettings(jp);
 
-        return new ImprintProfile(id, layers, blocks, surface, textureSets);
+        ImprintResolution resolution = parseResolution(jp);
+
+        return new ImprintProfile(id, layers, blocks, surface, textureSets, resolution);
     }
 
     public static JsonProfile toJsonModel(ImprintProfile profile) {
@@ -134,7 +138,12 @@ public class ProfileOperations {
                 profile.surface().zeroLayerSource()
         );
 
-        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets);
+        JsonImprintResolution resolution = new JsonImprintResolution(
+                profile.resolution.mapSize(),
+                profile.resolution.textureSize()
+        );
+
+        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution);
     }
 
     private static ImprintSurfaceSettings parseSurfaceSettings(JsonProfile jp) {
@@ -150,6 +159,22 @@ public class ProfileOperations {
 
         return new ImprintSurfaceSettings(mode, zeroLayerSource);
     }
+
+    private static ImprintResolution parseResolution(JsonProfile jp) {
+        JsonImprintResolution raw = jp.resolution();
+
+        int mapSize = raw != null && raw.mapSize() != null
+                ? raw.mapSize()
+                : ImprintResolution.DEFAULT.mapSize();
+
+        int textureSize = raw != null && raw.textureSize() != null
+                ? raw.textureSize()
+                : mapSize;
+
+
+        return new ImprintResolution(mapSize, textureSize);
+    }
+
 
     private static ZeroLayerSource legacyZeroLayerSource(JsonTextureSets textureSets) {
         if (textureSets == null || textureSets.useOriginalZeroLayer() == null) {

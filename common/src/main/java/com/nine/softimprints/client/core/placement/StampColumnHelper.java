@@ -1,7 +1,8 @@
 package com.nine.softimprints.client.core.placement;
 
-import com.nine.softimprints.client.core.Constants;
-import com.nine.softimprints.client.core.contact.ContactArea;
+import com.nine.softimprints.client.core.contact.bounds.ContactBounds;
+import com.nine.softimprints.client.core.contact.legacy.ContactArea;
+import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import com.nine.softimprints.client.core.stamp.StampMask;
 import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.ImprintProfiles;
@@ -17,14 +18,69 @@ import java.util.Objects;
 
 public class StampColumnHelper {
 
-    private static final int BLOCK_MAP_SIZE = Constants.BASIC_RESOLUTION;
-    private static final int BLOCK_MAP_AREA = BLOCK_MAP_SIZE * BLOCK_MAP_SIZE;
+    public static List<ColumnMask> slice(ImprintProfile profile, StampRaster raster) {
+        int width = raster.width();
+        int height = raster.height();
 
-    public static List<ColumnMask> slice(ContactArea area, StampMask stampMask) {
+        byte[] mask = raster.mask();
+        double cellSize = raster.cellSize();
+
+        int columnRes = profile.resolution().mapSize();
+
+        double originX = raster.originX();
+        double originZ = raster.originZ();
+
+        int minX = Mth.floor(raster.originX());
+        int maxX = Mth.ceil(raster.originX() + cellSize * width) - 1;
+        int minZ = Mth.floor(raster.originZ());
+        int maxZ = Mth.ceil(raster.originZ() + cellSize * height) - 1;
+
+        List<ColumnMask> ret = new ArrayList<>();
+
+        for (int blockX = minX; blockX <= maxX; blockX++) {
+            for (int blockZ = minZ; blockZ <= maxZ; blockZ++) {
+                byte[] map = new byte[columnRes * columnRes];
+
+                boolean hasData = false;
+
+                for (int pz = 0; pz < columnRes; pz++) {
+                    for (int px = 0; px < columnRes; px++) {
+                        double wX = blockX + (px + 0.5D) / columnRes;
+                        double wZ = blockZ + (pz + 0.5D) / columnRes;
+
+                        int gx = Mth.floor((wX - originX) / cellSize);
+                        int gz = Mth.floor((wZ - originZ) / cellSize);
+
+                        if (gx < 0 || gx >= width || gz < 0 || gz >= height) {
+                            continue;
+                        }
+
+                        byte value = mask[gz * width + gx];
+                        if (value == 0) {
+                            continue;
+                        }
+
+                        map[pz * columnRes + px] = value;
+                        hasData = true;
+
+                    }
+                }
+                if (!hasData) continue;
+                ret.add(new ColumnMask(blockX, blockZ, map));
+            }
+        }
+
+        return ret;
+    }
+
+
+    public static List<ColumnMask> slice(ImprintProfile profile, ContactArea area, StampMask stampMask) {
         int stampSize = stampMask.size();
         byte[] stamp = stampMask.mask();
+        
+        int mapSize = profile.resolution().mapSize();
 
-        int totalPixels = (stampMask.size() * Constants.BASIC_RESOLUTION);
+        int totalPixels = (stampMask.size() * mapSize);
         double cellSize = (double) stampMask.size() / totalPixels;
 
         double originX = area.originX - stampMask.padding() * cellSize;
@@ -39,13 +95,13 @@ public class StampColumnHelper {
         List<ColumnMask> result = new ArrayList<>();
         for (int blockX = minX; blockX <= maxX; blockX++) {
             for (int blockZ = minZ; blockZ <= maxZ; blockZ++) {
-                byte[] blockMap = new byte[BLOCK_MAP_AREA];
+                byte[] blockMap = new byte[mapSize * mapSize];
                 boolean hasData = false;
 
-                for (int py = 0; py < BLOCK_MAP_SIZE; py++) {
-                    for (int px = 0; px < BLOCK_MAP_SIZE; px++) {
-                        double worldX = blockX + (px + 0.5D) / BLOCK_MAP_SIZE;
-                        double worldZ = blockZ + (py + 0.5D) / BLOCK_MAP_SIZE;
+                for (int py = 0; py < mapSize; py++) {
+                    for (int px = 0; px < mapSize; px++) {
+                        double worldX = blockX + (px + 0.5D) / mapSize;
+                        double worldZ = blockZ + (py + 0.5D) / mapSize;
 
                         int gx = Mth.floor((worldX - originX) / cellSize);
                         int gz = Mth.floor((worldZ - originZ) / cellSize);
@@ -59,7 +115,7 @@ public class StampColumnHelper {
                             continue;
                         }
 
-                        blockMap[py * BLOCK_MAP_SIZE + px] = value;
+                        blockMap[py * mapSize + px] = value;
                         hasData = true;
                     }
                 }
@@ -92,7 +148,7 @@ public class StampColumnHelper {
                 if (thisProfile == null || !Objects.equals(thisProfile.id(), profile.id())) continue;
 
                 if (ProfileSurfaceMatcher.matches(level, pos, profile, y)) {
-                    ret.add(new BlockMask(pos.asLong(), column.map()));
+                    ret.add(new BlockMask(pos.asLong(), profile.resolution().mapSize(), column.map()));
                     break;
                 }
             }
