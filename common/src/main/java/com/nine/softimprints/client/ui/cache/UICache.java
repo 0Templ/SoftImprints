@@ -1,7 +1,6 @@
 package com.nine.softimprints.client.ui.cache;
 
 import com.nine.softimprints.client.ui.component.preview.brush.BrushHistory;
-import com.nine.softimprints.client.ui.component.search.SearchListEntry;
 import com.nine.softimprints.client.ui.screen.settings.EditorGroup;
 import net.minecraft.resources.Identifier;
 

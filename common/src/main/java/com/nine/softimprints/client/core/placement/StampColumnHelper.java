@@ -1,6 +1,5 @@
 package com.nine.softimprints.client.core.placement;
 
-import com.nine.softimprints.client.core.contact.bounds.ContactBounds;
 import com.nine.softimprints.client.core.contact.legacy.ContactArea;
 import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import com.nine.softimprints.client.core.stamp.StampMask;

@@ -2,8 +2,8 @@ package com.nine.softimprints.client.ui.component.search;
 
 import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.ImprintProfiles;
-import com.nine.softimprints.client.profile.resolver.ProfileCandidate;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
+import com.nine.softimprints.client.profile.resolver.ProfileCandidate;
 import com.nine.softimprints.client.ui.context.EditorContext;
 import com.nine.softimprints.client.ui.util.constant.SIColors;
 import net.minecraft.client.Minecraft;

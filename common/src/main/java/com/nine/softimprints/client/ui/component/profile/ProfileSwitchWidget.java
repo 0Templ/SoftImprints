@@ -1,6 +1,5 @@
 package com.nine.softimprints.client.ui.component.profile;
 
-import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.ui.context.EditorContext;
 import com.nine.softimprints.client.ui.context.ProfilesSession;
@@ -19,7 +18,6 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.system.windows.INPUT;
 
 import java.util.*;
 

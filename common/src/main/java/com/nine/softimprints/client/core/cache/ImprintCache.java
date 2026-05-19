@@ -1,7 +1,6 @@
 package com.nine.softimprints.client.core.cache;
 
 import com.nine.softimprints.client.config.SIConfig;
-import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.core.map.IImprintMap;
 import com.nine.softimprints.client.core.map.ImprintMap;
 import com.nine.softimprints.client.core.placement.BlockMask;

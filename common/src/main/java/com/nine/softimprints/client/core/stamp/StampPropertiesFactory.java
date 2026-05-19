@@ -1,8 +1,6 @@
 package com.nine.softimprints.client.core.stamp;
 
-import com.nine.softimprints.client.core.contact.legacy.ContactArea;
 import com.nine.softimprints.client.core.contact.raster.ContactRaster;
-import com.nine.softimprints.client.core.contact.raster.StampRaster;
 import net.minecraft.world.entity.Entity;
 
 public class StampPropertiesFactory {

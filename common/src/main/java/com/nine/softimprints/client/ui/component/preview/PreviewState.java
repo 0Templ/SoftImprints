@@ -1,9 +1,9 @@
 package com.nine.softimprints.client.ui.component.preview;
 
+import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.core.contact.ContactResult;
 import com.nine.softimprints.client.core.contact.raster.ContactRaster;
 import com.nine.softimprints.client.core.contact.raster.StampRaster;
-import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.core.stamp.StampGenerator;
 import com.nine.softimprints.client.core.stamp.StampProperties;
 import com.nine.softimprints.client.core.stamp.StampSeedHelper;

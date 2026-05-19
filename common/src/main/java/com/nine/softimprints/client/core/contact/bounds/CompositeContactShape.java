@@ -2,7 +2,6 @@ package com.nine.softimprints.client.core.contact.bounds;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public record CompositeContactShape(ContactBounds bounds, ContactBounds[] parts, double y) {

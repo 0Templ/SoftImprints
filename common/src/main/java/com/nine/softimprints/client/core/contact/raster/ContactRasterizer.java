@@ -3,7 +3,6 @@ package com.nine.softimprints.client.core.contact.raster;
 import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import com.nine.softimprints.client.core.contact.bounds.ContactBounds;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.WeatheringCopper;
 
 public class ContactRasterizer {
 

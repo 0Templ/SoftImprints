@@ -1,17 +1,16 @@
 package com.nine.softimprints.client.core;
 
-import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import com.nine.softimprints.client.core.contact.ContactResolvers;
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import com.nine.softimprints.client.core.contact.raster.ContactRaster;
 import com.nine.softimprints.client.core.contact.raster.ContactRasterizer;
 import com.nine.softimprints.client.core.contact.raster.StampRaster;
+import com.nine.softimprints.client.core.contact.util.ProfileShapesResolver;
 import com.nine.softimprints.client.core.placement.BlockMask;
 import com.nine.softimprints.client.core.placement.StampColumnHelper;
 import com.nine.softimprints.client.core.stamp.StampGenerator;
-import com.nine.softimprints.client.core.stamp.StampMask;
 import com.nine.softimprints.client.core.stamp.StampPropertiesFactory;
 import com.nine.softimprints.client.profile.ImprintProfile;
-import com.nine.softimprints.client.core.contact.util.ProfileShapesResolver;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.multiplayer.ClientLevel;

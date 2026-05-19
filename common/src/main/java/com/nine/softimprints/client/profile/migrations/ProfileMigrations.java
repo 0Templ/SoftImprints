@@ -3,8 +3,6 @@ package com.nine.softimprints.client.profile.migrations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.nine.softimprints.SICommon;
-import com.nine.softimprints.client.platform.Platform;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
 
 import java.util.Map;

@@ -2,7 +2,7 @@ package com.nine.softimprints.compat.ecliptic;
 
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.model.SurfaceMode;
-import com.nine.softimprints.client.profile.*;
+import com.nine.softimprints.client.profile.SIImprintProfiles;
 import com.nine.softimprints.client.profile.resolver.ImprintRenderOverrides;
 import com.nine.softimprints.client.profile.resolver.ImprintResolveContext;
 import com.nine.softimprints.client.profile.resolver.ImprintResolveResult;

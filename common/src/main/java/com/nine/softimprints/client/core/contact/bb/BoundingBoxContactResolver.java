@@ -1,9 +1,8 @@
 package com.nine.softimprints.client.core.contact.bb;
 
-import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
-import com.nine.softimprints.client.core.contact.legacy.ContactArea;
 import com.nine.softimprints.client.core.contact.ContactResolver;
 import com.nine.softimprints.client.core.contact.ContactResult;
+import com.nine.softimprints.client.core.contact.bounds.CompositeContactShape;
 import net.minecraft.world.entity.Entity;
 
 public class BoundingBoxContactResolver implements ContactResolver {
