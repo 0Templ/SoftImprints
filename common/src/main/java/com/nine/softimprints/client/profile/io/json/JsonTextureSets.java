@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public record JsonTextureSets(
         String selected,
-        @SerializedName("init_layer")
+        @SerializedName("zero_layer")
         String initLayer,
         @SerializedName("textures_by_value")
         Map<String, Map<String, String>> texturesByValue

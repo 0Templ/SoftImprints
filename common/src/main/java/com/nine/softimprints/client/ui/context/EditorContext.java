@@ -80,7 +80,7 @@ public class EditorContext {
     public DraftHolder<ImprintProfile> currentProfile() {
         var ret = session.draftOrFirst(selected);
         if (ret == null) {
-            throw new IllegalStateException("Selected profile draft is not initialized");
+            throw new IllegalStateException("Selected priority draft is not initialized");
         }
         return ret;
     }

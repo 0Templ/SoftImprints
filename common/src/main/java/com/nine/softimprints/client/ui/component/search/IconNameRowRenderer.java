@@ -24,10 +24,15 @@ public final class IconNameRowRenderer {
             boolean hovered, boolean selected
     ) {
         int iconY = y + (height - ICON_SIZE) / 2;
-        renderIcon(graphics, iconStack, x, iconY);
 
-        int textX = x + ICON_SIZE + ICON_TEXT_GAP;
-        int textWidth = width - ICON_SIZE - ICON_TEXT_GAP;
+        int textX = x;
+        int textWidth = width;
+
+        if (renderIcon(graphics, iconStack, x, iconY)){
+            textX += ICON_SIZE + ICON_TEXT_GAP;
+            textWidth -= (ICON_SIZE + ICON_TEXT_GAP);
+        }
+
         if (textWidth <= 0) return;
 
         Font font = Minecraft.getInstance().font;
@@ -37,16 +42,15 @@ public final class IconNameRowRenderer {
         renderName(graphics, font, name, textX, textY, textWidth, y, height, textColor);
     }
 
-    private static void renderIcon(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y) {
+    private static boolean renderIcon(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y) {
         if (!stack.isEmpty()) {
             try {
                 graphics.item(stack, x, y);
-                return;
+                return true;
             } catch (Exception ignored) {
             }
         }
-        // Todo: Just don't render them
-        graphics.fill(x, y, x + ICON_SIZE, y + ICON_SIZE, 0x66808080);
+        return false;
     }
 
     private static void renderName(

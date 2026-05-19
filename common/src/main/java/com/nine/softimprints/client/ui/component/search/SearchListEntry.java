@@ -55,9 +55,8 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
 
     private static final int ROW_HOVER_COLOR = 0x33FFFFFF;
 
-    private enum Tab { BROWSE, SELECTED }
+    public enum Tab { BROWSE, SELECTED }
 
-    /** Per-mode mutable state. Each mode owns its own selection and "Selected"-tab scroll. */
     private final class ModeState {
         final String id;
         final Component label;
@@ -111,11 +110,12 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         this.selectedTab = Button.builder(config.selectedTabLabel(), b -> switchTab(Tab.SELECTED))
                 .size(0, TAB_HEIGHT).build();
 
+        switchTab(config.defaultTab());
+
         syncTabActiveState();
         updateHeight(computeHeight());
     }
 
-    /** Add a mode (id+label+initial+listener). Order of registration drives the switcher row. */
     public SearchListEntry<T> addMode(SearchListMode<T> mode) {
         Objects.requireNonNull(mode, "mode");
         ModeState state = new ModeState(mode.id(), mode.label());
@@ -132,7 +132,6 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         return this;
     }
 
-    /** Programmatically switch to a registered mode (no-op if unknown). */
     public SearchListEntry<T> setActiveMode(String id) {
         if (id == null || !modes.containsKey(id)) return this;
         if (Objects.equals(activeModeId, id)) return this;
@@ -140,13 +139,11 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         return this;
     }
 
-    /** Receives the new active mode id whenever it changes (incl. user click). */
     public SearchListEntry<T> onModeChanged(Consumer<String> listener) {
         this.modeChangeListener = listener != null ? listener : ignored -> {};
         return this;
     }
 
-    /** Selection of the currently active mode. */
     public Set<T> selected() {
         ModeState s = activeMode();
         return s == null ? Set.of() : java.util.Collections.unmodifiableSet(s.selectedValues);
@@ -217,6 +214,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         int entryW = rowAreaW - ROW_BTN_WIDTH - ROW_BTN_RIGHT_PAD - ROW_BTN_LEFT_GAP - ROW_PADDING_H * 2;
 
         graphics.enableScissor(lx, rowsY, lx + lw, rowsY + rowsH);
+
         try {
             int last = Math.min(scrollIdx + config.visibleRows(), rows.size());
             for (int i = scrollIdx; i < last; i++) {
@@ -236,18 +234,15 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         }
     }
 
-    /** Left X of the row content shape (after the frame inset). */
     private static int rowsContentX(int lx) {
         return lx + LIST_FRAME_INSET_X;
     }
 
-    /** Width of the row content shape, accounting for scrollbar reservation. */
     private static int rowsContentWidth(int lw, boolean withScroll) {
         int base = lw - LIST_FRAME_INSET_X * 2;
         return withScroll ? base - SCROLLBAR_WIDTH - SCROLLBAR_GAP : base;
     }
 
-    /** Left X of the scrollbar sprite. */
     private static int scrollbarX(int lx, int lw) {
         return lx + lw - LIST_FRAME_INSET_X - SCROLLBAR_WIDTH;
     }

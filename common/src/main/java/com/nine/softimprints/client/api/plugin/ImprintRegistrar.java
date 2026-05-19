@@ -1,6 +1,6 @@
 package com.nine.softimprints.client.api.plugin;
 
-import com.nine.softimprints.client.profile.ProfileResolverEntry;
+import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Collection;

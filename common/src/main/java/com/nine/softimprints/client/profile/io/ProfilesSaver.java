@@ -18,7 +18,7 @@ public class ProfilesSaver {
     public static void save(Identifier id, ImprintProfile draft) {
         JsonProfile builtinJson = ImprintProfiles.getBuiltInJson(id);
         if (builtinJson == null) {
-            SICommon.LOGGER.error("Cannot save override for unknown profile {}", id);
+            SICommon.LOGGER.error("Cannot save override for unknown priority {}", id);
             return;
         }
 
@@ -35,7 +35,7 @@ public class ProfilesSaver {
                 ProfilesWriter.write(file, tree);
             }
         } catch (IOException e) {
-            SICommon.LOGGER.error("Failed to save profile {}: {}", id, e.getMessage());
+            SICommon.LOGGER.error("Failed to save priority {}: {}", id, e.getMessage());
             return;
         }
 

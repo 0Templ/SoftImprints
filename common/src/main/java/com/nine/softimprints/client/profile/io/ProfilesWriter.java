@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 
 public class ProfilesWriter {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static void write(Path file, JsonElement json) throws IOException {
         Files.createDirectories(file.getParent());

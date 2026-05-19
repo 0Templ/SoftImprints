@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 public record SearchListConfig(
         int rowHeight,
         int visibleRows,
+        SearchListEntry.Tab defaultTab,
         Component searchHint,
         Component typeHint,
         Component emptyHint,
@@ -16,6 +17,7 @@ public record SearchListConfig(
         return new SearchListConfig(
                 rowHeight,
                 visibleRows,
+                SearchListEntry.Tab.SELECTED,
                 Component.translatable("gui.softimprints.search.search_hint"),
                 Component.translatable("gui.softimprints.search.type_something"),
                 Component.translatable("gui.softimprints.search.no_results"),

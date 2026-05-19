@@ -61,7 +61,7 @@ public class SIConfigScreen extends Screen {
     private static final int BOTTOM_BUTTON_GAP = 8;
     private static final int BOTTOM_BUTTON_BOTTOM_INSET = 28;
 
-    private static final int MIN_PREVIEW_RESOLUTION = 32;
+    private static final int MIN_PREVIEW_RESOLUTION = 16;
     
     private static final int MIN_BRUSH_SIZE = 1;
     private static final int MAX_BRUSH_SIZE = 48;
@@ -206,9 +206,11 @@ public class SIConfigScreen extends Screen {
     }
 
     private ExtendedSlider resolutionSlider() {
+        int maxResolution = previewWidget.maxResolution();
+        int minResolution = Math.min(MIN_PREVIEW_RESOLUTION, maxResolution);
         return ExtendedSlider.builder("config.softimprints.preview.resolution")
                 .bounds(0, 0, 1, CONTROL_HEIGHT)
-                .range(MIN_PREVIEW_RESOLUTION, previewWidget.maxResolution())
+                .range(minResolution, maxResolution)
                 .value(previewSettings.resolution())
                 .step(1.0D, 0)
                 .build()

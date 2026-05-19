@@ -1,4 +1,4 @@
-package com.nine.softimprints.client.profile;
+package com.nine.softimprints.client.profile.resolver;
 
 import net.minecraft.resources.Identifier;
 

@@ -4,7 +4,7 @@ import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
-import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
+import com.nine.softimprints.client.profile.options.texture.ImprintTextures;
 import com.nine.softimprints.client.ui.component.list.GroupBuilder;
 import com.nine.softimprints.client.ui.component.list.ListGroup;
 import com.nine.softimprints.client.ui.component.slider.ExtendedSlider;
@@ -45,8 +45,9 @@ public class LayersGroupFactory implements SettingsGroupFactory {
 
         builder.widget(textureSetButton(context, profile.textureSets()));
 
-        addLayerTypeButtons(builder, context, profile.surface());
+        addResolutionButtons(builder, context);
 
+        addLayerTypeButtons(builder, context, profile.surface());
 
         builder.spacer(4);
 
@@ -98,11 +99,11 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         builder.section(Component.translatable("config.softimprints.group.layers.layer_section", layer.value()));
     }
 
-    private static Button textureSetButton(GroupBuildContext context, ImprintTextureSets textureSets) {
+    private static Button textureSetButton(GroupBuildContext context, ImprintTextures textureSets) {
         var currentId = context.editorContext().currentProfileId();
         Button button = Button.builder(textureSetText(currentId, textureSets), b ->
                 context.editorContext().currentProfile().updateDraft(profile -> {
-                    ImprintTextureSets next = profile.textureSets().selectNext();
+                    ImprintTextures next = profile.textureSets().selectNext();
                     b.setMessage(textureSetText(currentId, next));
                     return profile.toBuilder()
                             .setTextureSets(next)
@@ -114,7 +115,31 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         return button;
     }
 
-    private static Component textureSetText(Identifier currentProfile, ImprintTextureSets textureSets) {
+    private static void addResolutionButtons(GroupBuilder builder, GroupBuildContext context) {
+
+        var draftProfile = context.editorContext().currentProfile().getDraft();
+        var currentRes = draftProfile.resolution();
+
+        var mapResSlider = ExtendedSlider.builder("config.softimprints.group.layers.map_size")
+                .bounds(0, 0, 1, 18)
+                .range(1, 64)
+                .step(1, 1)
+                .value(currentRes.mapSize())
+                .build()
+                .addListener(v -> {
+                            context.editorContext().currentProfile().updateDraft(profile -> {
+                                return profile.toBuilder()
+                                        .setResolution(profile.resolution().withMapSize(v.intValue()))
+                                        .build();
+                            });
+                        }
+                );
+        mapResSlider.setTooltip(Tooltip.create(Component.translatable("config.softimprints.group.layers.map_size.tooltip")));
+
+        builder.widget(mapResSlider);
+    }
+
+    private static Component textureSetText(Identifier currentProfile, ImprintTextures textureSets) {
         var setTrId = ("imprint_profile.") + currentProfile.toLanguageKey() + ("." + textureSets.selected());
         return Component.translatable("config.softimprints.group.layers.texture_set",
                 Component.translatable(setTrId)
@@ -124,26 +149,26 @@ public class LayersGroupFactory implements SettingsGroupFactory {
     private static void addLayerTypeButtons(GroupBuilder builder, GroupBuildContext context, SurfaceSettings surface) {
 
         var zeroLayerButton = Button.builder(zeroLayerSourceText(surface), b ->
-                        context.editorContext().currentProfile().updateDraft(profile -> {
+                context.editorContext().currentProfile().updateDraft(profile -> {
                     SurfaceSettings next = profile.surface().toggleZeroLayerSource();
                     b.setMessage(zeroLayerSourceText(next));
                     b.setTooltip(Tooltip.create(zeroLayerSourceTooltip(next)));
-                            return profile.toBuilder()
-                                    .setSurface(next)
-                                    .build();
-                        })
-                ).tooltip(Tooltip.create(zeroLayerSourceTooltip(surface))).build();
+                    return profile.toBuilder()
+                            .setSurface(next)
+                            .build();
+                })
+        ).tooltip(Tooltip.create(zeroLayerSourceTooltip(surface))).build();
 
         zeroLayerButton.setTooltip(Tooltip.create(zeroLayerSourceTooltip(surface)));
-        zeroLayerButton.active = surface.mode() == SurfaceMode.TOP;
+        zeroLayerButton.active = surface.mode() == SurfaceMode.REPAINT;
 
         var surfaceModeButton = Button.builder(surfaceModeText(surface), b ->
                 context.editorContext().currentProfile().updateDraft(profile -> {
                     var current = profile.surface().mode();
                     SurfaceSettings next = profile.surface().withMode(
-                            current == SurfaceMode.TOP ? SurfaceMode.OVERLAY : SurfaceMode.TOP
+                            current == SurfaceMode.REPAINT ? SurfaceMode.OVERLAY : SurfaceMode.REPAINT
                     );
-                    zeroLayerButton.active = next.mode() == SurfaceMode.TOP;
+                    zeroLayerButton.active = next.mode() == SurfaceMode.REPAINT;
                     b.setMessage(surfaceModeText(next));
                     b.setTooltip(Tooltip.create(surfaceModeTooltip(next)));
 
@@ -183,7 +208,7 @@ public class LayersGroupFactory implements SettingsGroupFactory {
                 "config.softimprints.group.layers.zero_layer_source",
                 Component.translatable(surface.useOriginalZeroLayer()
                         ? "config.softimprints.group.layers.zero_layer_source.original"
-                        : "config.softimprints.group.layers.zero_layer_source.profile")
+                        : "config.softimprints.group.layers.zero_layer_source.priority")
         );
     }
 

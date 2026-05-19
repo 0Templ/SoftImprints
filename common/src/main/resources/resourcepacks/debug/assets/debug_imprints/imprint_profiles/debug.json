@@ -1,63 +1,68 @@
 {
+  "version" : 2,
+  "supported_blocks": [
+  ],
+  "surface": {
+    "mode": "top",
+    "zero_layer_source": "surface"
+  },
+  "preview": {
+    "base": "softimprints:block/imprints/debug/debug_base",
+    "icon": "softimprints:block/imprints/debug/debug_icon"
+  },
+  "texture_sets": {
+    "selected": "default",
+    "zero_layer": "softimprints:block/imprints/sets/debug/debug_layer_0",
+    "textures_by_value": {
+      "default": {
+        "1": "softimprints:block/imprints/debug/sets/debug_layer_1",
+        "2": "softimprints:block/imprints/debug/sets/debug_layer_2",
+        "3": "softimprints:block/imprints/debug/sets/debug_layer_3",
+        "4": "softimprints:block/imprints/debug/sets/debug_layer_4",
+        "5": "softimprints:block/imprints/debug/sets/debug_layer_5"
+      }
+    }
+  },
   "layers": [
     {
       "value": 1,
       "enable": true,
       "expand": 0,
-      "innerJitter": 0.0,
-      "outerJitter": 0,
-      "erosion": 0
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.0,
+      "erosion": 0.0
     },
     {
       "value": 2,
       "enable": true,
       "expand": 1,
-      "innerJitter": 0,
-      "outerJitter": 0,
-      "erosion": 0
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.0,
+      "erosion": 0.0
     },
     {
       "value": 3,
       "enable": true,
       "expand": 1,
-      "innerJitter": 0,
-      "outerJitter": 0,
-      "erosion": 0
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.0,
+      "erosion": 0.0
     },
     {
       "value": 4,
       "enable": true,
       "expand": 1,
-      "innerJitter": 0,
-      "outerJitter": 0,
-      "erosion": 0
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.0,
+      "erosion": 0.0
     },
     {
       "value": 5,
       "enable": true,
       "expand": 1,
-      "innerJitter": 0,
-      "outerJitter": 0,
-      "erosion": 0
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.0,
+      "erosion": 0.0
     }
-  ],
-  "supportedBlocks": [
-  ],
-  "surface": {
-    "mode": "TOP",
-    "zeroLayerSource": "SURFACE"
-  },
-  "textureSets": {
-    "selected": "default",
-    "initLayer": "softimprints:block/imprints/debug/debug_layer_0",
-    "texturesByValue": {
-      "default": {
-        "1": "softimprints:block/imprints/debug/debug_layer_1",
-        "2": "softimprints:block/imprints/debug/debug_layer_2",
-        "3": "softimprints:block/imprints/debug/debug_layer_3",
-        "4": "softimprints:block/imprints/debug/debug_layer_4",
-        "5": "softimprints:block/imprints/debug/debug_layer_5"
-      }
-    }
-  }
+  ]
 }

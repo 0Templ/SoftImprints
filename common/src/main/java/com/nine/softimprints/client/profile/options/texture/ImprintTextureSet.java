@@ -18,15 +18,15 @@ public class ImprintTextureSet {
             "debug",
             Map.of(
                     (byte) 1, Identifier.fromNamespaceAndPath(SICommon.MODID,
-                            "block/imprints/debug/debug_layer_1"),
+                            "block/imprints/debug/sets/debug_layer_1"),
                     (byte) 2, Identifier.fromNamespaceAndPath(SICommon.MODID,
-                            "block/imprints/debug/debug_layer_2"),
+                            "block/imprints/debug/sets/debug_layer_2"),
                     (byte) 3, Identifier.fromNamespaceAndPath(SICommon.MODID,
-                            "block/imprints/debug/debug_layer_3"),
+                            "block/imprints/debug/sets/debug_layer_3"),
                     (byte) 4, Identifier.fromNamespaceAndPath(SICommon.MODID,
-                            "block/imprints/debug/debug_layer_4"),
+                            "block/imprints/debug/sets/debug_layer_4"),
                     (byte) 5, Identifier.fromNamespaceAndPath(SICommon.MODID,
-                            "block/imprints/debug/debug_layer_5")
+                            "block/imprints/debug/sets/debug_layer_5")
             )
     );
 
@@ -87,7 +87,7 @@ public class ImprintTextureSet {
         return spriteCache = ret;
     }
 
-        public void invalidate(){
+    public void invalidate(){
         this.spriteCache = null;
     }
 

@@ -4,13 +4,13 @@ import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
-public record ImprintTextureSets(
+public record ImprintTextures(
         String selected,
         Identifier zeroLayer,
         Map<String, ImprintTextureSet> map
 ) {
 
-    public ImprintTextureSets {
+    public ImprintTextures {
         Objects.requireNonNull(selected, "selected");
         zeroLayer = Objects.requireNonNull(zeroLayer, "zeroLayer");
         map = Collections.unmodifiableMap(new LinkedHashMap<>(map));
@@ -20,17 +20,17 @@ public record ImprintTextureSets(
         return map.get(selected);
     }
 
-    public ImprintTextureSets withSelected(String selected) {
+    public ImprintTextures withSelected(String selected) {
         if (selected == null) {
             throw new IllegalArgumentException("Selected set id is not set");
         }
         if (!map.containsKey(selected)) {
             throw new IllegalArgumentException("Wrong current texture set Id: " + selected);
         }
-        return new ImprintTextureSets(selected, zeroLayer, map);
+        return new ImprintTextures(selected, zeroLayer, map);
     }
 
-    public ImprintTextureSets selectNext() {
+    public ImprintTextures selectNext() {
         if (map.isEmpty()) {
             return this;
         }
@@ -41,7 +41,7 @@ public record ImprintTextureSets(
         return withSelected(ids.get(nextIndex));
     }
 
-    public static ImprintTextureSets fromSets(String selected, Identifier initLayer, Iterable<? extends ImprintTextureSet> sets) {
+    public static ImprintTextures fromSets(String selected, Identifier initLayer, Iterable<? extends ImprintTextureSet> sets) {
         Objects.requireNonNull(sets, "sets");
         Map<String, ImprintTextureSet> collected = new LinkedHashMap<>();
         if (selected == null) throw new IllegalArgumentException("Selected set id is not set");
@@ -61,7 +61,7 @@ public record ImprintTextureSets(
         if (!collected.containsKey(selected)) {
             throw new IllegalArgumentException("Wrong current texture set Id: " + selected);
         }
-        return new ImprintTextureSets(selected, initLayer, collected);
+        return new ImprintTextures(selected, initLayer, collected);
     }
 
 }

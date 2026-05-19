@@ -3,6 +3,8 @@ package com.nine.softimprints.client.profile.migrations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.nine.softimprints.SICommon;
+import com.nine.softimprints.client.platform.Platform;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
 
 import java.util.Map;
@@ -23,7 +25,7 @@ public class ProfileMigrations {
     ){
         int prevStep = -1;
         var ret = json.deepCopy();
-        for (int v = from; v <= to; v++) {
+        for (int v = from + 1; v <= to; v++) {
             var step = MIGRATION_STEPS.get(v);
             if (!MIGRATION_STEPS.containsKey(v)) continue;
             ret = step.apply(ret);
@@ -31,11 +33,12 @@ public class ProfileMigrations {
                 if (v != prevStep){
                     throw new IllegalArgumentException("No migration step from v" + prevStep + " to v" + v);
                 } else {
-                    throw new IllegalArgumentException("Couldn't migrate profile to v" + v  );
+                    throw new IllegalArgumentException("Couldn't migrate priority to v" + v  );
                 }
             }
             prevStep = v;
         }
+
         return ret;
     }
 
@@ -48,7 +51,7 @@ public class ProfileMigrations {
         JsonObject textureSets = object(next, "texture_sets");
         if (textureSets != null) {
             rename(textureSets, "texturesByValue", "textures_by_value");
-            rename(textureSets, "initLayer", "init_layer");
+            rename(textureSets, "initLayer", "zero_layer");
         }
 
         JsonArray layers = array(next, "layers");
@@ -65,7 +68,6 @@ public class ProfileMigrations {
         if (!next.has("resolution")) {
             JsonObject resolution = new JsonObject();
             resolution.addProperty("map_size", 16);
-            resolution.addProperty("texture_size", 16);
             next.add("resolution", resolution);
         }
 

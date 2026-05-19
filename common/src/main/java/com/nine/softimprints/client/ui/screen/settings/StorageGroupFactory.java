@@ -113,7 +113,7 @@ public class StorageGroupFactory implements SettingsGroupFactory {
 //                )
 //                .widget(button("Apply Current Draft", _ -> context.editorContext().currentProfile().applyDraft()))
 //                .spacer(4)
-//                .label(Component.literal("This group is cached and does not rebuild on profile switch."))
+//                .label(Component.literal("This group is cached and does not rebuild on priority switch."))
 
         return builder.build();
     }

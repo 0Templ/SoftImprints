@@ -1,4 +1,4 @@
-package com.nine.softimprints.client.profile;
+package com.nine.softimprints.client.profile.resolver;
 
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;

@@ -12,4 +12,9 @@ public class FabricPlatformCoreHelper implements IPlatformCoreHelper {
         return FabricLoader.getInstance().getConfigDir();
     }
 
+    @Override
+    public boolean inDev() {
+        return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
 }

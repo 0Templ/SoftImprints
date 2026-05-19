@@ -6,9 +6,9 @@ import com.nine.softimprints.client.core.map.IImprintMap;
 import com.nine.softimprints.client.model.BlockRenderData;
 import com.nine.softimprints.client.model.SurfaceMode;
 import com.nine.softimprints.client.profile.ImprintProfiles;
-import com.nine.softimprints.client.profile.ImprintResolveContext;
-import com.nine.softimprints.client.profile.ProfileResolverEntry;
-import com.nine.softimprints.client.profile.ResolvedImprintProfile;
+import com.nine.softimprints.client.profile.resolver.ImprintResolveContext;
+import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
+import com.nine.softimprints.client.profile.resolver.ResolvedImprintProfile;
 import com.nine.softimprints.model.render.*;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -105,7 +105,7 @@ public class BasicImprintableStateModel extends ImprintableStateModel {
     private static ImprintSurfaceRenderer getRenderer(SurfaceMode mode) {
         return switch (mode) {
             case OVERLAY -> OVERLAY_SURFACE_RENDERER;
-            case TOP -> TOP_SURFACE_RENDERER;
+            case REPAINT -> TOP_SURFACE_RENDERER;
         };
     }
 

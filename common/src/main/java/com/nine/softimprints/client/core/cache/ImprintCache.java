@@ -33,12 +33,23 @@ public class ImprintCache {
     public void apply(List<BlockMask> masks, long gameTime){
         boolean changed = false;
         for (var mask : masks){
-            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
-                    pos -> {
-                        return new ImprintBlockMap(
-                                mask.mapSize(),
-                                new byte[Constants.BASIC_RESOLUTION * Constants.BASIC_RESOLUTION]);
-                    });
+//            var current = maps.get(mask.blockPos());
+//            if (current == null || current.mapSize() != mask.mapSize()) {
+//                current = new ImprintBlockMap(mask.mapSize(), Arrays.copyOf(mask.map(), mask.map().length));
+//            }
+            ImprintBlockMap map = maps.get(mask.blockPos());
+            if (map == null || map.mapSize() != mask.mapSize()) {
+                map = new ImprintBlockMap(
+                        mask.mapSize(),
+                        new byte[mask.mapSize() * mask.mapSize()]);
+                maps.put(mask.blockPos(), map);
+            }
+//            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
+//                    pos -> {
+//                        return new ImprintBlockMap(
+//                                mask.mapSize(),
+//                                new byte[mask.mapSize() * mask.mapSize()]);
+//                    });
             if (rasterize(map, mask)){
                 dirtySections.add(sectionOf(mask.blockPos()));
                 lastTouchedTick.put(mask.blockPos(), gameTime);
@@ -47,6 +58,24 @@ public class ImprintCache {
         }
         if (changed) evictOverflow();
     }
+
+
+/*    public void apply(List<BlockMask> masks, long gameTime){
+        boolean changed = false;
+        for (var mask : masks){
+            var current = maps.get(mask.blockPos());
+            if (current == null || current.mapSize() != mask.mapSize()) {
+                current = new ImprintBlockMap(mask.mapSize(), Arrays.copyOf(mask.map(), mask.map().length));
+            }
+            if (rasterize(current, mask)){
+                dirtySections.add(sectionOf(mask.blockPos()));
+                lastTouchedTick.put(mask.blockPos(), gameTime);
+                changed = true;
+            }
+        }
+        if (changed) evictOverflow();
+    }*/
+
 
     private void evictOverflow() {
         int max = SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.get();

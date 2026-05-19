@@ -125,8 +125,9 @@ public class ConfigImpl {
         return null;
     }
 
+    @Deprecated()
     private static boolean matchesLoaderTarget(LoaderTarget target) {
-        return target == null || target.matchesCurrent();
+        return true;
     }
 
     private static CommentedFileConfig getConfig(ConfigSide side) {

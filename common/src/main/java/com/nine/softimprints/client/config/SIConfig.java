@@ -12,6 +12,15 @@ public class SIConfig {
 
     public static final class General {
 
+        public static final ConfigValue<Boolean> DEBUG_MODE =
+                ConfigImpl.register(
+                        "debug_mode",
+                        false,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        ConfigComment.of("Enables some debug functions")
+                );
+
         public static final ConfigValue<Boolean> ENABLE_IMPRINTS =
                 ConfigImpl.register(
                         "enable_imprints",

@@ -1,8 +1,11 @@
 package com.nine.softimprints.client.profile;
 
-import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.api.plugin.ImprintPlugins;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
+import com.nine.softimprints.client.profile.resolver.ImprintResolveResult;
+import com.nine.softimprints.client.profile.resolver.ProfileCandidate;
+import com.nine.softimprints.client.profile.resolver.ProfileResolveIndex;
+import com.nine.softimprints.client.profile.resolver.ResolvedImprintProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockGetter;
@@ -15,37 +18,16 @@ import java.util.stream.Stream;
 
 public class ImprintProfiles {
 
+    private static volatile ProfileResolveIndex resolveIndex = ProfileResolveIndex.empty();
+
     private static volatile Map<Identifier, ImprintProfile> byId = Map.of();
-    private static volatile Map<Block, Identifier> blockToId = Map.of();
+
     private static volatile Map<Identifier, JsonProfile> builtinJsonById = Map.of();
     private static volatile Map<Identifier, ImprintProfile> builtinById = Map.of();
 
-    private static volatile Map<Block, List<ProfileResolverEntry>> blockToResolver = Map.of();
-
     @Nullable
     public static ResolvedImprintProfile resolve(BlockGetter level, BlockPos pos, BlockState state) {
-        Block block = state.getBlock();
-        ImprintResolveContext context = null;
-
-        for (ProfileResolverEntry entry : blockToResolver.getOrDefault(block, List.of())) {
-            if (!ImprintPlugins.isPluginEnabled(entry.pluginId())) continue;
-
-            if (context == null) {
-                context = new ImprintResolveContext(level, pos, state);
-            }
-
-            ImprintResolveResult result = entry.resolver().resolve(context);
-            if (result == null) {
-                continue;
-            }
-
-            ResolvedImprintProfile resolved = resolve(result);
-            if (resolved != null) {
-                return resolved;
-            }
-        }
-
-        return resolve(blockToId.get(block));
+        return resolve(resolveIndex.resolve(level, pos, state));
     }
 
     @Nullable
@@ -86,14 +68,15 @@ public class ImprintProfiles {
     }
 
     public static boolean supportsBlock(Block block) {
-        return blockToId.containsKey(block) || blockToResolver.containsKey(block);
+        return resolveIndex.supportsBlock(block);
+    }
+
+    public static List<ProfileCandidate> profileCandidates(Block block) {
+        return resolveIndex.profileCandidates(block);
     }
 
     public static Set<Block> supportedBlocks() {
-        Set<Block> ret = new HashSet<>();
-        ret.addAll(blockToId.keySet());
-        ret.addAll(blockToResolver.keySet());
-        return ret;
+        return resolveIndex.supportedBlocks();
     }
 
     public static JsonProfile getBuiltInJson(Identifier id) {
@@ -107,25 +90,8 @@ public class ImprintProfiles {
     public static void replaceMain(
             Map<Identifier, ImprintProfile> next
     ) {
-        Map<Block, Identifier> reverse = buildReverse(next);
-        Map<Block, List<ProfileResolverEntry>> resolvers = buildResolvers(ImprintPlugins.profileResolvers());
-
         byId = Map.copyOf(next);
-        blockToId = Map.copyOf(reverse);
-        blockToResolver = resolvers;
-    }
-
-    private static Map<Block, List<ProfileResolverEntry>> buildResolvers(Map<Block, List<ProfileResolverEntry>> resolvers) {
-        Map<Block, List<ProfileResolverEntry>> out = new HashMap<>();
-        for (var entry : resolvers.entrySet()) {
-            List<ProfileResolverEntry> sorted = entry.getValue().stream()
-                    .sorted(Comparator.comparingInt(ProfileResolverEntry::priority).reversed())
-                    .toList();
-            if (!sorted.isEmpty()) {
-                out.put(entry.getKey(), sorted);
-            }
-        }
-        return Map.copyOf(out);
+        resolveIndex = ProfileResolveIndex.build(byId, ImprintPlugins.profileResolvers());
     }
 
     public static void replaceBuiltin(
@@ -142,22 +108,6 @@ public class ImprintProfiles {
 
     public static Stream<ImprintProfile> builtInProfiles(){
         return builtinById.values().stream();
-    }
-
-    private static Map<Block, Identifier> buildReverse(Map<Identifier, ImprintProfile> src) {
-        Map<Block, Identifier> out = new HashMap<>();
-        for (var e : src.entrySet()) {
-            for (var surfaceBlock : e.getValue().supportedBlocks()) {
-                if (!surfaceBlock.resolved()) continue;
-                var block = surfaceBlock.block();
-                var prev = out.putIfAbsent(block, e.getKey());
-                if (prev != null) {
-                    SICommon.LOGGER.warn("Block {} claimed by both {} and {}, keeping {}",
-                            block, prev, e.getKey(), prev);
-                }
-            }
-        }
-        return out;
     }
 
 }

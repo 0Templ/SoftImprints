@@ -6,21 +6,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.model.SurfaceMode;
+import com.nine.softimprints.client.platform.Platform;
 import com.nine.softimprints.client.profile.ImprintProfile;
-import com.nine.softimprints.client.profile.io.json.JsonProfile;
-import com.nine.softimprints.client.profile.io.json.JsonImprintResolution;
-import com.nine.softimprints.client.profile.io.json.JsonSurfaceSettings;
-import com.nine.softimprints.client.profile.io.json.JsonTextureSets;
+import com.nine.softimprints.client.profile.io.json.*;
 import com.nine.softimprints.client.profile.migrations.ProfileMigrations;
+import com.nine.softimprints.client.profile.options.ImprintPreviewAssets;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
-import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
+import com.nine.softimprints.client.profile.options.resolution.ImprintResolution;
 import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.client.profile.options.surface.ZeroLayerSource;
 import com.nine.softimprints.client.profile.options.texture.ImprintTextureSet;
-import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
+import com.nine.softimprints.client.profile.options.texture.ImprintTextures;
 import net.minecraft.resources.Identifier;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,8 +32,13 @@ public class ProfileOperations {
     public static Map<Identifier, ImprintProfile> convertToDomainMap(Map<Identifier, JsonProfile> map){
         return map.entrySet().stream().collect(HashMap::new,
                 (m, entry) -> {
-                    var parsed = parseFromRawToDomain(entry.getKey(), entry.getValue());
-                    m.put(entry.getKey(), parsed);
+                    try {
+                        var parsed = parseFromRawToDomain(entry.getKey(), entry.getValue());
+                        m.put(entry.getKey(), parsed);
+                    }
+                    catch (Exception e){
+                        SICommon.LOGGER.warn("Couldn't load profile {}: {}", entry.getKey(), e);
+                    }
                 },
                 Map::putAll);
     }
@@ -43,16 +48,16 @@ public class ProfileOperations {
                 (m, entry) -> {
                     Identifier id = entry.getKey();
                     try {
-                        m.put(id, parseFromJsonToRaw(entry.getValue()));
+                        m.put(id, parseFromJsonToRaw(entry.getValue(), id));
                     } catch (RuntimeException e) {
-                        SICommon.LOGGER.warn("Skipping profile {}: {}", id, e.getMessage());
+                        SICommon.LOGGER.warn("Couldn't parse profile {}: {}", id, e.getMessage());
                     }
                 },
                 Map::putAll);
     }
 
     @Nullable
-    public static JsonProfile parseFromJsonToRaw(JsonElement json) {
+    public static JsonProfile parseFromJsonToRaw(JsonElement json, @Nullable Identifier id) {
         JsonObject obj = json.getAsJsonObject();
         int version = obj.has(JsonProfile.SCHEMA_KEY) ? obj.get(JsonProfile.SCHEMA_KEY).getAsInt() : 1;
         if (version > JsonProfile.CURRENT_SCHEMA){
@@ -60,51 +65,22 @@ public class ProfileOperations {
                     "Profile schema " + version + " is newer than supported " + JsonProfile.CURRENT_SCHEMA
             );
         }
-        JsonElement toParse = version < JsonProfile.CURRENT_SCHEMA
-                ? ProfileMigrations.migrate(obj, version, JsonProfile.CURRENT_SCHEMA)
-                : obj;
+        JsonElement toParse;
 
+        if (version < JsonProfile.CURRENT_SCHEMA){
+            toParse = ProfileMigrations.migrate(obj, version, JsonProfile.CURRENT_SCHEMA);
+            if (Platform.CORE.inDev()){
+                if (id != null) SICommon.LOGGER.info("Migrated profile {} from v{} to v{}", id, version, JsonProfile.CURRENT_SCHEMA);
+                else SICommon.LOGGER.info("Migrated profile from v{} to v{}", version, JsonProfile.CURRENT_SCHEMA);
+            }
+        }
+        else toParse = obj;
 
         return GSON.fromJson(toParse, JsonProfile.class);
     }
 
     public static JsonElement toJsonElement(JsonProfile profile) {
         return GSON.toJsonTree(profile);
-    }
-
-    public static ImprintProfile parseFromRawToDomain(Identifier id, JsonProfile jp) {
-        var layers = jp.layers().stream()
-                .map(jl -> new ImprintLayer(jl.value(), jl.enable(), jl.expand(), jl.innerJitter(), jl.outerJitter(), jl.erosion()))
-                .toList();
-
-
-        ImprintTextureSets textureSets = ImprintTextureSets.fromSets(
-                jp.textureSets().selected(),
-                Identifier.parse(jp.textureSets().initLayer()),
-                jp.textureSets().texturesByValue().entrySet().stream()
-                        .map(v -> {
-                            Map<Byte, Identifier> texturesByValue = new HashMap<>();
-                            for (var element : v.getValue().entrySet()){
-                                byte b = Byte.parseByte(element.getKey());
-                                Identifier texture = Identifier.parse(element.getValue());
-                                texturesByValue.put(b, texture);
-                            }
-                            return new ImprintTextureSet(
-                                    v.getKey(),
-                                    texturesByValue
-                            );
-                        }).toList()
-        );
-
-        Set<SurfaceBlock> blocks = jp.supportedBlocks().stream()
-                .map(Identifier::parse)
-                .map(SurfaceBlock::of)
-                .collect(Collectors.toSet());
-        SurfaceSettings surface = parseSurfaceSettings(jp);
-
-        ImprintResolution resolution = parseResolution(jp);
-
-        return new ImprintProfile(id, layers, blocks, surface, textureSets, resolution);
     }
 
     public static JsonProfile toJsonModel(ImprintProfile profile) {
@@ -139,11 +115,96 @@ public class ProfileOperations {
         );
 
         JsonImprintResolution resolution = new JsonImprintResolution(
-                profile.resolution.mapSize(),
-                profile.resolution.textureSize()
+                profile.resolution.mapSize()
         );
 
-        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution);
+        JsonImprintPreviewAssets preview = new JsonImprintPreviewAssets(
+                profile.preview().base().toString(),
+                profile.preview().icon().toString()
+        );
+
+        int priority = profile.priority();
+
+        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution, preview, priority);
+    }
+
+    public static ImprintProfile parseFromRawToDomain(Identifier id, JsonProfile jp) {
+        Objects.requireNonNull(jp, "json_profile");
+
+        var layers = parseLayer(jp);
+
+        ImprintTextures textureSets = parseImprintTextures(jp);
+
+        Set<SurfaceBlock> blocks = parseSupportedBlocks(jp);
+
+        SurfaceSettings surface = parseSurfaceSettings(jp);
+
+        ImprintResolution resolution = parseResolution(jp);
+
+        ImprintPreviewAssets preview = parseImprintPreviewAssets(jp, textureSets);
+
+        int priority = jp.priority();
+
+        return new ImprintProfile(id, layers, blocks, surface, textureSets, resolution, preview, priority);
+    }
+
+    private static Set<SurfaceBlock> parseSupportedBlocks(JsonProfile jp) {
+        if (jp.supportedBlocks() == null) return new HashSet<>();
+        return jp.supportedBlocks().stream()
+                .map(Identifier::parse)
+                .map(SurfaceBlock::of)
+                .collect(Collectors.toSet());
+    }
+
+    private static List<ImprintLayer> parseLayer(JsonProfile jp) {
+        Objects.requireNonNull(jp.layers(), "layers");
+        return jp.layers().stream()
+                .map(jl -> new ImprintLayer(jl.value(), jl.enable(), jl.expand(), jl.innerJitter(), jl.outerJitter(), jl.erosion()))
+                .toList();
+    }
+
+
+    private static ImprintTextures parseImprintTextures(JsonProfile jp) {
+        Objects.requireNonNull(jp.textureSets(), "texture_sets");
+        Objects.requireNonNull(jp.textureSets().selected(), "texture_sets.selected");
+        Objects.requireNonNull(jp.textureSets().initLayer(), "texture_sets.init_layer");
+        Objects.requireNonNull(jp.textureSets().texturesByValue(), "texture_sets.textures_by_value");
+        return ImprintTextures.fromSets(
+                jp.textureSets().selected(),
+                Identifier.parse(jp.textureSets().initLayer()),
+                jp.textureSets().texturesByValue().entrySet().stream()
+                        .map(v -> {
+                            Map<Byte, Identifier> texturesByValue = new HashMap<>();
+                            for (var element : v.getValue().entrySet()){
+                                byte b = Byte.parseByte(element.getKey());
+                                Identifier texture = Identifier.parse(element.getValue());
+                                texturesByValue.put(b, texture);
+                            }
+                            return new ImprintTextureSet(
+                                    v.getKey(),
+                                    texturesByValue
+                            );
+                        }).toList()
+        );
+
+    }
+
+
+    private static ImprintPreviewAssets parseImprintPreviewAssets(JsonProfile jp, @Nonnull ImprintTextures textureSets) {
+        JsonImprintPreviewAssets raw = jp.preview();
+        Identifier icon, base;
+
+        if (raw == null) {
+            icon = textureSets.zeroLayer();
+            base = textureSets.zeroLayer();
+        }
+        else {
+            if (raw.base() == null) base = textureSets.zeroLayer();
+            else base = Identifier.parse(raw.base());
+            if (raw.icon() == null) icon = textureSets.zeroLayer();
+            else icon = Identifier.parse(raw.icon());
+        }
+        return new ImprintPreviewAssets(base, icon);
     }
 
     private static SurfaceSettings parseSurfaceSettings(JsonProfile jp) {
@@ -162,17 +223,9 @@ public class ProfileOperations {
 
     private static ImprintResolution parseResolution(JsonProfile jp) {
         JsonImprintResolution raw = jp.resolution();
-
-        int mapSize = raw != null && raw.mapSize() != null
-                ? raw.mapSize()
-                : ImprintResolution.DEFAULT.mapSize();
-
-        int textureSize = raw != null && raw.textureSize() != null
-                ? raw.textureSize()
-                : mapSize;
-
-
-        return new ImprintResolution(mapSize, textureSize);
+        return raw != null && raw.mapSize() != null
+                ? new ImprintResolution(raw.mapSize())
+                : ImprintResolution.DEFAULT;
     }
 
 

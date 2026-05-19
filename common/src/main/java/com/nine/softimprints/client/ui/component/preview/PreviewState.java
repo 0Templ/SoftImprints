@@ -3,6 +3,7 @@ package com.nine.softimprints.client.ui.component.preview;
 import com.nine.softimprints.client.core.contact.ContactResult;
 import com.nine.softimprints.client.core.contact.raster.ContactRaster;
 import com.nine.softimprints.client.core.contact.raster.StampRaster;
+import com.nine.softimprints.client.core.Constants;
 import com.nine.softimprints.client.core.stamp.StampGenerator;
 import com.nine.softimprints.client.core.stamp.StampProperties;
 import com.nine.softimprints.client.core.stamp.StampSeedHelper;
@@ -12,14 +13,15 @@ import com.nine.softimprints.client.ui.component.preview.brush.BrushStroke;
 import com.nine.softimprints.client.ui.draft.DraftHolder;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PreviewState {
 
-    private byte[] result;
-    private int size;
     private int activeWidth;
     private int activeHeight;
+    private final Map<Long, byte[]> columns = new LinkedHashMap<>();
 
     public final BrushHistory history;
     private boolean dragging = false;
@@ -39,9 +41,6 @@ public class PreviewState {
             DraftHolder<ImprintProfile> profileDraft,
             BrushHistory brushHistory
     ){
-        int size = Math.max(width, height);
-        this.result = new byte[size*size];
-        this.size = size;
         this.activeWidth = width;
         this.activeHeight = height;
         this.minAllowedDist = minAllowedDist;
@@ -50,7 +49,7 @@ public class PreviewState {
     }
 
     public int mapSize(){
-        return size;
+        return currentMapSize();
     }
 
     public int activeWidth() {
@@ -66,14 +65,8 @@ public class PreviewState {
     }
 
     public void setMaskSize(int width, int height) {
-        int nextSize = Math.max(width, height);
-        boolean storageChanged = nextSize != this.size;
-        this.size = nextSize;
         this.activeWidth = width;
         this.activeHeight = height;
-        if (storageChanged) {
-            this.result = new byte[nextSize * nextSize];
-        }
         rebuild();
     }
 
@@ -117,9 +110,8 @@ public class PreviewState {
     }
 
     public void rebuild() {
-        Arrays.fill(result, (byte) 0);
+        columns.clear();
         if (profileDraft == null) return;
-//        fillSimply(history.snapshot());
 
         var strokes = BrushHistory.deduplicateByCell(history.snapshot(), minAllowedDist * 0.5f);
         strokes = BrushHistory.filterByDistance(strokes, allowedDist);
@@ -128,26 +120,17 @@ public class PreviewState {
 
     }
 
-    private void fillSimply(List<BrushStroke> strokes){
-        for (var stroke : strokes){
-            int cellX = (int) Math.floor(stroke.x());
-            int cellY = (int) Math.floor(stroke.y());
-
-            if (cellX < 0 || cellX >= size || cellY < 0 || cellY >= size) return;
-
-            int index = cellY * size + cellX;
-            this.result[index] = 1;
-        }
-    }
-
     private void applyStroke(ImprintProfile profile, BrushStroke stroke) {
-        int contactSize = Math.max(1, (int) Math.ceil(stroke.size()));
+        int mapSize = Math.max(1, profile.resolution().mapSize());
+        double profileScale = mapSize
+                / (double) Constants.PREVIEW_BLOCK_RESOLUTION;
+        int contactSize = Math.max(1, (int) Math.ceil(stroke.size() * profileScale));
 
         boolean[] contactMask = new boolean[contactSize * contactSize];
         Arrays.fill(contactMask, true);
 
-        double contactOriginX = Math.floor(stroke.x() - contactSize / 2.0D);
-        double contactOriginY = Math.floor(stroke.y() - contactSize / 2.0D);
+        double contactOriginX = Math.floor(stroke.x() * profileScale - contactSize / 2.0D);
+        double contactOriginY = Math.floor(stroke.y() * profileScale - contactSize / 2.0D);
 
         ContactRaster contact = new ContactRaster(
                 contactOriginX, contactOriginY, 1.0D,
@@ -163,42 +146,66 @@ public class PreviewState {
                 new StampProperties(0, 1, 1)
         );
 
-        pasteStamp(stamp);
+        pasteStamp(stamp, mapSize);
     }
 
 
-    private void pasteStamp(StampRaster stampRaster){
+    private void pasteStamp(StampRaster stampRaster, int mapSize){
         var src = stampRaster.mask();
-        int originX = (int) Math.floor(stampRaster.originX());
-        int originY = (int) Math.floor(stampRaster.originZ());
         int w = stampRaster.width();
         int h = stampRaster.height();
+        int originX = (int) Math.floor(stampRaster.originX());
+        int originY = (int) Math.floor(stampRaster.originZ());
+
+        int blockWidth = Math.ceilDiv(activeWidth, Constants.PREVIEW_BLOCK_RESOLUTION);
+        int blockHeight = Math.ceilDiv(activeHeight, Constants.PREVIEW_BLOCK_RESOLUTION);
+
         for (int sy = 0; sy < h; sy++){
-            int dy = sy + originY;
-            if (dy < 0) continue;
-            if (dy >= activeHeight) break;
+            int globalY = originY + sy;
+            int blockY = Math.floorDiv(globalY, mapSize);
+            if (blockY < 0) continue;
+            if (blockY >= blockHeight) break;
+            int localY = Math.floorMod(globalY, mapSize);
+
             for (int sx = 0; sx < w; sx++) {
-                int dx = sx + originX;
-                if (dx < 0) continue;
-                if (dx >= activeWidth) break;
-
-                int srcIndex = sy * w + sx;
-                int dstIndex = dy * size + dx;
-
-                var value = src[srcIndex];
-
-
+                byte value = src[sy * w + sx];
                 if (value == 0) continue;
-                var cur = result[dstIndex];
+
+                int globalX = originX + sx;
+                int blockX = Math.floorDiv(globalX, mapSize);
+                if (blockX < 0) continue;
+                if (blockX >= blockWidth) break;
+                int localX = Math.floorMod(globalX, mapSize);
+
+                byte[] column = columns.computeIfAbsent(columnKey(blockX, blockY), key -> new byte[mapSize * mapSize]);
+                int dstIndex = localY * mapSize + localX;
+                byte cur = column[dstIndex];
                 if (cur == 0 || (value & 0xFF) < (cur & 0xFF)){
-                    result[dstIndex] = value;
+                    column[dstIndex] = value;
                 }
             }
         }
     }
 
-    public byte[] getResult(){
-        return this.result;
+    public Map<Long, byte[]> columns() {
+        return Collections.unmodifiableMap(columns);
+    }
+
+    public int currentMapSize() {
+        if (profileDraft == null) return Constants.PREVIEW_BLOCK_RESOLUTION;
+        return Math.max(1, profileDraft.getDraft().resolution().mapSize());
+    }
+
+    public static long columnKey(int x, int y) {
+        return ((long) x << 32) | (y & 0xFFFFFFFFL);
+    }
+
+    public static int columnX(long key) {
+        return (int) (key >> 32);
+    }
+
+    public static int columnY(long key) {
+        return (int) key;
     }
 
 

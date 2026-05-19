@@ -29,6 +29,9 @@
   "config.softimprints.group.layers.zero_layer_source.profile": "Profile",
   "config.softimprints.group.layers.zero_layer_source.profile.tooltip": "Uses the current profile's zero-layer texture for cells untouched by imprints in Repaint mode",
 
+  "config.softimprints.group.layers.map_size": "Map size: %s",
+  "config.softimprints.group.layers.map_size.tooltip": "Uses the current profile's zero-layer texture for cells untouched by imprints in Repaint mode",
+
   "config.softimprints.group.layers.emit_strategy": "Emit: %s",
   "config.softimprints.group.layers.emit_strategy.top": "Repaint",
   "config.softimprints.group.layers.emit_strategy.top.tooltip": "Replaces the original top face and redraws the surface",
@@ -52,6 +55,8 @@
   "config.softimprints.group.blocks.section": "Surface Blocks",
   "config.softimprints.group.blocks.section.tooltip": "Blocks selected here can receive imprints for the current profile",
   "config.softimprints.group.blocks.reload_required.tooltip": "Newly added blocks require F3+T before model wrapping is applied",
+  "config.softimprints.group.blocks.priority_conflict.current_wins.tooltip": "%s has higher priority. Other profiles will not use this block: %s",
+  "config.softimprints.group.blocks.priority_conflict.current_loses.tooltip": "Other profiles have equal or higher priority and will use this block instead of current profile: %s",
 
   "config.softimprints.group.targets.title": "Targets",
   "config.softimprints.group.targets.section": "Entity Targets",

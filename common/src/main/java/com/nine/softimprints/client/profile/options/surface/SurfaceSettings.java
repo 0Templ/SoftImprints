@@ -8,7 +8,7 @@ public record SurfaceSettings(
 ) {
 
     public static final SurfaceSettings DEFAULT = new SurfaceSettings(
-            SurfaceMode.TOP,
+            SurfaceMode.REPAINT,
             ZeroLayerSource.SURFACE
     );
 

@@ -2,6 +2,7 @@ package com.nine.softimprints.client.profile.io;
 
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.platform.Platform;
+import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.profile.io.json.JsonProfile;
 import net.minecraft.resources.Identifier;
@@ -40,15 +41,19 @@ public class ProfilesLoader {
     public static void reload(ResourceManager rm) {
         var cfgProfilesDir = configProfilesDir();
 
-        var rawRes = ProfilesExtraction.readRawProfilesFromResources(rm, RESOURCES_FOLDER);
-        var rawCfg = ProfilesExtraction.readRawProfilesFromConfig(cfgProfilesDir);
+        var rawRes = ProfilesReader.readRawProfilesFromResources(rm, RESOURCES_FOLDER);
 
+        // Shouldn't we migrate and write it right here?
+        var rawCfg = ProfilesReader.readRawProfilesFromConfig(cfgProfilesDir);
+        // Migration goes here, but changes nothing (in terms of saving)...
         var builtInJson = ProfileOperations.convertToRawMap(rawRes);
         var overrideJson = ProfileOperations.convertToRawMap(rawCfg);
 
-        for (var id : overrideJson.keySet()) {
-            if (!builtInJson.containsKey(id)) {
-                SICommon.LOGGER.warn("Override for unknown profile {}, ignored", id);
+        if (Platform.CORE.inDev()){
+            for (var id : overrideJson.keySet()) {
+                if (!builtInJson.containsKey(id)) {
+                    SICommon.LOGGER.warn("Override for unknown priority {}, ignored", id);
+                }
             }
         }
 
@@ -65,6 +70,9 @@ public class ProfilesLoader {
         ImprintProfiles.replaceMain(domain);
 
         ImprintProfiles.replaceBuiltin(builtInJson, builtinDomain);
+
+        // System.out.println("Loaded profiles: " + ImprintProfiles.profiles().map(ImprintProfile::id).toList());
+
     }
 
     public static Path configProfilesDir() {

@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfilesExtraction {
+public class ProfilesReader {
 
     public static Map<Identifier, JsonElement> readRawProfilesFromResources(ResourceManager manager, String path){
         var rawRaw = manager.listResources(path, id -> id.getPath().endsWith(".json"));
@@ -27,7 +27,7 @@ public class ProfilesExtraction {
                         fullPath.length() - ".json".length());
                 normalizedId = Identifier.fromNamespaceAndPath(rawId.getNamespace(), base);
             } catch (Exception e) {
-                SICommon.LOGGER.error("Couldn't parse imprint profile: {}", rawId);
+                SICommon.LOGGER.error("Couldn't parse imprint priority: {}", rawId);
                 continue;
             }
             try (Reader reader = entry.getValue().openAsReader()) {
@@ -38,7 +38,7 @@ public class ProfilesExtraction {
                 else raw.put(normalizedId, el);
             }
             catch (Exception e) {
-                SICommon.LOGGER.error("Failed to read imprint profile {}: {}", rawId, e.getMessage());
+                SICommon.LOGGER.error("Failed to read imprint priority {}: {}", rawId, e.getMessage());
             }
         }
         return raw;

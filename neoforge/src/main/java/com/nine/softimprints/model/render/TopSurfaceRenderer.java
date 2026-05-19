@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * NeoForge counterpart of the fabric TOP renderer: removes the wrapped block's top face and
  * replaces it entirely with imprint strips. Strips with value 0 fall back to either the
- * block's original top sprite or a profile-supplied "zero layer" sprite.
+ * block's original top sprite or a priority-supplied "zero layer" sprite.
  */
 public class TopSurfaceRenderer implements ImprintSurfaceRenderer {
 

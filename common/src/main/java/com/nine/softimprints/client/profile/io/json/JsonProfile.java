@@ -17,19 +17,26 @@ import java.util.Set;
             @SerializedName("texture_sets")
             JsonTextureSets textureSets,
             @SerializedName("resolution")
-            JsonImprintResolution resolution
+            JsonImprintResolution resolution,
+
+            @SerializedName("preview")
+            JsonImprintPreviewAssets preview,
+            int priority
     ) {
 
     public static final String SCHEMA_KEY = "version";
     public static final int CURRENT_SCHEMA = 2;
 
     public JsonProfile merge(JsonProfile with){
-        return new JsonProfile(this.version,
+        return new JsonProfile(
+                this.version,
                 with.layers() != null ? with.layers() : this.layers(),
                 with.supportedBlocks() != null ? with.supportedBlocks() : this.supportedBlocks(),
                 with.surface() != null ? mergeSurface(with.surface()) : this.surface(),
                 with.textureSets() != null ? this.textureSets().merge(with.textureSets()) : this.textureSets(),
-                with.resolution() != null ? mergeResolution(with.resolution()) : this.resolution()
+                with.resolution() != null ? mergeResolution(with.resolution()) : this.resolution(),
+                this.preview,
+                this.priority
         );
     }
 
@@ -40,7 +47,9 @@ import java.util.Set;
                 Objects.equals(against.supportedBlocks, this.supportedBlocks) ? null : this.supportedBlocks,
                 Objects.equals(against.surface, this.surface) ? null : nullifySurface(against.surface),
                 Objects.equals(against.textureSets, this.textureSets) ? null : this.textureSets,
-                Objects.equals(against.resolution, this.resolution) ? null : this.resolution
+                Objects.equals(against.resolution, this.resolution) ? null : this.resolution,
+                null,
+                this.priority
         );
     }
 

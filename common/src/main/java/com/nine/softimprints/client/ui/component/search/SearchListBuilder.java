@@ -15,6 +15,7 @@ public final class SearchListBuilder<T> {
     private final List<SearchableEntry<T>> entries = new ArrayList<>();
     private int rowHeight = 20;
     private int visibleRows = 6;
+    private SearchListEntry.Tab defaultTab;
     private Component searchHint;
     private Component typeHint;
     private Component emptyHint;
@@ -24,7 +25,6 @@ public final class SearchListBuilder<T> {
     private Consumer<Set<T>> singleModeListener = ignored -> {};
     private final List<T> singleModeInitial = new ArrayList<>();
 
-    /** Explicitly added modes. When non-empty, single-mode fields are ignored. */
     private final List<SearchListMode<T>> modes = new ArrayList<>();
     private String initialActiveModeId;
     private Consumer<String> modeChangeListener;
@@ -90,12 +90,6 @@ public final class SearchListBuilder<T> {
         return this;
     }
 
-    public SearchListBuilder<T> addMode(String id, Component label,
-                                         Collection<? extends T> initial,
-                                         Consumer<Set<T>> onChange) {
-        return addMode(SearchListMode.of(id, label, initial, onChange));
-    }
-
     public SearchListBuilder<T> initialMode(String id) {
         this.initialActiveModeId = id;
         return this;
@@ -106,11 +100,17 @@ public final class SearchListBuilder<T> {
         return this;
     }
 
+    public SearchListBuilder<T> initDefaultTab(SearchListEntry.Tab tab) {
+        this.defaultTab = tab;
+        return this;
+    }
+
     public SearchListEntry<T> build() {
         var defaults = SearchListConfig.defaults(rowHeight, visibleRows);
         var config = new SearchListConfig(
                 defaults.rowHeight(),
                 defaults.visibleRows(),
+                defaultTab != null ? defaultTab : defaults.defaultTab(),
                 searchHint != null ? searchHint : defaults.searchHint(),
                 typeHint != null ? typeHint : defaults.typeHint(),
                 emptyHint != null ? emptyHint : defaults.emptyHint(),

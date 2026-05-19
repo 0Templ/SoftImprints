@@ -1,5 +1,6 @@
 package com.nine.softimprints.client.ui.component.profile;
 
+import com.nine.softimprints.SICommon;
 import com.nine.softimprints.client.profile.ImprintProfiles;
 import com.nine.softimprints.client.ui.context.EditorContext;
 import com.nine.softimprints.client.ui.context.ProfilesSession;
@@ -14,15 +15,13 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.lwjgl.system.windows.INPUT;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ProfileSwitchWidget extends AbstractWidget {
 
@@ -30,6 +29,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
 
     private static final int LABEL_ARROWS_PADDING = 4;
     private static final int ARROW_ZONE_WIDTH = 12;
+    private static final int ARROW_ZONE_TOP_PADDING = 13;
     private static final int LABEL_Y_OFFSET = 3;
     private static final int TOOLTIP_MAX_WIDTH = 180;
 
@@ -45,6 +45,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private final List<Identifier> allProfiles;
     private final List<ProfilesGroup> groups;
 
+
     private FilterMode filterMode = FilterMode.ALL;
     private int groupIndex;
     private int profileIndex;
@@ -55,9 +56,11 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private boolean focusedLeft;
     private boolean focusedRight;
 
-    private LabelGroup labelGroup = LabelGroup.empty();
-    private LabelProfile labelProfile = LabelProfile.empty();
+    private Label labelGroup = Label.empty();
+    private Label labelProfile = Label.empty();
     private List<ProfileButtonData> visibleProfiles = List.of();
+
+    private final Map<Identifier, Identifier> iconsCache = new HashMap<>();
 
     public ProfileSwitchWidget(
             int x,
@@ -242,6 +245,8 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
     private void rebuildHeaderLayout() {
+        int padding = 2;
+        int maxWidth = getWidth() - padding * 2;
         Font font = Minecraft.getInstance().font;
         Component groupText = groupLabel().copy().append(":");
         Component profileText = profileLabel();
@@ -251,10 +256,16 @@ public class ProfileSwitchWidget extends AbstractWidget {
         int totalWidth = groupWidth + spaceWidth + profileWidth;
 
         int labelsX = getX() + (getWidth() - totalWidth) / 2;
+        if (totalWidth > maxWidth) {
+            labelsX = getX() + padding;
+            groupWidth = (int) Math.min(groupWidth, maxWidth * 0.75F);
+            profileWidth = maxWidth - groupWidth - spaceWidth;
+
+        }
         int labelY = getY() + LABEL_Y_OFFSET;
 
-        this.labelGroup = new LabelGroup(groupText, labelsX, labelY, groupWidth, font.lineHeight);
-        this.labelProfile = new LabelProfile(
+        this.labelGroup = new Label(groupText, labelsX, labelY, groupWidth, font.lineHeight);
+        this.labelProfile = new Label(
                 profileText,
                 labelsX + groupWidth + spaceWidth,
                 labelY,
@@ -395,22 +406,21 @@ public class ProfileSwitchWidget extends AbstractWidget {
         boolean groupHovered = labelGroupHovered(mouseX, mouseY);
         boolean profileHovered = labelProfileHovered(mouseX, mouseY);
 
-        renderLabelGroup(graphics, labelGroup, groupHovered);
-        renderLabelProfile(graphics, labelProfile, profileHovered || leftArrowHovered || rightArrowHovered);
+        renderLabel(graphics, labelGroup, groupHovered);
+        renderLabel(graphics, labelProfile, profileHovered);
 
         if (groupHovered) {
             renderTooltip(graphics, groupTooltip(), mouseX, mouseY);
         }
     }
 
-    private void renderLabelGroup(GuiGraphicsExtractor graphics, LabelGroup label, boolean hovered) {
+    private void renderLabel(GuiGraphicsExtractor graphics, Label label, boolean hovered) {
         int color = hovered ? SIColors.WHITE : SIColors.ALMOST_WHITE;
-        graphics.text(Minecraft.getInstance().font, label.text().getString(), label.x(), label.y(), color);
-    }
+        graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE)
+                .acceptScrollingWithDefaultCenter(label.text().copy().withColor(color),
+                        label.x(), label.x() + label.width(),
+                        label.y(), label.y() + Minecraft.getInstance().font.lineHeight - 1);
 
-    private void renderLabelProfile(GuiGraphicsExtractor graphics, LabelProfile label, boolean hovered) {
-        int color = hovered ? SIColors.WHITE : SIColors.ALMOST_WHITE;
-        graphics.text(Minecraft.getInstance().font, label.text().getString(), label.x(), label.y(), color);
     }
 
     private Component groupTooltip() {
@@ -443,6 +453,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
         }
     }
 
+
     private void renderProfileCard(GuiGraphicsExtractor graphics, ProfileButtonData data, boolean hovered) {
         int size = data.size();
         int textureSize = 10;
@@ -453,17 +464,46 @@ public class ProfileSwitchWidget extends AbstractWidget {
         if (actual == null) {
             return;
         }
+//
+//        Identifier texture = actual.textureSets().zeroLayer();
+//        texture = Identifier.parse(texture.getNamespace() + ":textures/" + texture.getPath() + ".png");
+//        graphics.blit(
+//                RenderPipelines.GUI_TEXTURED,
+//                texture,
+//                data.x() + 2, data.y() + 2,
+//                3, 3,
+//                size - 4, size - 4,
+//                textureSize, textureSize,
+//                16, 16
+//        );
 
-        Identifier texture = actual.textureSets().zeroLayer();
-        texture = Identifier.parse(texture.getNamespace() + ":textures/" + texture.getPath() + ".png");
-        graphics.blit(
+        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
+                .getTextureManager()
+                .getTexture(TextureAtlas.LOCATION_BLOCKS);
+
+//        Identifier PREVIEW_RED_SAND_ICON =
+//                Identifier.fromNamespaceAndPath(
+//                        SICommon.MODID,
+//                        "imprints/red_sand/preview_red_sand_icon"
+//                );
+//        TextureAtlas atlas = Minecraft.getInstance()
+//                .getModelManager()
+//                .getAtlas(AtlasIds.BLOCKS);
+
+//        TextureAtlasSprite sprite = atlas.getSprite(Identifier.fromNamespaceAndPath(SICommon.MODID, "imprints/red_sand/preview_red_sand_icon"));
+        var icon = iconsCache.computeIfAbsent(actual.id,
+                id -> actual.preview().icon()
+        );
+
+        TextureAtlasSprite sprite = atlas.getSprite(icon);
+
+        graphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
-                texture,
-                data.x() + 2, data.y() + 2,
-                3, 3,
-                size - 4, size - 4,
-                textureSize, textureSize,
-                16, 16
+                sprite,
+                data.x() + 2,
+                data.y() + 2,
+                size - 4,
+                size - 4
         );
     }
 
@@ -583,14 +623,14 @@ public class ProfileSwitchWidget extends AbstractWidget {
         if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
-        return mouseX < getX() + ARROW_ZONE_WIDTH + LABEL_ARROWS_PADDING * 2;
+        return mouseX < getX() + ARROW_ZONE_WIDTH + LABEL_ARROWS_PADDING * 2 && mouseY > getY() + ARROW_ZONE_TOP_PADDING;
     }
 
     private boolean onArrowRight(double mouseX, double mouseY) {
         if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
-        return mouseX > getX() + getWidth() - ARROW_ZONE_WIDTH - LABEL_ARROWS_PADDING * 2;
+        return mouseX > getX() + getWidth() - ARROW_ZONE_WIDTH - LABEL_ARROWS_PADDING * 2 && mouseY > getY() + ARROW_ZONE_TOP_PADDING;
     }
 
     @Override
@@ -598,20 +638,10 @@ public class ProfileSwitchWidget extends AbstractWidget {
         defaultButtonNarrationText(output);
     }
 
-    private record LabelGroup(Component text, int x, int y, int width, int height) {
-        private static LabelGroup empty() {
-            return new LabelGroup(Component.empty(), 0, 0, 0, 0);
-        }
+    private record Label(Component text, int x, int y, int width, int height) {
 
-        private boolean containsMouse(double mouseX, double mouseY) {
-            return mouseX >= x && mouseX < x + width
-                    && mouseY >= y && mouseY < y + height;
-        }
-    }
-
-    private record LabelProfile(Component text, int x, int y, int width, int height) {
-        private static LabelProfile empty() {
-            return new LabelProfile(Component.empty(), 0, 0, 0, 0);
+        private static Label empty() {
+            return new Label(Component.empty(), 0, 0, 0, 0);
         }
 
         private boolean containsMouse(double mouseX, double mouseY) {

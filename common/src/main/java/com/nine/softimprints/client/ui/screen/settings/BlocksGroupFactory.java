@@ -54,10 +54,11 @@ public class BlocksGroupFactory implements SettingsGroupFactory {
 
         SearchListEntry<Block> blockList = SearchListBuilder.<Block>create()
                 .addAll(BuiltInRegistries.BLOCK.stream()
-                        .map(BlockSearchEntry::new)
+                        .map(block -> new BlockSearchEntry(block, editor))
                         .toList())
                 .visibleRows(6)
                 .selectInitial(initiallySelected)
+
                 .onChange(selected -> applySelection(editor, selected))
                 .build();
 

@@ -1,7 +1,7 @@
 package com.nine.softimprints.client.api.plugin;
 
 import com.nine.softimprints.client.config.SIConfig;
-import com.nine.softimprints.client.profile.ProfileResolverEntry;
+import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 

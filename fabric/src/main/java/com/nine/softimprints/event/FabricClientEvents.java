@@ -2,7 +2,7 @@ package com.nine.softimprints.event;
 
 import com.nine.softimprints.client.SILifecycle;
 import com.nine.softimprints.client.profile.ImprintProfiles;
-import com.nine.softimprints.client.profile.ProfileResolverEntry;
+import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.client.profile.io.ProfilesLoader;
 import com.nine.softimprints.model.BasicImprintableStateModel;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;

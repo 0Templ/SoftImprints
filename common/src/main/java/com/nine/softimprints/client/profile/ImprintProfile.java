@@ -1,10 +1,11 @@
 package com.nine.softimprints.client.profile;
 
+import com.nine.softimprints.client.profile.options.ImprintPreviewAssets;
 import com.nine.softimprints.client.profile.options.block.SurfaceBlock;
 import com.nine.softimprints.client.profile.options.layer.ImprintLayer;
-import com.nine.softimprints.client.profile.options.resoltuion.ImprintResolution;
+import com.nine.softimprints.client.profile.options.resolution.ImprintResolution;
 import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
-import com.nine.softimprints.client.profile.options.texture.ImprintTextureSets;
+import com.nine.softimprints.client.profile.options.texture.ImprintTextures;
 import com.nine.softimprints.client.profile.util.ProfilesHelper;
 import net.minecraft.resources.Identifier;
 
@@ -20,18 +21,24 @@ public final class ImprintProfile {
 
     public final SurfaceSettings surface;
 
-    public final ImprintTextureSets textureSets;
+    public final ImprintTextures textureSets;
 
     public final ImprintResolution resolution;
+
+    public final ImprintPreviewAssets preview ;
+
+    public final int priority;
 
     public ImprintProfile(
             Identifier id,
             List<ImprintLayer> layers,
             Set<SurfaceBlock> supportedBlocks,
-            ImprintTextureSets textureSets,
-            ImprintResolution resolution
+            ImprintTextures textureSets,
+            ImprintResolution resolution,
+            ImprintPreviewAssets preview,
+            int priority
     ) {
-        this(id, layers, supportedBlocks, SurfaceSettings.DEFAULT, textureSets, resolution);
+        this(id, layers, supportedBlocks, SurfaceSettings.DEFAULT, textureSets, resolution, preview, priority);
     }
 
     public ImprintProfile(
@@ -39,9 +46,10 @@ public final class ImprintProfile {
             List<ImprintLayer> layers,
             Set<SurfaceBlock> supportedBlocks,
             SurfaceSettings surface,
-            ImprintTextureSets textureSets,
-
-            ImprintResolution resolution
+            ImprintTextures textureSets,
+            ImprintResolution resolution,
+            ImprintPreviewAssets preview,
+            int priority
     ) {
         this.id = id;
         this.layers = List.copyOf(Objects.requireNonNull(layers, "layers")).stream()
@@ -53,6 +61,8 @@ public final class ImprintProfile {
 
 
         this.resolution = resolution;
+        this.preview = preview;
+        this.priority = priority;
 
         ProfilesHelper.validateLayersAndTextures(this);
     }
@@ -64,7 +74,9 @@ public final class ImprintProfile {
                 new HashSet<>(this.supportedBlocks),
                 this.surface,
                 this.textureSets,
-                this.resolution
+                this.resolution,
+                this.preview,
+                this.priority
         );
     }
 
@@ -76,7 +88,7 @@ public final class ImprintProfile {
         return this.supportedBlocks;
     }
 
-    public ImprintTextureSets textureSets() {
+    public ImprintTextures textureSets() {
         return this.textureSets;
     }
 
@@ -92,6 +104,14 @@ public final class ImprintProfile {
         return this.resolution;
     }
 
+    public ImprintPreviewAssets preview() {
+        return this.preview;
+    }
+
+    public int priority() {
+        return this.priority;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -103,6 +123,9 @@ public final class ImprintProfile {
                 && this.textureSets.equals(other.textureSets)
                 && this.layers.equals(other.layers)
                 && this.resolution == other.resolution()
+
+                && this.preview == other.preview()
+                && this.priority == other.priority()
 
                 ;
     }
@@ -122,8 +145,11 @@ public final class ImprintProfile {
         private List<ImprintLayer> layers;
         private Set<SurfaceBlock> supportedBlocks;
         private SurfaceSettings surface;
-        private ImprintTextureSets textureSets;
+        private ImprintTextures textureSets;
         private ImprintResolution resolution;
+
+        public final ImprintPreviewAssets preview;
+        private final int priority;
 
         private Builder(ImprintProfile src) {
             this.id = src.id;
@@ -132,6 +158,9 @@ public final class ImprintProfile {
             this.surface = src.surface;
             this.textureSets = src.textureSets;
             this.resolution = src.resolution;
+
+            this.preview = src.preview;
+            this.priority = src.priority;
         }
 
         public Builder setLayers(List<ImprintLayer> layers) {
@@ -165,7 +194,7 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder setTextureSets(ImprintTextureSets sets) {
+        public Builder setTextureSets(ImprintTextures sets) {
             this.textureSets = sets;
             return this;
         }
@@ -180,18 +209,23 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder mutateTextureSets(UnaryOperator<ImprintTextureSets> fn) {
+        public Builder mutateTextureSets(UnaryOperator<ImprintTextures> fn) {
             this.textureSets = fn.apply(this.textureSets);
             return this;
         }
 
-        public Builder setResolution(UnaryOperator<ImprintResolution> fn) {
+        public Builder mutateResolution(UnaryOperator<ImprintResolution> fn) {
             this.resolution = fn.apply(this.resolution);
             return this;
         }
 
+        public Builder setResolution(ImprintResolution value) {
+            this.resolution = value;
+            return this;
+        }
+
         public ImprintProfile build() {
-            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets, resolution);
+            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets, resolution, preview, priority);
         }
     }
 

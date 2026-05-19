@@ -1,5 +1,6 @@
-package com.nine.softimprints.client.profile;
+package com.nine.softimprints.client.profile.resolver;
 
+import com.nine.softimprints.client.profile.ImprintProfile;
 import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
 
 public record ResolvedImprintProfile(

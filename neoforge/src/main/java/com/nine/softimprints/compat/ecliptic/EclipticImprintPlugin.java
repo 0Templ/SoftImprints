@@ -5,7 +5,7 @@ import com.nine.softimprints.api.plugin.SoftImprintsPlugin;
 import com.nine.softimprints.client.api.plugin.ImprintPlugin;
 import com.nine.softimprints.client.api.plugin.ImprintPluginInfo;
 import com.nine.softimprints.client.api.plugin.ImprintRegistrar;
-import com.nine.softimprints.client.profile.ProfileResolverEntry;
+import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.client.ui.util.constant.SIText;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;

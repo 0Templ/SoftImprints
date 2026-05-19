@@ -1,42 +1,46 @@
 {
+  "version" : 2,
+  "surface": {
+    "mode": "repaint",
+    "zero_layer_source": "surface"
+  },
+  "supported_blocks": [
+    "minecraft:red_sand"
+  ],
+  "preview": {
+    "base": "softimprints:block/imprints/red_sand/red_sand_base",
+    "icon": "softimprints:block/imprints/red_sand/red_sand_icon"
+  },
+  "texture_sets": {
+    "selected": "standard",
+    "zero_layer": "minecraft:block/red_sand",
+    "textures_by_value": {
+      "standard": {
+        "1": "softimprints:block/imprints/red_sand/sets/standard_red_sand_layer_1",
+        "2": "softimprints:block/imprints/red_sand/sets/standard_red_sand_layer_2"
+      },
+      "warm": {
+        "1": "softimprints:block/imprints/red_sand/sets/warm_red_sand_layer_1",
+        "2": "softimprints:block/imprints/red_sand/sets/warm_red_sand_layer_2"
+      }
+    }
+  },
   "layers": [
     {
       "value": 1,
       "enable": true,
       "expand": 0,
-      "innerJitter": 0.0,
-      "outerJitter": 0.15,
+      "inner_jitter": 0.0,
+      "outer_jitter": 0.15,
       "erosion": 0.2
     },
     {
       "value": 2,
       "enable": true,
       "expand": 2,
-      "innerJitter": 0.22,
-      "outerJitter": 0.55,
+      "inner_jitter": 0.22,
+      "outer_jitter": 0.55,
       "erosion": 0.35
     }
   ]
-,
-  "supportedBlocks": [
-    "minecraft:red_sand"
-  ],
-  "surface": {
-    "mode": "TOP",
-    "zeroLayerSource": "SURFACE"
-  },
-  "textureSets": {
-    "selected": "standard",
-    "initLayer": "minecraft:block/red_sand",
-    "texturesByValue": {
-      "standard": {
-        "1": "softimprints:block/imprints/red_sand/standard_red_sand_layer_1",
-        "2": "softimprints:block/imprints/red_sand/standard_red_sand_layer_2"
-      },
-      "warm": {
-        "1": "softimprints:block/imprints/red_sand/warm_red_sand_layer_1",
-        "2": "softimprints:block/imprints/red_sand/warm_red_sand_layer_2"
-      }
-    }
-  }
 }
