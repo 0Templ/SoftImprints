@@ -1,6 +1,6 @@
 package com.nine.softimprints.mixin.feature.cache;
 
-import com.nine.softimprints.client.core.cache.CacheAccess;
+import com.nine.softimprints.core.cache.CacheAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;

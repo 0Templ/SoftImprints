@@ -33,8 +33,8 @@
   "config.softimprints.group.layers.map_size.tooltip": "Размер внутренней карты маски на один блок. Чем больше значение, тем выше детализация следа и нагрузка",
 
   "config.softimprints.group.layers.emit_strategy": "Рендер: %s",
-  "config.softimprints.group.layers.emit_strategy.top": "Перерисовка",
-  "config.softimprints.group.layers.emit_strategy.top.tooltip": "Заменяет исходную верхнюю грань и заново рисует поверхность",
+  "config.softimprints.group.layers.emit_strategy.repaint": "Перерисовка",
+  "config.softimprints.group.layers.emit_strategy.repaint.tooltip": "Заменяет исходную верхнюю грань и заново рисует поверхность",
   "config.softimprints.group.layers.emit_strategy.overlay": "Оверлей",
   "config.softimprints.group.layers.emit_strategy.overlay.tooltip": "Оставляет модель блока без изменений и рисует следы немного выше поверхности",
 
@@ -74,18 +74,14 @@
   "config.softimprints.group.general.step_distance.tooltip": "Минимальное движение в блоках перед постановкой следующего штампа следа",
   "config.softimprints.group.general.emit_strategy": "Режим поверхности: %s",
   "config.softimprints.group.general.model_contact": "Контакт по модели: %s",
-  "config.softimprints.group.general.offscreen_policy": "Вне поля зрения: %s",
-  "config.softimprints.group.general.offscreen_policy.disabled": "Отключено",
-  "config.softimprints.group.general.offscreen_policy.disabled.tooltip": "Не запрашивает дополнительные захваты модели для сущностей без пригодного рендер-снапшота",
-  "config.softimprints.group.general.offscreen_policy.on_demand": "По требованию",
-  "config.softimprints.group.general.offscreen_policy.on_demand.tooltip": "Запрашивать захват модели вне камеры наблюдателя, когда сущности нужен контакт по модели, но пригодного снапшота нет",
   "config.softimprints.group.general.fallback_policy": "Нет модели: %s",
   "config.softimprints.group.general.fallback_policy.skip": "Пропуск",
   "config.softimprints.group.general.fallback_policy.skip.tooltip": "Пропускает тик следа для этой сущности, если контакт по модели не может построить пригодный штамп",
   "config.softimprints.group.general.fallback_policy.bounding_box": "BB",
   "config.softimprints.group.general.fallback_policy.bounding_box.tooltip": "Использовать Bounding Box сущности, если контакт по модели не может построить пригодный штамп",
+  "config.softimprints.group.general.fallback_policy.last_snapshot": "Последний снапшот",
+  "config.softimprints.group.general.fallback_policy.last_snapshot.tooltip": "Использовать последний совместимый снапшот модели без принудительного offscreen-рендера",
   "config.softimprints.group.general.snapshot_interval": "Интервал снапшотов: %s",
-  "config.softimprints.group.general.accumulate_snapshots": "Накапливать снапшоты: %s",
   "config.softimprints.group.general.contact_band_height": "Вертикльный порог контакта: %s",
 
   "config.softimprints.group.general.rotation_step_degrees": "Шаг поворота: %s",
@@ -94,7 +90,6 @@
   "config.softimprints.group.general.enable_imprints.tooltip": "Главный переключатель всей системы захвата следов",
   "config.softimprints.group.general.model_contact.tooltip.on": "Использовать рендер-снапшоты модели, чтобы ставить следы по реальной модели сущности",
   "config.softimprints.group.general.model_contact.tooltip.off": "Использовать контакт по bounding box для постановки штампов",
-  "config.softimprints.group.general.accumulate_snapshots.tooltip": "Объединяет снапшоты модели, снятые в пределах одного игрового тика",
   "config.softimprints.group.general.contact_band_height.tooltip": "Лимит высоты над поверхностью для сэмплинга контакта по модели",
 
   "config.softimprints.group.storage.title": "Производительность",
@@ -112,9 +107,6 @@
   "config.softimprints.group.storage.max_sections_rebuild.tooltip": "Максимум затронутых рендер-секций, обрабатываемых за одну итерацию перестройки",
   "config.softimprints.group.storage.max_track_entities": "Сущности: %s",
   "config.softimprints.group.storage.max_track_entities.tooltip": "Максимум сущностей вокруг наблюдателя, проверяемых трекером следов за тик",
-  "config.softimprints.group.storage.offscreen_captures_per_frame": "Кол-во захватов вне поля зрения: %s",
-  "config.softimprints.group.storage.offscreen_captures_per_frame.tooltip": "Максимум захватов модели за кадр для сущностей вне поля зрения игрока, которым нужен контакт по модели",
-  "config.softimprints.group.storage.offscreen_captures_per_frame.tooltip.disabled": "Захваты модели вне поля зрения отключены",
   "config.softimprints.group.storage.snapshot_interval": "Интервал снапшотов: %s",
   "config.softimprints.group.storage.snapshot_interval.tooltip": "Захватывает рендер-снапшоты модели каждые N кадров, пока целевые сущности видимы",
   "config.softimprints.group.storage.max_cached_imprint_blocks": "Макс блоков в кэше: %s",
@@ -143,29 +135,25 @@
   "imprint_profile.softimprints.snow.icy": "Ледяной",
   "imprint_profile.softimprints.snow.slush": "Рыхлый",
 
+  "imprint_profile.issue.unsupported_profile": "Неподдерживаемый профиль",
+  "imprint_profile.issue.source": "Источник: %s",
+
+  "imprint_profile.issue.unsupported_schema_version.title": "Неподдерживаемая версия профиля",
+  "imprint_profile.issue.unsupported_schema_version.details_0": "Схема профиля: %s. Поддерживается: %s и ниже",
+  "imprint_profile.issue.unsupported_schema_version.details_1": "Обновите Soft Imprints или установите совместимый пак профилей",
+  "imprint_profile.issue.unsupported_schema_version.tooltip": "Профилю нужна более новая версия Soft Imprints",
+
+
   "imprint_pack.all": "Все профили",
   "imprint_pack.unknown": "Профили",
   "imprint_pack.softimprints": "Стандартные профили",
-  "imprint_pack.minecraft": "Minecraft",
   "imprint_pack.debug_imprints": "Отладочные следы",
   "imprint_pack.debug_imprints.desc": "Тестовый профиль следов",
 
-  "profile.softimprints.red_sand": "Красный песок",
-  "profile.softimprints.red_sand.standard": "Стандартный",
-  "profile.softimprints.red_sand.warm": "Тёплый",
-
-  "profile.softimprints.sand": "Песок",
-  "profile.softimprints.sand.standard": "Стандартный",
-  "profile.softimprints.sand.warm": "Тёплый",
-  "profile.softimprints.sand.pale": "Бледный",
-
-  "profile.softimprints.snow": "Снег",
-  "profile.softimprints.snow.standard": "Стандартный",
-  "profile.softimprints.snow.icy": "Ледяной",
-  "profile.softimprints.snow.slush": "Рыхлый",
-
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Позволяет заснеженным поверхностям Ecliptic Seasons автоматически использовать подходящие профили следов",
+
+
 
 
 

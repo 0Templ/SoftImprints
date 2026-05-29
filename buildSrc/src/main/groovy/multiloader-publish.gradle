@@ -1,0 +1,58 @@
+plugins {
+    id 'multiloader-loader'
+    id "me.modmuss50.mod-publish-plugin"
+}
+
+
+def csv = { String value ->
+    value.split(',')
+            .collect { it.trim() }
+            .findAll { !it.isEmpty() }
+}
+
+@SuppressWarnings('UnnecessaryQualifiedReference')
+def changelogProvider = rootProject.ext.releaseChangelogText as Provider<String>
+def extractChangelog = rootProject.ext.extractReleaseChangelog as TaskProvider<?>
+
+tasks.register("collectReleaseArtifacts") {
+    group = "release"
+    description = "Runs the artifact task"
+    dependsOn tasks.named(publishing_task)
+    dependsOn extractChangelog
+}
+
+publishMods {
+    file = tasks.named(project.publishing_task, Zip).flatMap { it.archiveFile }
+    changelog = changelogProvider
+    type = project.version_type
+    displayName = "[${project.loader_display}]${project.mod_display_name}-${project.mc_display_version}-${project.version.toString()}"
+
+    csv(project.loaders).each {String id ->
+        modLoaders.add(id)
+    }
+
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_TOKEN") ?: project.findProperty("CURSEFORGE_TOKEN")
+        projectId = curseforge_id
+        client = true
+        server = false
+        csv(project.publish_game_versions).each {String v ->
+            minecraftVersions.add(v)
+        }
+    }
+
+    modrinth {
+        accessToken = System.getenv("MODRINTH_TOKEN") ?: project.findProperty("MODRINTH_TOKEN")
+        projectId = modrinth_id
+        csv(project.publish_game_versions).each {String v ->
+            minecraftVersions.add(v)
+        }
+    }
+}
+
+tasks.matching { Task t ->
+    t.class.name.startsWith('me.modmuss50.mpp.PublishModTask')
+}.configureEach { Task t ->
+    t.dependsOn extractChangelog
+}
+

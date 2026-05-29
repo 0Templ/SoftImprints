@@ -1,6 +1,6 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.ImprintStrip;
+import com.nine.softimprints.core.map.ImprintStrip;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 
 import java.util.ArrayList;

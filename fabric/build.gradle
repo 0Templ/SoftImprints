@@ -1,8 +1,10 @@
 plugins {
     id 'multiloader-loader'
+
     id 'com.gradleup.shadow'
-    id 'me.shedaniel.unified-publishing'
     id 'net.fabricmc.fabric-loom'
+
+    id 'multiloader-publish'
 }
 
 def shadowedDeps = [
@@ -17,13 +19,18 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-renderer-api-v1:${fabric_version}"
     implementation "net.fabricmc.fabric-api:fabric-renderer-indigo:${fabric_version}"
 
-    //Mod Menu
+    // Mod Menu
     implementation("com.terraformersmc:modmenu:${mod_menu_version}")
 
     shadowedDeps.each {
         implementation it
         shadow it
     }
+    // Continuity
+    implementation "curse.maven:continuity-531351:7901855"
+//
+//    implementation "curse.maven:entity-texture-features-fabric-568563:7930641"
+//    implementation "curse.maven:entity-model-features-844662:8063578"
 }
 
 shadowJar {
@@ -68,15 +75,3 @@ loom {
     }
 }
 
-configureUnifiedPublishing(project, [
-        loaderName: 'Fabric',
-        gameLoader: 'fabric',
-        releaseType: rootProject.fabric_release_type,
-        publicationTask: 'shadowJar',
-        relations: {
-            depends {
-                modrinth = 'fabric-api'
-                curseforge = 'fabric-api'
-            }
-        }
-])

@@ -1,6 +1,6 @@
 package com.nine.softimprints;
 
-import com.nine.softimprints.client.ui.screen.SIConfigScreen;
+import com.nine.softimprints.ui.screen.SIConfigScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;

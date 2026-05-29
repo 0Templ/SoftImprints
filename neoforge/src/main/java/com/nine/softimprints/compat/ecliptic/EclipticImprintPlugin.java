@@ -2,11 +2,12 @@ package com.nine.softimprints.compat.ecliptic;
 
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.api.plugin.SoftImprintsPlugin;
-import com.nine.softimprints.client.api.plugin.ImprintPlugin;
-import com.nine.softimprints.client.api.plugin.ImprintPluginInfo;
-import com.nine.softimprints.client.api.plugin.ImprintRegistrar;
-import com.nine.softimprints.client.profile.resolver.ProfileResolverEntry;
-import com.nine.softimprints.client.ui.util.constant.SIText;
+import com.nine.softimprints.api.plugin.ImprintPlugin;
+import com.nine.softimprints.api.plugin.ImprintPluginInfo;
+import com.nine.softimprints.api.plugin.ImprintRegistrar;
+import com.nine.softimprints.platform.Platform;
+import com.nine.softimprints.profile.resolver.ProfileResolverEntry;
+import com.nine.softimprints.ui.util.constant.SIText;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -20,8 +21,13 @@ public class EclipticImprintPlugin implements ImprintPlugin {
 
     private static final Identifier ID = Identifier.fromNamespaceAndPath(SICommon.MODID, "ecliptic_seasons");
 
+    private static final String ECLIPTIC_MOD_ID = "eclipticseasons";
+
     @Override
     public void register(ImprintRegistrar registrar) {
+        if (!Platform.CORE.modLoaded(ECLIPTIC_MOD_ID)) {
+            return;
+        }
         if (!EclipticCompat.isPresent()) {
             return;
         }

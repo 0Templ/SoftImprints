@@ -1,6 +1,6 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.ImprintStrip;
+import com.nine.softimprints.core.map.ImprintStrip;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadAtlas;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.util.TriState;

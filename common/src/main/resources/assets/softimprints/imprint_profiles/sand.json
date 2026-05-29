@@ -1,5 +1,5 @@
 {
-  "version" : 2,
+  "version" : 3,
   "surface": {
     "mode": "repaint",
     "zero_layer_source": "surface"

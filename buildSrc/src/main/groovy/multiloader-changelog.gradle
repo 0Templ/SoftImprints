@@ -1,0 +1,58 @@
+import java.util.regex.Pattern
+
+abstract class ExtractChangelogTask extends DefaultTask {
+
+    @InputFile
+    abstract RegularFileProperty getChangelogFile()
+
+    @OutputFile
+    abstract RegularFileProperty getOutputFile()
+
+    ExtractChangelogTask() {
+        group = 'release'
+        description = 'Extract the CHANGELOG.md section for the project version'
+    }
+
+    @TaskAction
+    void extract() {
+        def ver = project.version
+        def source = changelogFile.get().asFile
+        def target = outputFile.get().asFile
+
+        if (!source.exists()) {
+            throw new GradleException("Changelog file not found: ${source.absolutePath}")
+        }
+
+        def text = source.getText('UTF-8')
+        def escaped = Pattern.quote(ver as String)
+        def pattern = ~/(?ms)^##[ \t]+\[?${escaped}\]?[^\n]*\n(.*?)(?=^##[ \t]+|\z)/
+        def matcher = text =~ pattern
+
+        if (!matcher.find()) {
+            throw new GradleException(
+                    "No changelog section for version ${ver}. Expected heading like: ## ${ver}"
+            )
+        }
+        def section = matcher.group(1).trim()
+        if (section.isEmpty()) {
+            throw new GradleException("Changelog section for ${ver} is empty.")
+        }
+
+        target.parentFile.mkdirs()
+        target.write(section + '\n', 'UTF-8')
+
+        logger.lifecycle("Extracted changelog for ${ver} → ${target.toPath().toAbsolutePath()}")
+    }
+}
+
+def extractTask = tasks.register('extractReleaseChangelog', ExtractChangelogTask) {
+    changelogFile.set(rootProject.file('CHANGELOG.md'))
+    outputFile.set(layout.buildDirectory.file("release/changelog.md") as Provider<? extends RegularFile>)
+}
+
+def changelogProvider = extractTask
+        .flatMap { it.outputFile }
+        .map { it.asFile.getText('UTF-8').trim() }
+
+ext.extractReleaseChangelog = extractTask
+ext.releaseChangelogText = changelogProvider

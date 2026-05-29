@@ -1,6 +1,6 @@
 package com.nine.softimprints.mixin.feature.model;
 
-import com.nine.softimprints.client.core.contact.model.ModelContactRenderStateBridge;
+import com.nine.softimprints.core.contact.model.ModelContactRenderStateBridge;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;

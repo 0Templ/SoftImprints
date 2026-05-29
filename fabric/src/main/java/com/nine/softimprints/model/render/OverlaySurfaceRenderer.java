@@ -1,7 +1,7 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.ImprintStrip;
-import com.nine.softimprints.client.model.ModelUtils;
+import com.nine.softimprints.core.map.ImprintStrip;
+import com.nine.softimprints.model.ModelUtils;
 
 public class OverlaySurfaceRenderer implements ImprintSurfaceRenderer{
 

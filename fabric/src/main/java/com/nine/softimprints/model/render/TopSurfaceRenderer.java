@@ -1,7 +1,7 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.ImprintStrip;
-import com.nine.softimprints.client.model.ModelUtils;
+import com.nine.softimprints.core.map.ImprintStrip;
+import com.nine.softimprints.model.ModelUtils;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadTransform;
 import net.minecraft.client.Minecraft;

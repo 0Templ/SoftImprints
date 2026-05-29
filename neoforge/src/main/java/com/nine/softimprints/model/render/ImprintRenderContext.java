@@ -1,9 +1,9 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.IImprintMap;
-import com.nine.softimprints.client.model.BlockRenderData;
-import com.nine.softimprints.client.profile.ImprintProfile;
-import com.nine.softimprints.client.profile.options.surface.SurfaceSettings;
+import com.nine.softimprints.core.map.IImprintMap;
+import com.nine.softimprints.model.BlockRenderData;
+import com.nine.softimprints.profile.ImprintProfile;
+import com.nine.softimprints.profile.options.surface.SurfaceSettings;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;

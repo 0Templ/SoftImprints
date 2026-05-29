@@ -1,0 +1,32 @@
+package com.nine.softimprints.profile.io.json;
+
+import com.google.gson.annotations.SerializedName;
+import com.nine.softimprints.model.SurfaceMode;
+import com.nine.softimprints.profile.options.surface.ZeroLayerSource;
+
+import java.util.Objects;
+
+public record JsonSurfaceSettings(
+        SurfaceMode mode,
+        @SerializedName("zero_layer_source")
+        ZeroLayerSource zeroLayerSource
+) {
+
+    public JsonSurfaceSettings merge(JsonSurfaceSettings with) {
+        if (with == null) return this;
+
+        return new JsonSurfaceSettings(
+                with.mode != null ? with.mode : this.mode,
+                with.zeroLayerSource != null ? with.zeroLayerSource : this.zeroLayerSource
+        );
+    }
+
+    public JsonSurfaceSettings nullifyAgainst(JsonSurfaceSettings with) {
+        if (with == null) return this;
+
+        return new JsonSurfaceSettings(
+                Objects.equals(with.mode, this.mode) ? null : this.mode,
+                Objects.equals(with.zeroLayerSource, this.zeroLayerSource) ? null : this.zeroLayerSource
+        );
+    }
+}

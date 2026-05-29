@@ -33,8 +33,8 @@
   "config.softimprints.group.layers.map_size.tooltip": "Uses the current profile's zero-layer texture for cells untouched by imprints in Repaint mode",
 
   "config.softimprints.group.layers.emit_strategy": "Emit: %s",
-  "config.softimprints.group.layers.emit_strategy.top": "Repaint",
-  "config.softimprints.group.layers.emit_strategy.top.tooltip": "Replaces the original top face and redraws the surface",
+  "config.softimprints.group.layers.emit_strategy.repaint": "Repaint",
+  "config.softimprints.group.layers.emit_strategy.repaint.tooltip": "Replaces the original top face and redraws the surface",
   "config.softimprints.group.layers.emit_strategy.overlay": "Overlay",
   "config.softimprints.group.layers.emit_strategy.overlay.tooltip": "Keeps the block model unchanged and draws imprints slightly above the surface",
 
@@ -74,18 +74,14 @@
   "config.softimprints.group.general.step_distance.tooltip": "Minimum movement, in blocks, before placing the next imprint stamp",
   "config.softimprints.group.general.emit_strategy": "Surface mode: %s",
   "config.softimprints.group.general.model_contact": "Model contact: %s",
-  "config.softimprints.group.general.offscreen_policy": "Offscreen: %s",
-  "config.softimprints.group.general.offscreen_policy.disabled": "Disabled",
-  "config.softimprints.group.general.offscreen_policy.disabled.tooltip": "Does not request extra model captures for entities missing a usable render snapshot",
-  "config.softimprints.group.general.offscreen_policy.on_demand": "On demand",
-  "config.softimprints.group.general.offscreen_policy.on_demand.tooltip": "Requests an offscreen model capture when an entity needs model contact but has no usable snapshot",
   "config.softimprints.group.general.fallback_policy": "Missing model: %s",
   "config.softimprints.group.general.fallback_policy.skip": "Skip",
   "config.softimprints.group.general.fallback_policy.skip.tooltip": "Skips this entity's imprint tick when model contact cannot build a usable stamp",
   "config.softimprints.group.general.fallback_policy.bounding_box": "BB",
   "config.softimprints.group.general.fallback_policy.bounding_box.tooltip": "Uses the entity bounding box when model contact cannot build a usable stamp",
+  "config.softimprints.group.general.fallback_policy.last_snapshot": "Last snapshot",
+  "config.softimprints.group.general.fallback_policy.last_snapshot.tooltip": "Reuses the latest compatible model snapshot without forcing an offscreen render",
   "config.softimprints.group.general.snapshot_interval": "Snapshot interval: %s",
-  "config.softimprints.group.general.accumulate_snapshots": "Accumulate snapshots: %s",
   "config.softimprints.group.general.contact_band_height": "Contact band: %s",
 
   "config.softimprints.group.general.rotation_step_degrees": "Rotation step: %s",
@@ -94,7 +90,6 @@
   "config.softimprints.group.general.enable_imprints.tooltip": "Master switch for all imprint capture",
   "config.softimprints.group.general.model_contact.tooltip.on": "Uses render-model snapshots to place stamps from the visible entity shape",
   "config.softimprints.group.general.model_contact.tooltip.off": "Uses bounding-box contact to place stamps",
-  "config.softimprints.group.general.accumulate_snapshots.tooltip": "Combines model snapshots captured during the same game tick",
   "config.softimprints.group.general.contact_band_height.tooltip": "Vertical tolerance above the surface for model-contact sampling",
 
   "config.softimprints.group.storage.title": "Performance",
@@ -112,9 +107,6 @@
   "config.softimprints.group.storage.max_sections_rebuild.tooltip": "Maximum dirty render sections processed per rebuild iteration",
   "config.softimprints.group.storage.max_track_entities": "Tracked entities: %s",
   "config.softimprints.group.storage.max_track_entities.tooltip": "Maximum entities around the observer checked by the imprint tracker each tick",
-  "config.softimprints.group.storage.offscreen_captures_per_frame": "Offscreen captures: %s",
-  "config.softimprints.group.storage.offscreen_captures_per_frame.tooltip": "Maximum offscreen model captures processed per frame for entities that need model-based contact",
-  "config.softimprints.group.storage.offscreen_captures_per_frame.tooltip.disabled": "Offscreen model captures are disabled. Model contact can only use live snapshots or the configured fallback",
   "config.softimprints.group.storage.snapshot_interval": "Snapshot interval: %s",
   "config.softimprints.group.storage.snapshot_interval.tooltip": "Captures render-model snapshots every N render frames while target entities are visible",
   "config.softimprints.group.storage.max_cached_imprint_blocks": "Cached blocks: %s",
@@ -125,6 +117,22 @@
   "config.softimprints.group.plugins.title": "Plugins",
   "config.softimprints.group.plugins.section.installed": "Loaded Plugins",
   "config.softimprints.group.plugins.empty": "No plugins loaded",
+
+  "config.softimprints.group.info.title": "?",
+
+  "config.softimprints.group.info.distribution": "Distribution source:",
+  "config.softimprints.group.info.distribution.tooltip": "Where this mod come from",
+  "config.softimprints.group.info.distribution.curseforge": "Curse Forge",
+  "config.softimprints.group.info.distribution.modrinth": "Modrinth",
+  "config.softimprints.group.info.distribution.github": "Github",
+  "config.softimprints.group.info.distribution.unknown": "Unknown",
+
+  "config.softimprints.group.info.meta.version": "Mod version: %s",
+
+  "config.softimprints.group.info.update.abailable": "Update available:",
+  "config.softimprints.group.info.update.up_to_date": "Mod is up to date",
+  "config.softimprints.group.info.update.download": "Download:",
+  "config.softimprints.group.info.update.download.tooltip": "Follow download link: %s",
 
   "config.softimprints.unlimited": "Unlimited",
   "config.softimprints.disabled": "Disabled",
@@ -143,6 +151,14 @@
   "imprint_profile.softimprints.snow.icy": "Icy",
   "imprint_profile.softimprints.snow.slush": "Slush",
 
+  "imprint_profile.issue.unsupported_profile": "Unsupported Profile",
+  "imprint_profile.issue.source": "Source: %s",
+
+  "imprint_profile.issue.unsupported_schema_version.title": "Unsupported profile version",
+  "imprint_profile.issue.unsupported_schema_version.details_0": "Profile schema: %s. Supported: %s and below",
+  "imprint_profile.issue.unsupported_schema_version.details_1": "Update Soft Imprints or install a compatible profile pack",
+  "imprint_profile.issue.unsupported_schema_version.tooltip": "Profile requires a newer Soft Imprints version",
+
 
   "imprint_pack.all": "All Profiles",
 
@@ -152,7 +168,6 @@
 
   "imprint_pack.debug_imprints": "Debug Imprints",
   "imprint_pack.debug_imprints.desc": "Test imprint profile",
-
 
 
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",

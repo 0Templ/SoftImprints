@@ -1,7 +1,7 @@
 package com.nine.softimprints.model.render;
 
-import com.nine.softimprints.client.core.map.ImprintStrip;
-import com.nine.softimprints.client.model.ModelUtils;
+import com.nine.softimprints.core.map.ImprintStrip;
+import com.nine.softimprints.model.ModelUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlas;

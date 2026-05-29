@@ -1,8 +1,6 @@
 package com.nine.softimprints.api.plugin;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.client.api.plugin.ImprintPlugin;
-import com.nine.softimprints.client.api.plugin.ImprintPluginLoader;
 import net.neoforged.fml.ModList;
 
 import java.lang.annotation.ElementType;

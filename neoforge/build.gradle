@@ -1,7 +1,8 @@
 plugins {
     id 'multiloader-loader'
+    id 'multiloader-publish'
+
     id 'net.neoforged.moddev'
-    id 'me.shedaniel.unified-publishing'
 }
 
 neoForge {
@@ -55,7 +56,9 @@ dependencies {
 
     // Aether
     implementation "curse.maven:aether-ii-223796:8045002"
-    
+
+    // neoContinuity
+    implementation "curse.maven:neocontinuity-1377279:8071996"
 
 }
 
@@ -82,9 +85,3 @@ sourceSets.configureEach {
             .each(markNeoForge)
 }
 
-configureUnifiedPublishing(project, [
-        loaderName     : 'NeoForge',
-        gameLoader     : 'neoforge',
-        releaseType: rootProject.neoforge_release_type,
-        publicationTask: 'jar'
-])

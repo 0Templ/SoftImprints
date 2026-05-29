@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags: ['mc*-v*']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Release tag, branch, or commit. Format: mc*-v*'
+        required: true
+        type: string
+
+      upload_github:
+        description: 'Upload to GitHub Releases'
+        default: true
+        type: boolean
+
+      upload_modrinth:
+        description: 'Upload to Modrinth'
+        default: true
+        type: boolean
+
+      upload_curseforge:
+        description: 'Upload to CurseForge'
+        default: true
+        type: boolean
+
+      dry_run:
+        description: 'Build only, no publish'
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      UPLOAD_GITHUB: ${{ github.event_name == 'push' || inputs.upload_github }}
+      UPLOAD_MODRINTH: ${{ github.event_name == 'push' || inputs.upload_modrinth }}
+      UPLOAD_CURSEFORGE: ${{ github.event_name == 'push' || inputs.upload_curseforge }}
+
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+
+    outputs:
+      dry_run: ${{ env.DRY_RUN }}
+      upload_github: ${{ env.UPLOAD_GITHUB }}
+      release_tag: ${{ steps.release.outputs.release_tag }}
+      mod_version: ${{ steps.release.outputs.mod_version }}
+
+    steps:
+      - name: Resolve release ref
+        id: ref
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ref.outputs.tag }}
+
+      - name: Parse release data
+        id: release
+        run: node .github/scripts/parse-release-ref.js "${{ steps.ref.outputs.tag }}"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build artifacts
+        if: env.UPLOAD_GITHUB == 'true'
+        run: |
+          ./gradlew \
+            :neoforge:collectReleaseArtifacts \
+            :fabric:collectReleaseArtifacts
+
+      - name: Upload artifacts for next jobs
+        if: env.DRY_RUN == 'false' && env.UPLOAD_GITHUB == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            **/build/libs/*.jar
+            **/build/release/*.md
+          if-no-files-found: error
+
+      - name: Publish to Modrinth
+        if: env.UPLOAD_MODRINTH == 'true' && env.DRY_RUN == 'false'
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          ./gradlew \
+            :neoforge:publishModrinth \
+            :fabric:publishModrinth
+      - name: Publish to Curse
+        if: env.UPLOAD_CURSEFORGE == 'true' && env.DRY_RUN == 'false'
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+        run: |
+          ./gradlew \
+            :neoforge:publishCurseforge \
+            :fabric:publishCurseforge
+
+  github-release:
+    needs: build
+    if: needs.build.outputs.upload_github == 'true' && needs.build.outputs.dry_run == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: payload
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.release_tag }}
+          body_path: payload/build/release/changelog.md
+          fail_on_unmatched_files: false
+          files: |
+            payload/fabric/build/libs/*.jar
+            payload/neoforge/build/libs/*.jar

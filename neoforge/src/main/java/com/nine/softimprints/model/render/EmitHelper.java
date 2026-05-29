@@ -2,7 +2,7 @@ package com.nine.softimprints.model.render;
 
 import com.mojang.blaze3d.platform.Transparency;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.nine.softimprints.client.core.map.ImprintStrip;
+import com.nine.softimprints.core.map.ImprintStrip;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;

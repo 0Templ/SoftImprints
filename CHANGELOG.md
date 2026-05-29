@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.0
+- Some todo changes 
+
+
 ## 2.1.0
 - Changed Profile Switcher widget
 - Updated some textures and imprint profiles
