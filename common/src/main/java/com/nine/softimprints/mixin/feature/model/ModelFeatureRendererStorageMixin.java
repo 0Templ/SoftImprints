@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ModelFeatureRendererStorageMixin {
 
     @Inject(
-            method = ModelContactMixinTargets.MODEL_FEATURE_STORAGE_ADD,
+            method = "add(Lnet/minecraft/client/renderer/rendertype/RenderType;Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;)V",
             at = @At("HEAD"),
             require = 1,
             allow = 1

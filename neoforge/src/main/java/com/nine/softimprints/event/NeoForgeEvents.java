@@ -1,13 +1,13 @@
 package com.nine.softimprints.event;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.api.plugin.NeoImprintPluginLoader;
 import com.nine.softimprints.SILifecycle;
+import com.nine.softimprints.api.plugin.NeoImprintPluginLoader;
+import com.nine.softimprints.model.NeoBaseNeoImprintableStateModel;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.io.ProfilesLoader;
 import com.nine.softimprints.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.profile.resource.ImprintsResourceReloadListener;
-import com.nine.softimprints.model.NeoBaseNeoImprintableStateModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;

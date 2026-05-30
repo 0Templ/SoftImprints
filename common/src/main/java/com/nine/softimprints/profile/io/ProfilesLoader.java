@@ -76,7 +76,7 @@ public class ProfilesLoader {
                         JsonProfile merged = raw.merge(override);
                         ready.put(id, ProfileOperations.parseFromRawToDomain(id, merged));
                     } catch (RuntimeException e){
-                        if (Platform.CORE.inDev()) SICommon.LOGGER.warn("Couldn't apply profile override {}: {}", id, e.getMessage());
+                        if (Platform.CORE.inDevEnvironment()) SICommon.LOGGER.warn("Couldn't apply profile override {}: {}", id, e.getMessage());
                         // Erase them?
                     }
                 }

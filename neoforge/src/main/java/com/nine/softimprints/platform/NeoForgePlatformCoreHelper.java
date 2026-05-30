@@ -1,17 +1,11 @@
 package com.nine.softimprints.platform;
 
-import com.google.gson.JsonObject;
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.api.meta.update.SIUpdateCandidate;
-import com.nine.softimprints.api.meta.update.SIUpdateChannel;
-import net.minecraft.SharedConstants;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NeoForgePlatformCoreHelper implements IPlatformCoreHelper {
 
@@ -21,7 +15,7 @@ public class NeoForgePlatformCoreHelper implements IPlatformCoreHelper {
     }
 
     @Override
-    public boolean inDev() {
+    public boolean inDevEnvironment() {
         return !FMLLoader.getCurrent().isProduction();
     }
 
@@ -35,12 +29,12 @@ public class NeoForgePlatformCoreHelper implements IPlatformCoreHelper {
 
 
     @Override
-    public String loader() {
+    public String currentLoader() {
         return "neoforge";
     }
 
     @Override
-    public boolean modLoaded(String id) {
+    public boolean isModLoaded(String id) {
         return ModList.get().isLoaded(id);
     }
 

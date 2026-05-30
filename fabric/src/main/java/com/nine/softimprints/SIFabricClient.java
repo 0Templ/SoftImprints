@@ -2,8 +2,8 @@ package com.nine.softimprints;
 
 import com.nine.softimprints.api.plugin.ImprintPlugin;
 import com.nine.softimprints.api.plugin.ImprintPluginLoader;
-import com.nine.softimprints.profile.resource.ImprintsResourceReloadListener;
 import com.nine.softimprints.event.FabricClientEvents;
+import com.nine.softimprints.profile.resource.ImprintsResourceReloadListener;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;

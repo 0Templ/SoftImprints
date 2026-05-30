@@ -5,7 +5,6 @@ import com.nine.softimprints.api.meta.update.SIUpdateCandidate;
 import com.nine.softimprints.api.meta.update.SIUpdateChannel;
 import com.nine.softimprints.api.meta.update.SIUpdateResult;
 import com.nine.softimprints.core.Constants;
-import com.nine.softimprints.platform.Platform;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import net.minecraft.network.chat.Component;

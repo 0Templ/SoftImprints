@@ -13,7 +13,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -86,7 +89,7 @@ public final class SIUpdateService {
         }
 
         String mcVersion = SharedConstants.getCurrentVersion().name();
-        String loader = Platform.CORE.loader();
+        String loader = Platform.CORE.currentLoader();
 
         String currentModVersion = Platform.CORE.modVersion();
 
@@ -188,7 +191,7 @@ public final class SIUpdateService {
                 return JsonParser.parseString(response.body()).getAsJsonObject();
             }
         } catch (Exception e) {
-            if (Platform.CORE.inDev()){
+            if (Platform.CORE.inDevEnvironment()){
                 SICommon.LOGGER.warn("Couldn't fetch candidates info: {}", e.getMessage());
             }
         }

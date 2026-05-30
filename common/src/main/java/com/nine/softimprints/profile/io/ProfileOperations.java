@@ -96,7 +96,7 @@ public class ProfileOperations {
 
         if (version < JsonProfile.CURRENT_SCHEMA){
             toParse = ProfileMigrations.migrate(obj, version, JsonProfile.CURRENT_SCHEMA);
-            if (Platform.CORE.inDev()){
+            if (Platform.CORE.inDevEnvironment()){
                 if (id != null) SICommon.LOGGER.info("Migrated profile {} from v{} to v{}", id, version, JsonProfile.CURRENT_SCHEMA);
                 else SICommon.LOGGER.info("Migrated profile from v{} to v{}", version, JsonProfile.CURRENT_SCHEMA);
             }

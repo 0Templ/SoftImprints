@@ -1,10 +1,10 @@
 package com.nine.softimprints.compat.ecliptic;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.api.plugin.SoftImprintsPlugin;
 import com.nine.softimprints.api.plugin.ImprintPlugin;
 import com.nine.softimprints.api.plugin.ImprintPluginInfo;
 import com.nine.softimprints.api.plugin.ImprintRegistrar;
+import com.nine.softimprints.api.plugin.SoftImprintsPlugin;
 import com.nine.softimprints.platform.Platform;
 import com.nine.softimprints.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.ui.util.constant.SIText;
@@ -25,7 +25,7 @@ public class EclipticImprintPlugin implements ImprintPlugin {
 
     @Override
     public void register(ImprintRegistrar registrar) {
-        if (!Platform.CORE.modLoaded(ECLIPTIC_MOD_ID)) {
+        if (!Platform.CORE.isModLoaded(ECLIPTIC_MOD_ID)) {
             return;
         }
         if (!EclipticCompat.isPresent()) {

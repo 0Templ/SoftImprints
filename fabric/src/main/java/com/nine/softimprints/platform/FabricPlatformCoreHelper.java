@@ -1,14 +1,9 @@
 package com.nine.softimprints.platform;
 
-import com.google.gson.JsonObject;
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.api.meta.update.SIUpdateCandidate;
-import com.nine.softimprints.api.meta.update.SIUpdateChannel;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FabricPlatformCoreHelper implements IPlatformCoreHelper {
 
@@ -18,7 +13,7 @@ public class FabricPlatformCoreHelper implements IPlatformCoreHelper {
     }
 
     @Override
-    public boolean inDev() {
+    public boolean inDevEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
@@ -36,12 +31,12 @@ public class FabricPlatformCoreHelper implements IPlatformCoreHelper {
 
 
     @Override
-    public String loader() {
+    public String currentLoader() {
         return "fabric";
     }
 
     @Override
-    public boolean modLoaded(String id) {
+    public boolean isModLoaded(String id) {
         return FabricLoader.getInstance().isModLoaded(id);
     }
 

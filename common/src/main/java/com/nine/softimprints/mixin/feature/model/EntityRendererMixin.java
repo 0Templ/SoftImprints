@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityRendererMixin {
 
     @Inject(
-            method = ModelContactMixinTargets.LIVING_ENTITY_RENDERER_EXTRACT_RENDER_STATE,
+            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
             at = @At("HEAD"),
             require = 1,
             allow = 1
@@ -26,7 +26,7 @@ public abstract class EntityRendererMixin {
     }
 
     @Inject(
-            method = ModelContactMixinTargets.LIVING_ENTITY_RENDERER_EXTRACT_RENDER_STATE,
+            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
             at = @At("RETURN"),
             require = 1,
             allow = 1

@@ -1,11 +1,7 @@
 package com.nine.softimprints.ui.component.list;
 
 import com.nine.softimprints.profile.catalog.entry.InvalidProfileEntry;
-import com.nine.softimprints.ui.component.list.element.ConfigListEntry;
-import com.nine.softimprints.ui.component.list.element.ConfigWidgetEntry;
-import com.nine.softimprints.ui.component.list.element.EmptyListEntry;
-import com.nine.softimprints.ui.component.list.element.LabelEntry;
-import com.nine.softimprints.ui.component.list.element.SeparatorListEntry;
+import com.nine.softimprints.ui.component.list.element.*;
 import com.nine.softimprints.ui.component.list.element.row.RowItem;
 import com.nine.softimprints.ui.component.list.element.row.RowListEntry;
 import com.nine.softimprints.ui.component.search.SearchListEntry;

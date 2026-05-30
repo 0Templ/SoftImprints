@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GameRendererMixin {
 
     @Inject(
-            method = ModelContactMixinTargets.GAME_RENDERER_RENDER,
+            method = "render(Lnet/minecraft/client/DeltaTracker;Z)V",
             at = @At("HEAD"),
             require = 1,
             allow = 1
@@ -23,7 +23,7 @@ public abstract class GameRendererMixin {
     }
 
     @Inject(
-            method = ModelContactMixinTargets.GAME_RENDERER_RENDER_LEVEL,
+            method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V",
             at = @At("RETURN"),
             require = 1,
             allow = 1

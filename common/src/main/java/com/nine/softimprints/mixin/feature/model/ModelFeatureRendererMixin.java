@@ -18,10 +18,10 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ModelFeatureRendererMixin {
 
     @WrapOperation(
-            method = ModelContactMixinTargets.MODEL_FEATURE_RENDER_MODEL,
+            method = "renderModel(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V",
             at = @At(
                     value = "INVOKE",
-                    target = ModelContactMixinTargets.MODEL_RENDER_TO_BUFFER,
+                    target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V",
                     ordinal = 0
             ),
             require = 1,

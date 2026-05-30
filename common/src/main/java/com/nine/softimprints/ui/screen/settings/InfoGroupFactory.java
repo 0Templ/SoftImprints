@@ -111,10 +111,11 @@ public class InfoGroupFactory implements SettingsGroupFactory {
 
     private record DistributionWidget(boolean valid, LabelWidget widget){}
 
-    private DistributionWidget buildDistroWidget(Map<Distribution, SIUpdateCandidate> candidates, Distribution distribution,
-                                                 int color,
-                                                 int colorHovered
-                                                 ){
+    private DistributionWidget buildDistroWidget(
+            Map<Distribution, SIUpdateCandidate> candidates, Distribution distribution,
+            int color,
+            int colorHovered
+    ){
         var candidate = candidates.get(distribution);
         boolean valid = candidate != null;
         LabelWidget ret;
@@ -127,23 +128,23 @@ public class InfoGroupFactory implements SettingsGroupFactory {
                     candidate.url())));
         }
         else {
-            ret = LabelWidget.singleLine(Component.translatable(Distribution.MODRINTH.getLabelKey()),
+            ret = LabelWidget.singleLine(Component.translatable(distribution.getLabelKey()),
                     0Xff6e6e6e, 0Xff56645b);
-            ret.setTooltip(Tooltip.create(Component.translatable("Couldn't find update")));
+            ret.setTooltip(Tooltip.create(Component.translatable("config.softimprints.group.info.update.not_found")));
         }
         return new DistributionWidget(valid, ret);
     }
 
     private void addGithibInfo(GroupBuilder builder, Font font){
         builder.rowLabels(font,
-                LabelWidget.singleLine(Component.translatable("Report a Bug"),
+                LabelWidget.singleLine(Component.translatable("config.softimprints.group.info.meta.report_a_bug").withStyle(ChatFormatting.UNDERLINE),
                         () -> {
                             openLinkPrompt(Constants.ISSUES_LINK);
                         })
         );
         builder.height(9);
         builder.rowLabels(font,
-                LabelWidget.singleLine(Component.translatable("Create your own Imprints"),
+                LabelWidget.singleLine(Component.translatable("config.softimprints.group.info.meta.create_pack").withStyle(ChatFormatting.UNDERLINE),
                         () -> {
                             openLinkPrompt(Constants.GITHUB_HOME_PAGE);
                         })
