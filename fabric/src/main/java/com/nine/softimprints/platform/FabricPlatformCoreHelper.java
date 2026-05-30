@@ -25,11 +25,6 @@ public class FabricPlatformCoreHelper implements IPlatformCoreHelper {
                 .orElse("0.0.0");
     }
 
-
-    private static final String UPDATE_JSON_URL =
-            "https://raw.githubusercontent.com/0Templ/ModVersions/refs/heads/main/fabric/snow-imprints.json";
-
-
     @Override
     public String currentLoader() {
         return "fabric";

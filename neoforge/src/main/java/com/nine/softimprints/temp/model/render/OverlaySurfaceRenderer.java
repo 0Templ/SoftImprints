@@ -1,4 +1,4 @@
-package com.nine.softimprints.model.render;
+package com.nine.softimprints.temp.model.render;
 
 import com.nine.softimprints.core.map.ImprintStrip;
 import com.nine.softimprints.model.ModelUtils;

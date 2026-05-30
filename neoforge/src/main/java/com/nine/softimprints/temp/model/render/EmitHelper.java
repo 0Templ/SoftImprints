@@ -1,4 +1,4 @@
-package com.nine.softimprints.model.render;
+package com.nine.softimprints.temp.model.render;
 
 import com.mojang.blaze3d.platform.Transparency;
 import com.mojang.blaze3d.vertex.VertexConsumer;

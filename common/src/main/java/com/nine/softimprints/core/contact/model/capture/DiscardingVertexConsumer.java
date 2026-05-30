@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 public enum DiscardingVertexConsumer implements VertexConsumer {
 
-    // Todo: not sure in safeness... Tests
     INSTANCE;
 
     @Override

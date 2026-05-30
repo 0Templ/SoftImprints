@@ -1,4 +1,4 @@
-package com.nine.softimprints.model.render;
+package com.nine.softimprints.temp.model.render;
 
 import com.nine.softimprints.core.map.IImprintMap;
 import com.nine.softimprints.model.BlockRenderData;
@@ -13,12 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-/**
- * Per-render call context handed to a NeoForge {@link ImprintSurfaceRenderer}.
- *
- * <p>Mirrors the fabric-side context, but with a parts list (NeoForge's quad-list API)
- * instead of a Fabric {@code QuadEmitter}.
- */
 public record ImprintRenderContext(
         BlockStateModel wrapped,
         List<BlockStateModelPart> parts,

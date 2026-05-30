@@ -1,6 +1,7 @@
-package com.nine.softimprints.platform;
+package com.nine.softimprints.temp.platform;
 
 import com.nine.softimprints.SICommon;
+import com.nine.softimprints.platform.IPlatformCoreHelper;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;

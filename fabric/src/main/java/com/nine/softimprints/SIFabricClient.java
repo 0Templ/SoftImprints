@@ -26,10 +26,10 @@ public class SIFabricClient implements ClientModInitializer {
         registerBuiltinPacks();
     }
 
-    private void loadPlugins() {
-        ImprintPluginLoader.load(FabricLoader.getInstance()
-                .getEntrypoints("softimprints", ImprintPlugin.class));
-    }
+        private void loadPlugins() {
+            ImprintPluginLoader.load(FabricLoader.getInstance()
+                    .getEntrypoints("softimprints", ImprintPlugin.class));
+        }
 
     private void registerResourceListener(){
         var loader = ResourceLoader.get(PackType.CLIENT_RESOURCES);
@@ -37,7 +37,6 @@ public class SIFabricClient implements ClientModInitializer {
 
         loader.registerReloadListener(id, new ImprintsResourceReloadListener());
 
-        // Tests
         loader.addListenerOrdering(id, ResourceReloaderKeys.Client.MODELS);
         loader.addListenerOrdering(id, ResourceReloaderKeys.BEFORE_VANILLA);
     }

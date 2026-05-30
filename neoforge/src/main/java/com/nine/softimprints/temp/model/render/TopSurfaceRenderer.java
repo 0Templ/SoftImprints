@@ -1,4 +1,4 @@
-package com.nine.softimprints.model.render;
+package com.nine.softimprints.temp.model.render;
 
 import com.nine.softimprints.core.map.ImprintStrip;
 import com.nine.softimprints.model.ModelUtils;
@@ -12,18 +12,10 @@ import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * NeoForge counterpart of the fabric TOP renderer: removes the wrapped block's top face and
- * replaces it entirely with imprint strips. Strips with value 0 fall back to either the
- * block's original top sprite or a priority-supplied "zero layer" sprite.
- */
 public class TopSurfaceRenderer implements ImprintSurfaceRenderer {
 
     @Override
     public void emit(ImprintRenderContext context) {
-        // The wrapped model has already pushed parts into context.parts() via super.collectParts.
-        // Replace each part with one whose UP-facing quads are stripped — the imprint strips
-        // below take over that surface.
         List<BlockStateModelPart> parts = context.parts();
         for (int i = 0; i < parts.size(); i++) {
             parts.set(i, ImprintParts.withoutUpQuads(parts.get(i)));

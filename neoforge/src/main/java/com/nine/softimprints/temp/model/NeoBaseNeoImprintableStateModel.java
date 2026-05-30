@@ -1,13 +1,15 @@
-package com.nine.softimprints.model;
+package com.nine.softimprints.temp.model;
 
 import com.nine.softimprints.core.cache.CacheAccess;
 import com.nine.softimprints.core.cache.LevelData;
 import com.nine.softimprints.core.map.IImprintMap;
-import com.nine.softimprints.model.render.*;
+import com.nine.softimprints.model.BlockRenderData;
+import com.nine.softimprints.model.SurfaceMode;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.resolver.ImprintResolveContext;
 import com.nine.softimprints.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.profile.resolver.ResolvedImprintProfile;
+import com.nine.softimprints.temp.model.render.*;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
