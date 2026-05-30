@@ -8,7 +8,6 @@ import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.resolver.ImprintResolveContext;
 import com.nine.softimprints.profile.resolver.ProfileResolverEntry;
 import com.nine.softimprints.profile.resolver.ResolvedImprintProfile;
-import com.nine.softimprints.temp.model.render.*;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
