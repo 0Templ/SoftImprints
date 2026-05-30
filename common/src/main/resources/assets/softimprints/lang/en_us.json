@@ -128,11 +128,14 @@
   "config.softimprints.group.info.distribution.unknown": "Unknown",
 
   "config.softimprints.group.info.meta.version": "Mod version: %s",
+  "config.softimprints.group.info.meta.report_a_bug": "Report a Bug",
+  "config.softimprints.group.info.meta.create_pack": "Create your own Imprints",
 
   "config.softimprints.group.info.update.abailable": "Update available:",
   "config.softimprints.group.info.update.up_to_date": "Mod is up to date",
   "config.softimprints.group.info.update.download": "Download:",
   "config.softimprints.group.info.update.download.tooltip": "Follow download link: %s",
+  "config.softimprints.group.info.update.not_found": "Couldn't find update",
 
   "config.softimprints.unlimited": "Unlimited",
   "config.softimprints.disabled": "Disabled",
