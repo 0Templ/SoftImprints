@@ -1,4 +1,4 @@
-package com.nine.softimprints.temp.model;
+package com.nine.softimprints.model;
 
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;

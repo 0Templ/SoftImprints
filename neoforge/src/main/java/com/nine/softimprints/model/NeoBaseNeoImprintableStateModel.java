@@ -1,10 +1,9 @@
-package com.nine.softimprints.temp.model;
+package com.nine.softimprints.model;
 
 import com.nine.softimprints.core.cache.CacheAccess;
 import com.nine.softimprints.core.cache.LevelData;
 import com.nine.softimprints.core.map.IImprintMap;
-import com.nine.softimprints.model.BlockRenderData;
-import com.nine.softimprints.model.SurfaceMode;
+import com.nine.softimprints.model.render.*;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.resolver.ImprintResolveContext;
 import com.nine.softimprints.profile.resolver.ProfileResolverEntry;

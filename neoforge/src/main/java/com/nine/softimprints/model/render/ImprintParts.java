@@ -1,4 +1,4 @@
-package com.nine.softimprints.temp.model.render;
+package com.nine.softimprints.model.render;
 
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

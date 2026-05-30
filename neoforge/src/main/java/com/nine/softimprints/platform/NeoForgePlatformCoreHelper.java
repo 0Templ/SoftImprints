@@ -1,4 +1,4 @@
-package com.nine.softimprints.temp.platform;
+package com.nine.softimprints.platform;
 
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.platform.IPlatformCoreHelper;

@@ -1,4 +1,4 @@
-package com.nine.softimprints.temp.model.render;
+package com.nine.softimprints.model.render;
 
 import com.nine.softimprints.core.map.IImprintMap;
 import com.nine.softimprints.model.BlockRenderData;

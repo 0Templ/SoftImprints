@@ -1,4 +1,4 @@
-package com.nine.softimprints.temp.model.render;
+package com.nine.softimprints.model.render;
 
 public interface ImprintSurfaceRenderer {
 
