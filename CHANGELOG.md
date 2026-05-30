@@ -1,8 +1,12 @@
 # Changelog
 
 ## 2.5.0
-- Some todo changes 
-
+- Added an Info tab to the config screen with mod update status and metadata
+- Improved the profile switcher UI: profiles that fail to load are now shown instead of being silently hidden
+- Improved model contact capture algorithms for more reliable imprint placement
+- Added support for custom imprint map resolution per profile (for non-x16 textures)
+- Added UI polish and layout improvements across the config screen
+- Updated and expanded translations
 
 ## 2.1.0
 - Changed Profile Switcher widget
