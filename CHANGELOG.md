@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.5.01
+- Fixed render issues
+
 ## 2.5.0
 - Added an Info tab to the config screen with mod update status and metadata
 - Improved the profile switcher UI: profiles that fail to load are now shown instead of being silently hidden
