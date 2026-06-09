@@ -1,6 +1,7 @@
 package com.nine.softimprints.core.contact.model.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.nine.softimprints.core.contact.model.ModelContactRenderTypes;
 import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
 import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
 import net.minecraft.client.gui.Font;
@@ -76,7 +77,9 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             int outlineColor,
             ModelFeatureRenderer.CrumblingOverlay crumblingOverlay
     ) {
-        if (this.capturedBaseModel || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity)) {
+        if (this.capturedBaseModel
+                || !ModelContactRenderTypes.shouldCapture(renderType)
+                || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity)) {
             return;
         }
         this.capturedBaseModel = true;

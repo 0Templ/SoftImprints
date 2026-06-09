@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -164,7 +165,11 @@ public final class ModelContactSnapshotCache {
         BASE_MODEL_SUBMIT_ENTITY.remove();
     }
 
-    public static void markSubmittedBaseModel(SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
+    public static void markSubmittedBaseModel(RenderType renderType, SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
+        if (!ModelContactRenderTypes.shouldCapture(renderType)) {
+            return;
+        }
+
         LivingEntity entity = BASE_MODEL_SUBMIT_ENTITY.get();
         if (entity == null) {
             return;

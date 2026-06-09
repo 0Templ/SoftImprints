@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
+import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
@@ -41,15 +42,27 @@ public abstract class ModelFeatureRendererMixin {
             OutlineBufferSource outlineBufferSource,
             MultiBufferSource.BufferSource crumblingBufferSource
     ) {
-        boolean capturing = ModelContactSnapshotCache.tryBeginSubmittedBaseModelCapture(modelSubmit);
-        VertexConsumer captureBuffer = capturing
-                ? ModelContactSnapshotCache.wrapActiveVertexConsumer(buffer)
-                : buffer;
+        original.call(model, poseStack, buffer, packedLight, packedOverlay, color);
+
+        if (!ModelContactSnapshotCache.tryBeginSubmittedBaseModelCapture(modelSubmit)) {
+            return;
+        }
+
+        boolean complete = false;
         try {
-            original.call(model, poseStack, captureBuffer, packedLight, packedOverlay, color);
+            model.renderToBuffer(
+                    poseStack,
+                    ModelContactSnapshotCache.wrapActiveVertexConsumer(DiscardingVertexConsumer.INSTANCE),
+                    packedLight,
+                    packedOverlay,
+                    color
+            );
+            complete = true;
         } finally {
-            if (capturing) {
+            if (complete) {
                 ModelContactSnapshotCache.finishLivingCapture();
+            } else {
+                ModelContactSnapshotCache.discardLivingCapture();
             }
         }
     }

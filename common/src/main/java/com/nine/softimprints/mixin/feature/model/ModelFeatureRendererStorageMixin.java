@@ -23,6 +23,6 @@ public abstract class ModelFeatureRendererStorageMixin {
             SubmitNodeStorage.ModelSubmit<?> modelSubmit,
             CallbackInfo ci
     ) {
-        ModelContactSnapshotCache.markSubmittedBaseModel(modelSubmit);
+        ModelContactSnapshotCache.markSubmittedBaseModel(renderType, modelSubmit);
     }
 }
