@@ -11,8 +11,6 @@
     "feature.model.EntityRenderStateMixin",
     "feature.model.GameRendererMixin",
     "feature.model.LivingEntityRendererMixin",
-    "feature.model.ModelFeatureRendererMixin",
-    "feature.model.ModelFeatureRendererStorageMixin",
     "feature.model.ModelPartAccessor"
   ],
   "server": [],

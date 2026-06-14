@@ -8,25 +8,17 @@ import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshotSto
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.IdentityHashMap;
-import java.util.Map;
 
 public final class ModelContactSnapshotCache {
 
     private static final ModelContactSnapshotStore STORE = new ModelContactSnapshotStore();
     private static final ModelContactCapturePolicy POLICY = new ModelContactCapturePolicy();
     private static final ThreadLocal<ModelContactCaptureSession> ACTIVE_SESSION = new ThreadLocal<>();
-    private static final ThreadLocal<LivingEntity> BASE_MODEL_SUBMIT_ENTITY = new ThreadLocal<>();
-    private static final Map<SubmitNodeStorage.ModelSubmit<?>, LivingEntity> BASE_MODEL_SUBMITS =
-            new IdentityHashMap<>();
 
     // To cfg? Tests
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
@@ -51,7 +43,6 @@ public final class ModelContactSnapshotCache {
         if (client.level != null) {
             STORE.prune(client.level.getGameTime());
         }
-        BASE_MODEL_SUBMITS.clear();
 
         frameIndex++;
     }
@@ -64,8 +55,6 @@ public final class ModelContactSnapshotCache {
         STORE.clear();
         POLICY.clear();
         ACTIVE_SESSION.remove();
-        BASE_MODEL_SUBMIT_ENTITY.remove();
-        BASE_MODEL_SUBMITS.clear();
         activeLevel = null;
         frameIndex = 0L;
     }
@@ -167,34 +156,6 @@ public final class ModelContactSnapshotCache {
         return entity.level().getGameTime() - snapshot.gameTime() <= MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS;
     }
 
-    public static void beginBaseModelSubmit(LivingEntity entity) {
-        BASE_MODEL_SUBMIT_ENTITY.set(entity);
-    }
-
-    public static void finishBaseModelSubmit() {
-        BASE_MODEL_SUBMIT_ENTITY.remove();
-    }
-
-    public static void markSubmittedBaseModel(
-            RenderType renderType,
-            SubmitNodeStorage.ModelSubmit<?> modelSubmit
-    ) {
-        if (!ModelContactRenderTypes.shouldCapture(renderType)) {
-            return;
-        }
-
-        LivingEntity entity = BASE_MODEL_SUBMIT_ENTITY.get();
-        if (entity == null) {
-            return;
-        }
-        BASE_MODEL_SUBMITS.put(modelSubmit, entity);
-    }
-
-    public static boolean tryBeginSubmittedBaseModelCapture(SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
-        LivingEntity entity = BASE_MODEL_SUBMITS.remove(modelSubmit);
-        return entity != null && tryBeginLivingCapture(entity);
-    }
-
     public static void captureModelGeometry(
             Model<?> model,
             PoseStack poseStack,
@@ -292,7 +253,7 @@ public final class ModelContactSnapshotCache {
             }
         }
 
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.mainCamera().position();
         ACTIVE_SESSION.set(new ModelContactCaptureSession(
                 entityId,
                 entity.level().getGameTime(),

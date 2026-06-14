@@ -320,7 +320,7 @@ public class SIConfigScreen extends Screen {
 
     private void closeToParent() {
         context.notifyOnCloseListeners();
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     private ProfilesSession createSession() {

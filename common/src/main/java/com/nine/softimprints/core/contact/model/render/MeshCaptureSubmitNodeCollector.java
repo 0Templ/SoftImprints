@@ -9,13 +9,14 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.MovingBlockRenderState;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.network.chat.Component;
@@ -23,6 +24,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Quaternionf;
 
 import java.util.List;
@@ -57,7 +59,6 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             Component text,
             boolean seeThrough,
             int lightCoords,
-            double distanceToCameraSq,
             CameraRenderState cameraRenderState
     ) {
     }
@@ -122,8 +123,6 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             int packedLight,
             int packedOverlay,
             TextureAtlasSprite textureAtlasSprite,
-            boolean renderWithPose,
-            boolean useTextureAtlas,
             int color,
             ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
             int outlineColor
@@ -133,7 +132,8 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     @Override
     public void submitMovingBlock(
             PoseStack poseStack,
-            MovingBlockRenderState movingBlockRenderState
+            MovingBlockRenderState movingBlockRenderState,
+            int outlineColor
     ) {
     }
 
@@ -152,9 +152,19 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     @Override
     public void submitBreakingBlockModel(
             PoseStack poseStack,
-            BlockStateModel blockStateModel,
-            long seed,
-            int packedOverlay
+            List<BlockStateModelPart> parts,
+            int progress
+    ) {
+    }
+
+    @Override
+    public void submitShapeOutline(
+            PoseStack poseStack,
+            VoxelShape shape,
+            RenderType renderType,
+            int color,
+            float width,
+            boolean afterTerrain
     ) {
     }
 
@@ -180,6 +190,14 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     }
 
     @Override
-    public void submitParticleGroup(SubmitNodeCollector.ParticleGroupRenderer particleGroupRenderer) {
+    public void submitQuadParticleGroup(QuadParticleRenderState particles) {
+    }
+
+    @Override
+    public void submitGizmoPrimitives(
+            DrawableGizmoPrimitives.Group group,
+            CameraRenderState camera,
+            boolean onTop
+    ) {
     }
 }

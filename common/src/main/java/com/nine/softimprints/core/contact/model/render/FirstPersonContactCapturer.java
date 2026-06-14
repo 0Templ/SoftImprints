@@ -29,12 +29,12 @@ public final class FirstPersonContactCapturer {
         }
 
         EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
-        CameraRenderState cameraRenderState = client.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        CameraRenderState cameraRenderState = client.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
         if (!cameraRenderState.initialized) {
             return;
         }
 
-        Vec3 cameraPos = client.gameRenderer.getMainCamera().position();
+        Vec3 cameraPos = client.gameRenderer.mainCamera().position();
         double renderX = Mth.lerp(partialTick, player.xo, player.getX()) - cameraPos.x;
         double renderY = Mth.lerp(partialTick, player.yo, player.getY()) - cameraPos.y;
         double renderZ = Mth.lerp(partialTick, player.zo, player.getZ()) - cameraPos.z;

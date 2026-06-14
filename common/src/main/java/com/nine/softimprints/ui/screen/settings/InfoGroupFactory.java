@@ -24,13 +24,13 @@ public class InfoGroupFactory implements SettingsGroupFactory {
 
     public static void openLinkPrompt(String url) {
         Minecraft minecraft = Minecraft.getInstance();
-        Screen previous = minecraft.screen;
-        minecraft.setScreen(new ConfirmLinkScreen(
+        Screen previous = minecraft.gui.screen();
+        minecraft.gui.setScreen(new ConfirmLinkScreen(
                 confirmed -> {
                     if (confirmed) {
                         Util.getPlatform().openUri(url);
                     }
-                    minecraft.setScreen(previous);
+                    minecraft.gui.setScreen(previous);
                 },
                 url,
                 true

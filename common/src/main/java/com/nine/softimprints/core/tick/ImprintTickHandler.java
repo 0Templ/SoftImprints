@@ -78,7 +78,7 @@ public class ImprintTickHandler {
             return;
         }
         dirtySections.forEach(section ->
-                client.levelRenderer.setSectionDirty(
+                client.levelExtractor.setSectionDirty(
                         SectionPos.x(section),
                         SectionPos.y(section),
                         SectionPos.z(section)

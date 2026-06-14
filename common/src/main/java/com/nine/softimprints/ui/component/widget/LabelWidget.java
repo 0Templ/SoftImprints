@@ -185,13 +185,13 @@ public class LabelWidget extends AbstractWidget {
 
     private static void openLink(URI uri) {
         Minecraft minecraft = Minecraft.getInstance();
-        Screen previous = minecraft.screen;
-        minecraft.setScreen(new ConfirmLinkScreen(
+        Screen previous = minecraft.gui.screen();
+        minecraft.gui.setScreen(new ConfirmLinkScreen(
                 confirmed -> {
                     if (confirmed) {
                         Util.getPlatform().openUri(uri);
                     }
-                    minecraft.setScreen(previous);
+                    minecraft.gui.setScreen(previous);
                 },
                 uri.toString(),
                 true
