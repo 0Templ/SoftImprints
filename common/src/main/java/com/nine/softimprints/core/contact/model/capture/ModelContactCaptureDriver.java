@@ -22,6 +22,32 @@ public final class ModelContactCaptureDriver {
 
     private final Int2ObjectOpenHashMap<CaptureState> states = new Int2ObjectOpenHashMap<>();
 
+    private static boolean isTurnHard(MotionFrame frame) {
+        if (!(frame.entity() instanceof LivingEntity)) {
+            return false;
+        }
+        double deltaRadians = Math.abs(
+                Math.toRadians(Mth.wrapDegrees(frame.curBodyYaw() - frame.prevBodyYaw()))
+        );
+        return deltaRadians > TURN_EDGE_RADIANS;
+    }
+
+    private static ModelContactCaptureMode resolveMode(
+            MotionFrame frame,
+            CaptureState state
+    ) {
+        boolean airborne = !frame.curOnGround();
+        if (airborne) {
+            state.oftenHoldTicks = OFTEN_HOLD_TICKS;
+            return OFTEN;
+        }
+        if (state.oftenHoldTicks > 0) {
+            state.oftenHoldTicks--;
+            return OFTEN;
+        }
+        return ModelContactCaptureMode.DEFAULT;
+    }
+
     public void clear() {
         this.states.clear();
     }
@@ -83,29 +109,6 @@ public final class ModelContactCaptureDriver {
             ModelContactSnapshotCache.setCaptureMode(id, mode);
             state.lastPublishedMode = mode;
         }
-    }
-
-    private static boolean isTurnHard(MotionFrame frame) {
-        if (!(frame.entity() instanceof LivingEntity)) {
-            return false;
-        }
-        double deltaRadians = Math.abs(
-                Math.toRadians( Mth.wrapDegrees(frame.curBodyYaw() - frame.prevBodyYaw()))
-        );
-        return deltaRadians > TURN_EDGE_RADIANS;
-    }
-
-    private static ModelContactCaptureMode resolveMode(MotionFrame frame, CaptureState state) {
-        boolean airborne = !frame.curOnGround();
-        if (airborne) {
-            state.oftenHoldTicks = OFTEN_HOLD_TICKS;
-            return OFTEN;
-        }
-        if (state.oftenHoldTicks > 0) {
-            state.oftenHoldTicks--;
-            return OFTEN;
-        }
-        return ModelContactCaptureMode.DEFAULT;
     }
 
     private static final class CaptureState {

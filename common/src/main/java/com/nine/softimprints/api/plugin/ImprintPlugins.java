@@ -19,7 +19,7 @@ public class ImprintPlugins {
         return REGISTRAR;
     }
 
-    public static Map<Block, List<ProfileResolverEntry>> profileResolvers(){
+    public static Map<Block, List<ProfileResolverEntry>> profileResolvers() {
         Map<Block, List<ProfileResolverEntry>> snap = new HashMap<>();
         for (var entry : profileResolvers.entrySet()) {
             snap.put(entry.getKey(), List.copyOf(entry.getValue()));

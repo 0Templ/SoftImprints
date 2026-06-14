@@ -15,7 +15,10 @@ import java.util.Map;
 
 public class ProfilesSaver {
 
-    public static void save(Identifier id, ImprintProfile draft) {
+    public static void save(
+            Identifier id,
+            ImprintProfile draft
+    ) {
         JsonProfile builtinJson = ImprintProfiles.getBuiltInJson(id);
         if (builtinJson == null) {
             SICommon.LOGGER.error("Cannot save override for unknown profile {}", id);

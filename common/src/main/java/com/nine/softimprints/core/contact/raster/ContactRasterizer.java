@@ -7,7 +7,10 @@ import net.minecraft.util.Mth;
 public class ContactRasterizer {
 
 
-    public static ContactRaster rasterize(CompositeContactShape shape, int size) {
+    public static ContactRaster rasterize(
+            CompositeContactShape shape,
+            int size
+    ) {
         double cellSize = 1.0D / size;
 
         ContactBounds bounds = shape.bounds();

@@ -13,10 +13,6 @@ public enum EntityTargetFilterMode {
         this.id = id;
     }
 
-    public String id() {
-        return id;
-    }
-
     public static EntityTargetFilterMode fromId(String id) {
         if (id == null) {
             return BLACKLIST;
@@ -28,5 +24,9 @@ public enum EntityTargetFilterMode {
             }
         }
         return BLACKLIST;
+    }
+
+    public String id() {
+        return id;
     }
 }

@@ -51,7 +51,10 @@ public final class GroupBuilder {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text));
     }
 
-    public GroupBuilder section(Component text, Component tooltip) {
+    public GroupBuilder section(
+            Component text,
+            Component tooltip
+    ) {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text, tooltip));
     }
 
@@ -68,7 +71,7 @@ public final class GroupBuilder {
     public GroupBuilder issueDetails(InvalidProfileEntry invalidEntry) {
         var issue = invalidEntry.issue();
         var ret = label(issue.title());
-        for (var detail : issue.details()){
+        for (var detail : issue.details()) {
             label(detail);
         }
         label(Component.translatable("imprint_profile.issue.source", invalidEntry.source().path()));
@@ -79,19 +82,33 @@ public final class GroupBuilder {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text));
     }
 
-    public GroupBuilder label(Component text, Runnable onClickAction) {
+    public GroupBuilder label(
+            Component text,
+            Runnable onClickAction
+    ) {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text, onClickAction));
     }
 
-    public GroupBuilder label(Component text, int textColor, int textColorHovered) {
+    public GroupBuilder label(
+            Component text,
+            int textColor,
+            int textColorHovered
+    ) {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text, textColor, textColorHovered));
     }
 
-    public GroupBuilder label(Component text, Component tooltip) {
+    public GroupBuilder label(
+            Component text,
+            Component tooltip
+    ) {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text, tooltip));
     }
 
-    public GroupBuilder label(Component text, Component tooltip, Runnable onClickAction) {
+    public GroupBuilder label(
+            Component text,
+            Component tooltip,
+            Runnable onClickAction
+    ) {
         return add(new LabelEntry(DEFAULT_LABEL_GAP, text, tooltip, onClickAction));
     }
 
@@ -99,31 +116,55 @@ public final class GroupBuilder {
         return add(LabelEntry.singleLine(DEFAULT_LABEL_GAP, text));
     }
 
-    public GroupBuilder singleLineLabel(Component text, Runnable onClickAction) {
+    public GroupBuilder singleLineLabel(
+            Component text,
+            Runnable onClickAction
+    ) {
         return add(LabelEntry.singleLine(DEFAULT_LABEL_GAP, text, null, onClickAction));
     }
 
-    public GroupBuilder singleLineLabel(Component text, Component tooltip) {
+    public GroupBuilder singleLineLabel(
+            Component text,
+            Component tooltip
+    ) {
         return add(LabelEntry.singleLine(DEFAULT_LABEL_GAP, text, tooltip));
     }
 
-    public GroupBuilder singleLineLabel(Component text, Component tooltip, Runnable onClickAction) {
+    public GroupBuilder singleLineLabel(
+            Component text,
+            Component tooltip,
+            Runnable onClickAction
+    ) {
         return add(LabelEntry.singleLine(DEFAULT_LABEL_GAP, text, tooltip, onClickAction));
     }
 
-    public GroupBuilder linkLabel(Component text, URI uri) {
+    public GroupBuilder linkLabel(
+            Component text,
+            URI uri
+    ) {
         return label(text, LabelEntry.openLinkAction(uri));
     }
 
-    public GroupBuilder linkLabel(Component text, Component tooltip, URI uri) {
+    public GroupBuilder linkLabel(
+            Component text,
+            Component tooltip,
+            URI uri
+    ) {
         return label(text, tooltip, LabelEntry.openLinkAction(uri));
     }
 
-    public GroupBuilder singleLineLinkLabel(Component text, URI uri) {
+    public GroupBuilder singleLineLinkLabel(
+            Component text,
+            URI uri
+    ) {
         return singleLineLabel(text, LabelEntry.openLinkAction(uri));
     }
 
-    public GroupBuilder singleLineLinkLabel(Component text, Component tooltip, URI uri) {
+    public GroupBuilder singleLineLinkLabel(
+            Component text,
+            Component tooltip,
+            URI uri
+    ) {
         return singleLineLabel(text, tooltip, LabelEntry.openLinkAction(uri));
     }
 
@@ -143,7 +184,10 @@ public final class GroupBuilder {
         return add(new RowListEntry(rowHeight, ROW_INNER_GAP, List.of(items)));
     }
 
-    public GroupBuilder rowLabels(Font font, LabelWidget... labels) {
+    public GroupBuilder rowLabels(
+            Font font,
+            LabelWidget... labels
+    ) {
 
         List<RowItem> items = new ArrayList<>();
         items.add(RowItem.space(1));

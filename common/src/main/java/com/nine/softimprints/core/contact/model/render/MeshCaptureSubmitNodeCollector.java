@@ -42,25 +42,54 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     }
 
     @Override
-    public void submitShadow(PoseStack poseStack, float shadowRadius, List<EntityRenderState.ShadowPiece> shadowPieces) {
+    public void submitShadow(
+            PoseStack poseStack,
+            float shadowRadius,
+            List<EntityRenderState.ShadowPiece> shadowPieces
+    ) {
     }
 
     @Override
-    public void submitNameTag(PoseStack poseStack, Vec3 offset, int order, Component text, boolean seeThrough,
-                              int lightCoords, double distanceToCameraSq, CameraRenderState cameraRenderState) {
+    public void submitNameTag(
+            PoseStack poseStack,
+            Vec3 offset,
+            int order,
+            Component text,
+            boolean seeThrough,
+            int lightCoords,
+            double distanceToCameraSq,
+            CameraRenderState cameraRenderState
+    ) {
     }
 
     @Override
-    public void submitText(PoseStack poseStack, float x, float y, FormattedCharSequence text, boolean dropShadow,
-                           Font.DisplayMode displayMode, int backgroundColor, int color, int light, int order) {
+    public void submitText(
+            PoseStack poseStack,
+            float x,
+            float y,
+            FormattedCharSequence text,
+            boolean dropShadow,
+            Font.DisplayMode displayMode,
+            int backgroundColor,
+            int color,
+            int light,
+            int order
+    ) {
     }
 
     @Override
-    public void submitFlame(PoseStack poseStack, EntityRenderState renderState, Quaternionf orientation) {
+    public void submitFlame(
+            PoseStack poseStack,
+            EntityRenderState renderState,
+            Quaternionf orientation
+    ) {
     }
 
     @Override
-    public void submitLeash(PoseStack poseStack, EntityRenderState.LeashState leashState) {
+    public void submitLeash(
+            PoseStack poseStack,
+            EntityRenderState.LeashState leashState
+    ) {
     }
 
     @Override
@@ -86,34 +115,68 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     }
 
     @Override
-    public void submitModelPart(ModelPart modelPart, PoseStack poseStack, RenderType renderType, int packedLight,
-                                int packedOverlay, TextureAtlasSprite textureAtlasSprite, boolean renderWithPose,
-                                boolean useTextureAtlas, int color,
-                                ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, int outlineColor) {
+    public void submitModelPart(
+            ModelPart modelPart,
+            PoseStack poseStack,
+            RenderType renderType,
+            int packedLight,
+            int packedOverlay,
+            TextureAtlasSprite textureAtlasSprite,
+            boolean renderWithPose,
+            boolean useTextureAtlas,
+            int color,
+            ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
+            int outlineColor
+    ) {
     }
 
     @Override
-    public void submitMovingBlock(PoseStack poseStack, MovingBlockRenderState movingBlockRenderState) {
+    public void submitMovingBlock(
+            PoseStack poseStack,
+            MovingBlockRenderState movingBlockRenderState
+    ) {
     }
 
     @Override
-    public void submitBlockModel(PoseStack poseStack, RenderType renderType, List<BlockStateModelPart> modelParts,
-                                 int[] tints, int packedLight, int packedOverlay, int color) {
+    public void submitBlockModel(
+            PoseStack poseStack,
+            RenderType renderType,
+            List<BlockStateModelPart> modelParts,
+            int[] tints,
+            int packedLight,
+            int packedOverlay,
+            int color
+    ) {
     }
 
     @Override
-    public void submitBreakingBlockModel(PoseStack poseStack, BlockStateModel blockStateModel, long seed,
-                                         int packedOverlay) {
+    public void submitBreakingBlockModel(
+            PoseStack poseStack,
+            BlockStateModel blockStateModel,
+            long seed,
+            int packedOverlay
+    ) {
     }
 
     @Override
-    public void submitItem(PoseStack poseStack, ItemDisplayContext displayContext, int packedLight, int packedOverlay,
-                           int color, int[] tints, List<BakedQuad> quads, ItemStackRenderState.FoilType foilType) {
+    public void submitItem(
+            PoseStack poseStack,
+            ItemDisplayContext displayContext,
+            int packedLight,
+            int packedOverlay,
+            int color,
+            int[] tints,
+            List<BakedQuad> quads,
+            ItemStackRenderState.FoilType foilType
+    ) {
     }
 
     @Override
-    public void submitCustomGeometry(PoseStack poseStack, RenderType renderType,
-                                     SubmitNodeCollector.CustomGeometryRenderer customGeometryRenderer) {
+    public void submitCustomGeometry(
+            PoseStack poseStack,
+            RenderType renderType,
+            SubmitNodeCollector.CustomGeometryRenderer customGeometryRenderer
+    ) {
     }
 
     @Override

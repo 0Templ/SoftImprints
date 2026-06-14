@@ -18,7 +18,12 @@ public abstract class EntityRendererMixin {
             require = 1,
             allow = 1
     )
-    private void softimprints$invalidateStaleRenderState(LivingEntity entity, LivingEntityRenderState renderState, float partialTicks, CallbackInfo ci) {
+    private void softimprints$invalidateStaleRenderState(
+            LivingEntity entity,
+            LivingEntityRenderState renderState,
+            float partialTicks,
+            CallbackInfo ci
+    ) {
         ModelContactRenderStateBridge bridge = (ModelContactRenderStateBridge) renderState;
         if (bridge.softimprints$getEntity() != null && bridge.softimprints$getEntity() != entity) {
             bridge.softimprints$setEntity(null);
@@ -31,7 +36,12 @@ public abstract class EntityRendererMixin {
             require = 1,
             allow = 1
     )
-    private void softimprints$attachEntityToRenderState(LivingEntity entity, LivingEntityRenderState renderState, float partialTicks, CallbackInfo ci) {
+    private void softimprints$attachEntityToRenderState(
+            LivingEntity entity,
+            LivingEntityRenderState renderState,
+            float partialTicks,
+            CallbackInfo ci
+    ) {
         ModelContactRenderStateBridge bridge = (ModelContactRenderStateBridge) renderState;
         bridge.softimprints$setEntity(entity);
     }

@@ -27,7 +27,7 @@ publishMods {
     type = project.version_type
     displayName = "[${project.loader_display}]${project.mod_display_name}-${project.mc_display_version}-${project.version.toString()}"
 
-    csv(project.loaders).each {String id ->
+    csv(project.loaders).each { String id ->
         modLoaders.add(id)
     }
 
@@ -36,7 +36,7 @@ publishMods {
         projectId = curseforge_id
         client = true
         server = false
-        csv(project.publish_game_versions).each {String v ->
+        csv(project.publish_game_versions).each { String v ->
             minecraftVersions.add(v)
         }
     }
@@ -44,7 +44,7 @@ publishMods {
     modrinth {
         accessToken = System.getenv("MODRINTH_TOKEN") ?: project.findProperty("MODRINTH_TOKEN")
         projectId = modrinth_id
-        csv(project.publish_game_versions).each {String v ->
+        csv(project.publish_game_versions).each { String v ->
             minecraftVersions.add(v)
         }
     }

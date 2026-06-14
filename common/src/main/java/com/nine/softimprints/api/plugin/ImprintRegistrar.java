@@ -7,9 +7,15 @@ import java.util.Collection;
 
 public interface ImprintRegistrar {
 
-    void registerResolver(Block block, ProfileResolverEntry resolver);
+    void registerResolver(
+            Block block,
+            ProfileResolverEntry resolver
+    );
 
-    default void registerResolver(Collection<Block> blocks, ProfileResolverEntry resolver) {
+    default void registerResolver(
+            Collection<Block> blocks,
+            ProfileResolverEntry resolver
+    ) {
         blocks.forEach(block -> registerResolver(block, resolver));
     }
 

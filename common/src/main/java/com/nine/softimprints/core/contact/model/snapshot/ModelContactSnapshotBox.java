@@ -15,51 +15,22 @@ public record ModelContactSnapshotBox(
 
     private static final double MIN_MESH_EXTENT = 1.0E-4D;
 
-    public ModelContactSnapshotBox rotateAroundY(double radians) {
-        if (Math.abs(radians) <= EPSILON) {
-            return this;
-        }
-        double cos = Math.cos(radians);
-        double sin = Math.sin(radians);
-
-        double rotatedCenterX = rotateX(this.centerX, this.centerZ, cos, sin);
-        double rotatedCenterZ = rotateZ(this.centerX, this.centerZ, cos, sin);
-
-        double rotatedAxisXx = rotateX(this.axisXx, this.axisXz, cos, sin);
-        double rotatedAxisXz = rotateZ(this.axisXx, this.axisXz, cos, sin);
-        double rotatedAxisYx = rotateX(this.axisYx, this.axisYz, cos, sin);
-        double rotatedAxisYz = rotateZ(this.axisYx, this.axisYz, cos, sin);
-        double rotatedAxisZx = rotateX(this.axisZx, this.axisZz, cos, sin);
-        double rotatedAxisZz = rotateZ(this.axisZx, this.axisZz, cos, sin);
-
-        double radiusX = Math.abs(rotatedAxisXx) * this.extentX
-                + Math.abs(rotatedAxisYx) * this.extentY
-                + Math.abs(rotatedAxisZx) * this.extentZ;
-        double radiusY = Math.abs(this.axisXy) * this.extentX
-                + Math.abs(this.axisYy) * this.extentY
-                + Math.abs(this.axisZy) * this.extentZ;
-        double radiusZ = Math.abs(rotatedAxisXz) * this.extentX
-                + Math.abs(rotatedAxisYz) * this.extentY
-                + Math.abs(rotatedAxisZz) * this.extentZ;
-
-        return new ModelContactSnapshotBox(
-                rotatedCenterX, this.centerY, rotatedCenterZ,
-                rotatedAxisXx, this.axisXy, rotatedAxisXz,
-                rotatedAxisYx, this.axisYy, rotatedAxisYz,
-                rotatedAxisZx, this.axisZy, rotatedAxisZz,
-                this.extentX, this.extentY, this.extentZ,
-                rotatedCenterX - radiusX, rotatedCenterX + radiusX,
-                this.centerY - radiusY, this.centerY + radiusY,
-                rotatedCenterZ - radiusZ, rotatedCenterZ + radiusZ
-        );
-    }
-
     public static ModelContactSnapshotBox fromObb(
-            double centerX, double centerY, double centerZ,
-            double colXx, double colXy, double colXz,
-            double colYx, double colYy, double colYz,
-            double colZx, double colZy, double colZz,
-            double halfX, double halfY, double halfZ
+            double centerX,
+            double centerY,
+            double centerZ,
+            double colXx,
+            double colXy,
+            double colXz,
+            double colYx,
+            double colYy,
+            double colYz,
+            double colZx,
+            double colZy,
+            double colZz,
+            double halfX,
+            double halfY,
+            double halfZ
     ) {
         if (!allFinite(
                 centerX, centerY, centerZ,
@@ -115,10 +86,18 @@ public record ModelContactSnapshotBox(
     }
 
     public static ModelContactSnapshotBox fromQuad(
-            double x0, double y0, double z0,
-            double x1, double y1, double z1,
-            double x2, double y2, double z2,
-            double x3, double y3, double z3
+            double x0,
+            double y0,
+            double z0,
+            double x1,
+            double y1,
+            double z1,
+            double x2,
+            double y2,
+            double z2,
+            double x3,
+            double y3,
+            double z3
     ) {
         if (!allFinite(
                 x0, y0, z0,
@@ -227,6 +206,109 @@ public record ModelContactSnapshotBox(
         );
     }
 
+    private static boolean allFinite(double... values) {
+        for (double value : values) {
+            if (!Double.isFinite(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static double length(
+            double x,
+            double y,
+            double z
+    ) {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
+
+    private static double dot(
+            double ax,
+            double ay,
+            double az,
+            double bx,
+            double by,
+            double bz
+    ) {
+        return ax * bx + ay * by + az * bz;
+    }
+
+    private static double min4(
+            double a,
+            double b,
+            double c,
+            double d
+    ) {
+        return Math.min(Math.min(a, b), Math.min(c, d));
+    }
+
+    private static double max4(
+            double a,
+            double b,
+            double c,
+            double d
+    ) {
+        return Math.max(Math.max(a, b), Math.max(c, d));
+    }
+
+    private static double rotateX(
+            double x,
+            double z,
+            double cos,
+            double sin
+    ) {
+        return x * cos + z * sin;
+    }
+
+    private static double rotateZ(
+            double x,
+            double z,
+            double cos,
+            double sin
+    ) {
+        return z * cos - x * sin;
+    }
+
+    public ModelContactSnapshotBox rotateAroundY(double radians) {
+        if (Math.abs(radians) <= EPSILON) {
+            return this;
+        }
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+
+        double rotatedCenterX = rotateX(this.centerX, this.centerZ, cos, sin);
+        double rotatedCenterZ = rotateZ(this.centerX, this.centerZ, cos, sin);
+
+        double rotatedAxisXx = rotateX(this.axisXx, this.axisXz, cos, sin);
+        double rotatedAxisXz = rotateZ(this.axisXx, this.axisXz, cos, sin);
+        double rotatedAxisYx = rotateX(this.axisYx, this.axisYz, cos, sin);
+        double rotatedAxisYz = rotateZ(this.axisYx, this.axisYz, cos, sin);
+        double rotatedAxisZx = rotateX(this.axisZx, this.axisZz, cos, sin);
+        double rotatedAxisZz = rotateZ(this.axisZx, this.axisZz, cos, sin);
+
+        double radiusX = Math.abs(rotatedAxisXx) * this.extentX
+                + Math.abs(rotatedAxisYx) * this.extentY
+                + Math.abs(rotatedAxisZx) * this.extentZ;
+        double radiusY = Math.abs(this.axisXy) * this.extentX
+                + Math.abs(this.axisYy) * this.extentY
+                + Math.abs(this.axisZy) * this.extentZ;
+        double radiusZ = Math.abs(rotatedAxisXz) * this.extentX
+                + Math.abs(rotatedAxisYz) * this.extentY
+                + Math.abs(rotatedAxisZz) * this.extentZ;
+
+        return new ModelContactSnapshotBox(
+                rotatedCenterX, this.centerY, rotatedCenterZ,
+                rotatedAxisXx, this.axisXy, rotatedAxisXz,
+                rotatedAxisYx, this.axisYy, rotatedAxisYz,
+                rotatedAxisZx, this.axisZy, rotatedAxisZz,
+                this.extentX, this.extentY, this.extentZ,
+                rotatedCenterX - radiusX, rotatedCenterX + radiusX,
+                this.centerY - radiusY, this.centerY + radiusY,
+                rotatedCenterZ - radiusZ, rotatedCenterZ + radiusZ
+        );
+    }
+
     public boolean intersectsAabb(
             double boxMinX,
             double boxMinY,
@@ -326,42 +408,6 @@ public record ModelContactSnapshotBox(
             return false;
         }
         return Math.abs(ty * r02 - tx * r12) <= ax * ar12 + ay * ar02 + bx * ar21 + by * ar20;
-    }
-
-    private static boolean allFinite(double... values) {
-        for (double value : values) {
-            if (!Double.isFinite(value)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static double length(double x, double y, double z) {
-        return Math.sqrt(x * x + y * y + z * z);
-    }
-
-    private static double dot(
-            double ax, double ay, double az,
-            double bx, double by, double bz
-    ) {
-        return ax * bx + ay * by + az * bz;
-    }
-
-    private static double min4(double a, double b, double c, double d) {
-        return Math.min(Math.min(a, b), Math.min(c, d));
-    }
-
-    private static double max4(double a, double b, double c, double d) {
-        return Math.max(Math.max(a, b), Math.max(c, d));
-    }
-
-    private static double rotateX(double x, double z, double cos, double sin) {
-        return x * cos + z * sin;
-    }
-
-    private static double rotateZ(double x, double z, double cos, double sin) {
-        return z * cos - x * sin;
     }
 
 }

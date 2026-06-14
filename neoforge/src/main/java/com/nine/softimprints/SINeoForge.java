@@ -10,7 +10,11 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Mod(SICommon.MODID)
 public class SINeoForge {
 
-    public SINeoForge(IEventBus modEventBus, Dist dist, ModContainer container) {
+    public SINeoForge(
+            IEventBus modEventBus,
+            Dist dist,
+            ModContainer container
+    ) {
         SICommon.init();
 
         if (dist.isClient()) bindConfigScreen(container);
@@ -20,7 +24,6 @@ public class SINeoForge {
         container.registerExtensionPoint(IConfigScreenFactory.class,
                 (modContainer, parent) -> new SIConfigScreen(parent));
     }
-
 
 
 }

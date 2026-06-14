@@ -69,7 +69,13 @@ public final class StampGenerator {
         );
     }
 
-    private static void applyMask(byte[] mask, boolean[] coverage, int width, int height, byte value) {
+    private static void applyMask(
+            byte[] mask,
+            boolean[] coverage,
+            int width,
+            int height,
+            byte value
+    ) {
         for (int i = 0; i < width * height; i++) {
             if (!coverage[i]) continue;
             mask[i] = value;
@@ -113,7 +119,12 @@ public final class StampGenerator {
         }
     }
 
-    private static LayerStep unionPaintWith(LayerStep step, boolean[] coverage, int width, int height) {
+    private static LayerStep unionPaintWith(
+            LayerStep step,
+            boolean[] coverage,
+            int width,
+            int height
+    ) {
         boolean[] paint = step.paint().clone();
         for (int i = 0; i < width * height; i++) {
             if (coverage[i]) paint[i] = true;
@@ -189,7 +200,13 @@ public final class StampGenerator {
         return new LayerStep(step.body(), step.cleanBody(), paint);
     }
 
-    private static boolean hasNeighbor(boolean[] body, int width, int height, int x, int y) {
+    private static boolean hasNeighbor(
+            boolean[] body,
+            int width,
+            int height,
+            int x,
+            int y
+    ) {
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
                 if (dx == 0 && dy == 0) continue;
@@ -202,7 +219,13 @@ public final class StampGenerator {
         return false;
     }
 
-    private static double edgeExposure(boolean[] body, int width, int height, int x, int y) {
+    private static double edgeExposure(
+            boolean[] body,
+            int width,
+            int height,
+            int x,
+            int y
+    ) {
         int openSides = 0;
         if (!isFilled(body, width, height, x - 1, y)) openSides++;
         if (!isFilled(body, width, height, x + 1, y)) openSides++;
@@ -211,20 +234,24 @@ public final class StampGenerator {
         return openSides / 4.0D;
     }
 
-    private static boolean isFilled(boolean[] body, int width, int height, int x, int y) {
+    private static boolean isFilled(
+            boolean[] body,
+            int width,
+            int height,
+            int x,
+            int y
+    ) {
         return x >= 0 && x < width
                 && y >= 0 && y < height
                 && body[y * width + x];
     }
 
-    private record LayerStep(boolean[] body, boolean[] cleanBody, boolean[] paint) {
-
-    }
-
     private static boolean[] embedExact(
             boolean[] mask,
-            int oldW, int oldH,
-            int w, int h,
+            int oldW,
+            int oldH,
+            int w,
+            int h,
             int padding
     ) {
         boolean[] ret = new boolean[w * h];
@@ -240,10 +267,14 @@ public final class StampGenerator {
 
     private static boolean[] embedEllipse(
             boolean[] mask,
-            int oldW, int oldH,
-            int w, int h,
+            int oldW,
+            int oldH,
+            int w,
+            int h,
             int padding,
-            double scaleX, double scaleZ, double angleDeg
+            double scaleX,
+            double scaleZ,
+            double angleDeg
     ) {
         boolean[] ret = new boolean[w * h];
         double cx = (oldW - 1) / 2.0D;
@@ -273,7 +304,12 @@ public final class StampGenerator {
         return ret;
     }
 
-    private static LayerStep dilate(LayerStep step, int expand, int width, int height) {
+    private static LayerStep dilate(
+            LayerStep step,
+            int expand,
+            int width,
+            int height
+    ) {
         boolean[] paint = new boolean[width * height];
         if (expand <= 0) {
             return new LayerStep(step.body().clone(), step.cleanBody().clone(), paint);
@@ -316,7 +352,9 @@ public final class StampGenerator {
         return new LayerStep(body, cleanBody, paint);
     }
 
+    private record LayerStep(boolean[] body, boolean[] cleanBody, boolean[] paint) {
 
+    }
 
 
 }

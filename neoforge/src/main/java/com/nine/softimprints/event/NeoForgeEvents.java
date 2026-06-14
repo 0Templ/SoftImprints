@@ -37,6 +37,33 @@ public final class NeoForgeEvents {
     private NeoForgeEvents() {
     }
 
+    private static void wrapBlock(
+            ModelEvent.ModifyBakingResult event,
+            Block block
+    ) {
+        var models = event.getBakingResult().blockStateModels();
+        for (var state : block.getStateDefinition().getPossibleStates()) {
+            models.computeIfPresent(state, (ignored, original) -> wrap(original));
+        }
+    }
+
+    private static BlockStateModel wrap(BlockStateModel original) {
+        return wrap(original, null);
+    }
+
+    private static BlockStateModel wrap(
+            BlockStateModel original,
+            ProfileResolverEntry resolver
+    ) {
+        if (original instanceof NeoBaseNeoImprintableStateModel) {
+            return resolver == null
+                    ? original
+                    : ((NeoBaseNeoImprintableStateModel) original).withModelResolver(resolver);
+        }
+        NeoBaseNeoImprintableStateModel wrapped = new NeoBaseNeoImprintableStateModel(original);
+        return resolver == null ? wrapped : wrapped.withModelResolver(resolver);
+    }
+
     @EventBusSubscriber(modid = SICommon.MODID, value = Dist.CLIENT)
     public static final class ClientEvents {
 
@@ -117,27 +144,6 @@ public final class NeoForgeEvents {
                 SILifecycle.onChunkUnload(event.getChunk());
             }
         }
-    }
-
-    private static void wrapBlock(ModelEvent.ModifyBakingResult event, Block block) {
-        var models = event.getBakingResult().blockStateModels();
-        for (var state : block.getStateDefinition().getPossibleStates()) {
-            models.computeIfPresent(state, (ignored, original) -> wrap(original));
-        }
-    }
-
-    private static BlockStateModel wrap(BlockStateModel original) {
-        return wrap(original, null);
-    }
-
-    private static BlockStateModel wrap(BlockStateModel original, ProfileResolverEntry resolver) {
-        if (original instanceof NeoBaseNeoImprintableStateModel) {
-            return resolver == null
-                    ? original
-                    : ((NeoBaseNeoImprintableStateModel) original).withModelResolver(resolver);
-        }
-        NeoBaseNeoImprintableStateModel wrapped = new NeoBaseNeoImprintableStateModel(original);
-        return resolver == null ? wrapped : wrapped.withModelResolver(resolver);
     }
 
 }

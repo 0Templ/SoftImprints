@@ -27,21 +27,32 @@ public abstract class CompositeListEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         for (AbstractWidget widget : widgets) {
             widget.extractRenderState(graphics, mouseX, mouseY, partialTick);
         }
     }
 
     @Override
-    public void mouseMoved(double x, double y) {
+    public void mouseMoved(
+            double x,
+            double y
+    ) {
         for (AbstractWidget widget : widgets) {
             widget.mouseMoved(x, y);
         }
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         for (AbstractWidget widget : widgets) {
             if (widget.mouseClicked(event, doubleClick)) {
                 setFocusedWidget(widget);
@@ -64,12 +75,21 @@ public abstract class CompositeListEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    public boolean mouseDragged(
+            MouseButtonEvent event,
+            double dragX,
+            double dragY
+    ) {
         return activeMouseWidget != null && activeMouseWidget.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
+    public boolean mouseScrolled(
+            double x,
+            double y,
+            double scrollX,
+            double scrollY
+    ) {
         for (AbstractWidget widget : widgets) {
             if (widget.mouseScrolled(x, y, scrollX, scrollY)) {
                 return true;
@@ -113,6 +133,11 @@ public abstract class CompositeListEntry extends AbstractConfigListEntry {
     }
 
     @Override
+    public boolean isFocused() {
+        return focusedWidget != null && focusedWidget.isFocused();
+    }
+
+    @Override
     public void setFocused(boolean focused) {
         super.setFocused(focused);
 
@@ -123,11 +148,6 @@ public abstract class CompositeListEntry extends AbstractConfigListEntry {
         if (focused && focusedWidget == null && !widgets.isEmpty()) {
             setFocusedWidget(widgets.getFirst());
         }
-    }
-
-    @Override
-    public boolean isFocused() {
-        return focusedWidget != null && focusedWidget.isFocused();
     }
 
     @Override

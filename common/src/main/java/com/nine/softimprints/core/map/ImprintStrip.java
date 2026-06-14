@@ -7,11 +7,10 @@ public record ImprintStrip(int x0, int y0, int x1, byte value) {
     public ImprintStrip {
     }
 
-    public int length() {
-        return x1 - x0;
-    }
-
-    public static void consume(Consumer<ImprintStrip> output, IImprintMap map) {
+    public static void consume(
+            Consumer<ImprintStrip> output,
+            IImprintMap map
+    ) {
         int size = map.size();
         for (int y = 0; y < size; y++) {
             int stripStart = 0;
@@ -28,5 +27,9 @@ public record ImprintStrip(int x0, int y0, int x1, byte value) {
 
             output.accept(new ImprintStrip(stripStart, y, size, current));
         }
+    }
+
+    public int length() {
+        return x1 - x0;
     }
 }

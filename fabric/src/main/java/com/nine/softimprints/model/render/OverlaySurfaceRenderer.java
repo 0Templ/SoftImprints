@@ -3,7 +3,7 @@ package com.nine.softimprints.model.render;
 import com.nine.softimprints.core.map.ImprintStrip;
 import com.nine.softimprints.model.ModelUtils;
 
-public class OverlaySurfaceRenderer implements ImprintSurfaceRenderer{
+public class OverlaySurfaceRenderer implements ImprintSurfaceRenderer {
 
     private static final float SURFACE_OFFSET = 1.0F / 4096.0F;
 
@@ -34,8 +34,6 @@ public class OverlaySurfaceRenderer implements ImprintSurfaceRenderer{
         }, context.map());
 
     }
-
-
 
 
 }

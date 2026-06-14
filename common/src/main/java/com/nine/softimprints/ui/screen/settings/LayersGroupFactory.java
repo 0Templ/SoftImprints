@@ -25,60 +25,11 @@ import static com.nine.softimprints.ui.screen.settings.SettingsControls.doubleSl
 
 public class LayersGroupFactory implements SettingsGroupFactory {
 
-    @Override
-    public EditorGroup key() {
-        return EditorGroup.LAYERS;
-    }
-
-    @Override
-    public GroupZone zone() {
-        return GroupZone.MIDDLE;
-    }
-
-    @Override
-    public boolean rebuildOnProfileChange() {
-        return true;
-    }
-
-    @Override
-    public ListGroup build(GroupBuildContext context) {
-        EditorContext editor = context.editorContext();
-
-        GroupBuilder builder = GroupBuilder.of(label())
-                .spacer(3);
-
-        if (editor.currentEntry() instanceof InvalidProfileEntry entry){
-            builder.issueDetails(entry);
-            return builder.build();
-        }
-
-        var draft = context.editorContext().currentDraft();
-        if (draft == null) return builder.build();
-        var profile = draft.getDraft();
-
-        builder.widget(textureSetButton(context, profile.textureSets()));
-
-        if (SIConfig.General.DEBUG_MODE.get()){
-            addResolutionButtons(builder, context);
-        }
-
-        addLayerTypeButtons(builder, context, profile.surface());
-
-        builder.spacer(4);
-
-        for (ImprintLayer layer : profile.getLayers()) {
-            addLayerSection(builder, layer);
-            if (layer.value() == Constants.BASIC_LAYER_BYTE) {
-                addInitLayer(context, builder, layer);
-            } else {
-                addRegularLayer(context, builder, layer);
-            }
-        }
-
-        return builder.build();
-    }
-
-    private static void addInitLayer(GroupBuildContext context, GroupBuilder builder, ImprintLayer layer) {
+    private static void addInitLayer(
+            GroupBuildContext context,
+            GroupBuilder builder,
+            ImprintLayer layer
+    ) {
         builder.widget(expandSlider(context, layer));
         builder.rowWidgets(
                 layerSlider("config.softimprints.group.layers.outer_jitter", layer.outerJitter(), v ->
@@ -91,7 +42,11 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         builder.spacer(4);
     }
 
-    private static void addRegularLayer(GroupBuildContext context, GroupBuilder builder, ImprintLayer layer) {
+    private static void addRegularLayer(
+            GroupBuildContext context,
+            GroupBuilder builder,
+            ImprintLayer layer
+    ) {
         builder.widget(enableButton(context, layer));
         builder.rowWidgets(
                 expandSlider(context, layer),
@@ -110,11 +65,17 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         builder.spacer(4);
     }
 
-    private static void addLayerSection(GroupBuilder builder, ImprintLayer layer) {
+    private static void addLayerSection(
+            GroupBuilder builder,
+            ImprintLayer layer
+    ) {
         builder.section(Component.translatable("config.softimprints.group.layers.layer_section", layer.value()));
     }
 
-    private static Button textureSetButton(GroupBuildContext context, ImprintTextures textureSets) {
+    private static Button textureSetButton(
+            GroupBuildContext context,
+            ImprintTextures textureSets
+    ) {
         var currentId = context.editorContext().currentId();
         Button button = Button.builder(textureSetText(currentId, textureSets), b ->
                 context.editorContext().requireCurrentDraft().updateDraft(profile -> {
@@ -130,7 +91,10 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         return button;
     }
 
-    private static void addResolutionButtons(GroupBuilder builder, GroupBuildContext context) {
+    private static void addResolutionButtons(
+            GroupBuilder builder,
+            GroupBuildContext context
+    ) {
 
         var draftProfile = context.editorContext().requireCurrentDraft().getDraft();
         var currentRes = draftProfile.resolution();
@@ -154,14 +118,21 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         builder.widget(mapResSlider);
     }
 
-    private static Component textureSetText(Identifier currentProfile, ImprintTextures textureSets) {
+    private static Component textureSetText(
+            Identifier currentProfile,
+            ImprintTextures textureSets
+    ) {
         var setTrId = ("imprint_profile.") + currentProfile.toLanguageKey() + ("." + textureSets.selected());
         return Component.translatable("config.softimprints.group.layers.texture_set",
                 Component.translatable(setTrId)
         );
     }
 
-    private static void addLayerTypeButtons(GroupBuilder builder, GroupBuildContext context, SurfaceSettings surface) {
+    private static void addLayerTypeButtons(
+            GroupBuilder builder,
+            GroupBuildContext context,
+            SurfaceSettings surface
+    ) {
 
         var zeroLayerButton = Button.builder(zeroLayerSourceText(surface), b ->
                 context.editorContext().requireCurrentDraft().updateDraft(profile -> {
@@ -227,7 +198,10 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
-    private static ExtendedSlider expandSlider(GroupBuildContext context, ImprintLayer layer) {
+    private static ExtendedSlider expandSlider(
+            GroupBuildContext context,
+            ImprintLayer layer
+    ) {
         return applyTooltip(ExtendedSlider.builder("config.softimprints.group.layers.expand")
                 .bounds(0, 0, 1, 18)
                 .range(0, 8)
@@ -238,7 +212,10 @@ public class LayersGroupFactory implements SettingsGroupFactory {
                 )), Component.translatable("config.softimprints.group.layers.expand.tooltip"));
     }
 
-    private static Button enableButton(GroupBuildContext context, ImprintLayer layer) {
+    private static Button enableButton(
+            GroupBuildContext context,
+            ImprintLayer layer
+    ) {
         return Button.builder(
                 enabledText(layer.enable()),
                 b -> {
@@ -253,7 +230,11 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         return Component.translatable("config.softimprints.group.layers.layer_enabled", SIText.onOffState(enabled));
     }
 
-    private static ExtendedSlider layerSlider(String labelKey, double value, Consumer<Double> listener) {
+    private static ExtendedSlider layerSlider(
+            String labelKey,
+            double value,
+            Consumer<Double> listener
+    ) {
         return applyTooltip(
                 doubleSlider(labelKey, 0.0D, 1.0D, value, 0.01D, 2, listener),
                 Component.translatable(labelKey + ".tooltip")
@@ -272,9 +253,65 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
-    private static <T extends AbstractWidget> T applyTooltip(T widget, Component tooltip) {
+    private static <T extends AbstractWidget> T applyTooltip(
+            T widget,
+            Component tooltip
+    ) {
         widget.setTooltip(Tooltip.create(tooltip));
         return widget;
+    }
+
+    @Override
+    public EditorGroup key() {
+        return EditorGroup.LAYERS;
+    }
+
+    @Override
+    public GroupZone zone() {
+        return GroupZone.MIDDLE;
+    }
+
+    @Override
+    public boolean rebuildOnProfileChange() {
+        return true;
+    }
+
+    @Override
+    public ListGroup build(GroupBuildContext context) {
+        EditorContext editor = context.editorContext();
+
+        GroupBuilder builder = GroupBuilder.of(label())
+                .spacer(3);
+
+        if (editor.currentEntry() instanceof InvalidProfileEntry entry) {
+            builder.issueDetails(entry);
+            return builder.build();
+        }
+
+        var draft = context.editorContext().currentDraft();
+        if (draft == null) return builder.build();
+        var profile = draft.getDraft();
+
+        builder.widget(textureSetButton(context, profile.textureSets()));
+
+        if (SIConfig.General.DEBUG_MODE.get()) {
+            addResolutionButtons(builder, context);
+        }
+
+        addLayerTypeButtons(builder, context, profile.surface());
+
+        builder.spacer(4);
+
+        for (ImprintLayer layer : profile.getLayers()) {
+            addLayerSection(builder, layer);
+            if (layer.value() == Constants.BASIC_LAYER_BYTE) {
+                addInitLayer(context, builder, layer);
+            } else {
+                addRegularLayer(context, builder, layer);
+            }
+        }
+
+        return builder.build();
     }
 
 }

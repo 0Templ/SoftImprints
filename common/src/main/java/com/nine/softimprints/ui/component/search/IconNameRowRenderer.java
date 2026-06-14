@@ -14,21 +14,28 @@ public final class IconNameRowRenderer {
     private static final float SCROLL_SPEED = 12.0f;
     private static final long BOUNCE_PAUSE_MS = 1500L;
 
-    private IconNameRowRenderer() {}
+    private IconNameRowRenderer() {
+    }
 
     public static void render(
             GuiGraphicsExtractor graphics,
-            int x, int y, int width, int height,
-            int mouseX, int mouseY,
-            ItemStack iconStack, String name,
-            boolean hovered, boolean selected
+            int x,
+            int y,
+            int width,
+            int height,
+            int mouseX,
+            int mouseY,
+            ItemStack iconStack,
+            String name,
+            boolean hovered,
+            boolean selected
     ) {
         int iconY = y + (height - ICON_SIZE) / 2;
 
         int textX = x;
         int textWidth = width;
 
-        if (renderIcon(graphics, iconStack, x, iconY)){
+        if (renderIcon(graphics, iconStack, x, iconY)) {
             textX += ICON_SIZE + ICON_TEXT_GAP;
             textWidth -= (ICON_SIZE + ICON_TEXT_GAP);
         }
@@ -42,7 +49,12 @@ public final class IconNameRowRenderer {
         renderName(graphics, font, name, textX, textY, textWidth, y, height, textColor);
     }
 
-    private static boolean renderIcon(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y) {
+    private static boolean renderIcon(
+            GuiGraphicsExtractor graphics,
+            ItemStack stack,
+            int x,
+            int y
+    ) {
         if (!stack.isEmpty()) {
             try {
                 graphics.item(stack, x, y);
@@ -55,9 +67,13 @@ public final class IconNameRowRenderer {
 
     private static void renderName(
             GuiGraphicsExtractor graphics,
-            Font font, String name,
-            int textX, int textY, int textWidth,
-            int rowY, int rowHeight,
+            Font font,
+            String name,
+            int textX,
+            int textY,
+            int textWidth,
+            int rowY,
+            int rowHeight,
             int color
     ) {
         int nameWidth = font.width(name);
@@ -93,7 +109,10 @@ public final class IconNameRowRenderer {
         return overflow - (int) (elapsed * (long) overflow / scrollMs);
     }
 
-    private static int colorFor(boolean hovered, boolean selected) {
+    private static int colorFor(
+            boolean hovered,
+            boolean selected
+    ) {
         if (selected) return SIColors.WHITE;
         if (hovered) return SIColors.SOFT_SOFT_SOFT_GRAY;
         return SIColors.GRAY;

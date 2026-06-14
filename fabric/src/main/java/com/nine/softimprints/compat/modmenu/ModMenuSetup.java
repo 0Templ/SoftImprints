@@ -10,17 +10,17 @@ import java.util.Map;
 
 public class ModMenuSetup implements ModMenuApi {
 
-	@Override
-	public Map<String, UpdateChecker> getProvidedUpdateCheckers() {
-		return Map.of(
-				SICommon.MODID, new SIUpdateChecker()
-		);
-	}
+    @Override
+    public Map<String, UpdateChecker> getProvidedUpdateCheckers() {
+        return Map.of(
+                SICommon.MODID, new SIUpdateChecker()
+        );
+    }
 
-	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return SIConfigScreen::new;
-	}
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return SIConfigScreen::new;
+    }
 
 
 }

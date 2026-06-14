@@ -5,7 +5,6 @@ public enum GroupZone {
     MIDDLE,
     RIGHT,
     LEFT_BOT,
-    RIGHT_BOT
-
-    ,;
+    RIGHT_BOT,
+    ;
 }

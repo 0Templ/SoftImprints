@@ -26,12 +26,12 @@ public class SIFabricClient implements ClientModInitializer {
         registerBuiltinPacks();
     }
 
-        private void loadPlugins() {
-            ImprintPluginLoader.load(FabricLoader.getInstance()
-                    .getEntrypoints("softimprints", ImprintPlugin.class));
-        }
+    private void loadPlugins() {
+        ImprintPluginLoader.load(FabricLoader.getInstance()
+                .getEntrypoints("softimprints", ImprintPlugin.class));
+    }
 
-    private void registerResourceListener(){
+    private void registerResourceListener() {
         var loader = ResourceLoader.get(PackType.CLIENT_RESOURCES);
         var id = Identifier.fromNamespaceAndPath(SICommon.MODID, "imprint_profiles");
 

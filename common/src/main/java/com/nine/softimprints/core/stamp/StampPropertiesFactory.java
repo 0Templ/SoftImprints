@@ -5,7 +5,12 @@ import net.minecraft.world.entity.Entity;
 
 public class StampPropertiesFactory {
 
-    public static int createSeed(Entity entity, ContactRaster raster, double y, int entityId) {
+    public static int createSeed(
+            Entity entity,
+            ContactRaster raster,
+            double y,
+            int entityId
+    ) {
         return StampSeedHelper.mixSeed(entityId,
                 Double.hashCode(raster.originX()),
                 Double.hashCode(raster.originZ()),

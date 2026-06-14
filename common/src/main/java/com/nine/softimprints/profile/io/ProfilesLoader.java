@@ -60,7 +60,7 @@ public class ProfilesLoader {
         // 3. Filling
         var raws = entriesResult.raw();
         var entries = entriesResult.entries();
-        for (var entry : entries.entrySet()){
+        for (var entry : entries.entrySet()) {
             Identifier id = entry.getKey();
             ImprintProfileEntry profileEntry = entry.getValue();
             if (profileEntry instanceof ValidProfileEntry valid) {
@@ -75,8 +75,9 @@ public class ProfilesLoader {
                     try {
                         JsonProfile merged = raw.merge(override);
                         ready.put(id, ProfileOperations.parseFromRawToDomain(id, merged));
-                    } catch (RuntimeException e){
-                        if (Platform.CORE.inDevEnvironment()) SICommon.LOGGER.warn("Couldn't apply profile override {}: {}", id, e.getMessage());
+                    } catch (RuntimeException e) {
+                        if (Platform.CORE.inDevEnvironment())
+                            SICommon.LOGGER.warn("Couldn't apply profile override {}: {}", id, e.getMessage());
                         // Erase them?
                     }
                 }
@@ -91,7 +92,6 @@ public class ProfilesLoader {
     public static Path configProfilesDir() {
         return Platform.CORE.getConfigPath().resolve("softimprints").resolve("profiles");
     }
-
 
 
 }

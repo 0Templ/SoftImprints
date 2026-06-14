@@ -13,7 +13,10 @@ public record SearchListConfig(
         Component selectedTabLabel
 ) {
 
-    public static SearchListConfig defaults(int rowHeight, int visibleRows) {
+    public static SearchListConfig defaults(
+            int rowHeight,
+            int visibleRows
+    ) {
         return new SearchListConfig(
                 rowHeight,
                 visibleRows,

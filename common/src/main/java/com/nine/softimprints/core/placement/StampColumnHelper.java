@@ -15,7 +15,10 @@ import java.util.Objects;
 
 public class StampColumnHelper {
 
-    public static List<ColumnMask> slice(ImprintProfile profile, StampRaster raster) {
+    public static List<ColumnMask> slice(
+            ImprintProfile profile,
+            StampRaster raster
+    ) {
         int width = raster.width();
         int height = raster.height();
 
@@ -79,7 +82,7 @@ public class StampColumnHelper {
         List<BlockMask> ret = new ArrayList<>();
         int yBase = Mth.floor(y);
 
-        for (var column : columns){
+        for (var column : columns) {
 
             for (int dy = 0; dy >= -1; dy--) {
                 BlockPos pos = new BlockPos(column.x(), yBase + dy, column.z());

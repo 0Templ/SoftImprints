@@ -14,13 +14,20 @@ public record SearchListMode<T>(
         Consumer<Set<T>> onChange
 ) {
 
-    public static <T> SearchListMode<T> of(String id, Component label,
-                                            Collection<? extends T> initialSelected,
-                                            Consumer<Set<T>> onChange) {
+    public static <T> SearchListMode<T> of(
+            String id,
+            Component label,
+            Collection<? extends T> initialSelected,
+            Consumer<Set<T>> onChange
+    ) {
         return new SearchListMode<>(id, label, initialSelected, onChange);
     }
 
-    public static <T> SearchListMode<T> of(String id, Component label, Consumer<Set<T>> onChange) {
+    public static <T> SearchListMode<T> of(
+            String id,
+            Component label,
+            Consumer<Set<T>> onChange
+    ) {
         return new SearchListMode<>(id, label, List.of(), onChange);
     }
 }

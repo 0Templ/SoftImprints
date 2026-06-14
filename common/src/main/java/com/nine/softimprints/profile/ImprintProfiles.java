@@ -29,7 +29,11 @@ public class ImprintProfiles {
     private static volatile Map<Identifier, ImprintProfileEntry> entriesById = Map.of();
 
     @Nullable
-    public static ResolvedImprintProfile resolve(BlockGetter level, BlockPos pos, BlockState state) {
+    public static ResolvedImprintProfile resolve(
+            BlockGetter level,
+            BlockPos pos,
+            BlockState state
+    ) {
         return resolve(resolveIndex.resolve(level, pos, state));
     }
 
@@ -50,7 +54,11 @@ public class ImprintProfiles {
     }
 
     @Nullable
-    public static ImprintProfile getProfile(BlockGetter level, BlockPos pos, BlockState state) {
+    public static ImprintProfile getProfile(
+            BlockGetter level,
+            BlockPos pos,
+            BlockState state
+    ) {
         ResolvedImprintProfile resolved = resolve(level, pos, state);
         return resolved == null ? null : resolved.profile();
     }
@@ -111,15 +119,15 @@ public class ImprintProfiles {
         entriesById = Map.copyOf(ready);
     }
 
-    public static Map<Identifier, ImprintProfile> profiles(){
+    public static Map<Identifier, ImprintProfile> profiles() {
         return byId;
     }
 
-    public static Map<Identifier, ImprintProfile> builtInProfiles(){
+    public static Map<Identifier, ImprintProfile> builtInProfiles() {
         return builtinById;
     }
 
-    public static Map<Identifier, ImprintProfileEntry> entriesById(){
+    public static Map<Identifier, ImprintProfileEntry> entriesById() {
         return entriesById;
     }
 

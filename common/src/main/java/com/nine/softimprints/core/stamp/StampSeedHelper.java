@@ -12,7 +12,11 @@ public class StampSeedHelper {
         return h;
     }
 
-    public static double createNoise(int x, int y, int seed) {
+    public static double createNoise(
+            int x,
+            int y,
+            int seed
+    ) {
         int h = seed;
         h = 31 * h + x;
         h = 31 * h + y;

@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ['mc*-v*']
+    tags: [ 'mc*-v*' ]
   workflow_dispatch:
     inputs:
       ref:

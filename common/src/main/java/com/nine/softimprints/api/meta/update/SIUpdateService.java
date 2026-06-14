@@ -96,8 +96,8 @@ public final class SIUpdateService {
         Map<Distribution, SIUpdateCandidate> updates = new HashMap<>();
 
         Map<Distribution, DistributionInfo> updateVersions = getDistributionInfos(mcVersion, loader, updateInfo);
-        updateVersions.forEach((distro,info) -> {
-            if (compareVersions(currentModVersion, info.version)){
+        updateVersions.forEach((distro, info) -> {
+            if (compareVersions(currentModVersion, info.version)) {
                 updates.put(distro, new SIUpdateCandidate(SIUpdateChannel.RELEASE, info.url, info.version));
             }
         });
@@ -107,17 +107,15 @@ public final class SIUpdateService {
         return SIUpdateResult.available(updates);
     }
 
-    private static boolean compareVersions(String currentVersion, String updateVersion) {
+    private static boolean compareVersions(
+            String currentVersion,
+            String updateVersion
+    ) {
         if (compareStrings(currentVersion, updateVersion) >= 0) {
             return false;
         }
         return true;
     }
-
-    public record DistributionInfo(
-            String version,
-            String url
-    ) {}
 
     public static Map<Distribution, DistributionInfo> getDistributionInfos(
             String mcVersion,
@@ -191,14 +189,17 @@ public final class SIUpdateService {
                 return JsonParser.parseString(response.body()).getAsJsonObject();
             }
         } catch (Exception e) {
-            if (Platform.CORE.inDevEnvironment()){
+            if (Platform.CORE.inDevEnvironment()) {
                 SICommon.LOGGER.warn("Couldn't fetch candidates info: {}", e.getMessage());
             }
         }
         return null;
     }
 
-    public static int compareStrings(String v1, String v2) {
+    public static int compareStrings(
+            String v1,
+            String v2
+    ) {
         var splitV1 = v1.split("[.-]");
         var splitV2 = v2.split("[.-]");
         int len = Math.max(splitV1.length, splitV2.length);
@@ -219,7 +220,10 @@ public final class SIUpdateService {
         return 0;
     }
 
-    private static int compareChars(String partV1, String partV2) {
+    private static int compareChars(
+            String partV1,
+            String partV2
+    ) {
         char[] charsV1 = partV1.toLowerCase().toCharArray();
         char[] charsV2 = partV2.toLowerCase().toCharArray();
         int charsLen = Math.max(charsV1.length, charsV2.length);
@@ -241,5 +245,11 @@ public final class SIUpdateService {
             ret -= 48;
         }
         return ret;
+    }
+
+    public record DistributionInfo(
+            String version,
+            String url
+    ) {
     }
 }

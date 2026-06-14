@@ -22,6 +22,21 @@ import java.util.Map;
 
 public class InfoGroupFactory implements SettingsGroupFactory {
 
+    public static void openLinkPrompt(String url) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Screen previous = minecraft.screen;
+        minecraft.setScreen(new ConfirmLinkScreen(
+                confirmed -> {
+                    if (confirmed) {
+                        Util.getPlatform().openUri(url);
+                    }
+                    minecraft.setScreen(previous);
+                },
+                url,
+                true
+        ));
+    }
+
     @Override
     public EditorGroup key() {
         return EditorGroup.INFO;
@@ -60,23 +75,29 @@ public class InfoGroupFactory implements SettingsGroupFactory {
         return builder.build();
     }
 
-    private void addMetaInfo(GroupBuilder builder, Font font) {
+    private void addMetaInfo(
+            GroupBuilder builder,
+            Font font
+    ) {
         var currentVersion = Platform.CORE.modVersion();
         builder.spacer(1);
         builder.rowLabels(font, LabelWidget.singleLine(Component.translatable("config.softimprints.group.info.meta.version", currentVersion)));
         builder.height(9);
     }
 
-    private void addUpdateInfo(GroupBuilder builder, Font font) {
-        if (SIUpdateService.hasUpdate()){
+    private void addUpdateInfo(
+            GroupBuilder builder,
+            Font font
+    ) {
+        if (SIUpdateService.hasUpdate()) {
             var currentVersion = Platform.CORE.modVersion();
             var result = SIUpdateService.current();
-            if (result != null){
+            if (result != null) {
                 var candidates = result.candidates();
                 if (candidates != null) {
                     var firstValid = candidates.entrySet().stream().findFirst();
                     String updVersion = "???";
-                    if (firstValid.isPresent()){
+                    if (firstValid.isPresent()) {
                         updVersion = firstValid.get().getValue().version();
                     }
                     builder.rowLabels(font,
@@ -109,25 +130,23 @@ public class InfoGroupFactory implements SettingsGroupFactory {
         }
     }
 
-    private record DistributionWidget(boolean valid, LabelWidget widget){}
-
     private DistributionWidget buildDistroWidget(
-            Map<Distribution, SIUpdateCandidate> candidates, Distribution distribution,
+            Map<Distribution, SIUpdateCandidate> candidates,
+            Distribution distribution,
             int color,
             int colorHovered
-    ){
+    ) {
         var candidate = candidates.get(distribution);
         boolean valid = candidate != null;
         LabelWidget ret;
-        if (valid){
+        if (valid) {
             ret = LabelWidget.singleLine(Component.translatable(distribution.getLabelKey()),
                     color, colorHovered, () -> {
                         openLinkPrompt(candidate.url());
                     });
             ret.setTooltip(Tooltip.create(Component.translatable("config.softimprints.group.info.update.download.tooltip",
                     candidate.url())));
-        }
-        else {
+        } else {
             ret = LabelWidget.singleLine(Component.translatable(distribution.getLabelKey()),
                     0Xff6e6e6e, 0Xff56645b);
             ret.setTooltip(Tooltip.create(Component.translatable("config.softimprints.group.info.update.not_found")));
@@ -135,7 +154,10 @@ public class InfoGroupFactory implements SettingsGroupFactory {
         return new DistributionWidget(valid, ret);
     }
 
-    private void addGithibInfo(GroupBuilder builder, Font font){
+    private void addGithibInfo(
+            GroupBuilder builder,
+            Font font
+    ) {
         builder.rowLabels(font,
                 LabelWidget.singleLine(Component.translatable("config.softimprints.group.info.meta.report_a_bug").withStyle(ChatFormatting.UNDERLINE),
                         () -> {
@@ -151,19 +173,8 @@ public class InfoGroupFactory implements SettingsGroupFactory {
         );
         builder.height(9);
     }
-    public static void openLinkPrompt(String url) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Screen previous = minecraft.screen;
-        minecraft.setScreen(new ConfirmLinkScreen(
-                confirmed -> {
-                    if (confirmed) {
-                        Util.getPlatform().openUri(url);
-                    }
-                    minecraft.setScreen(previous);
-                },
-                url,
-                true
-        ));
+
+    private record DistributionWidget(boolean valid, LabelWidget widget) {
     }
 
 }

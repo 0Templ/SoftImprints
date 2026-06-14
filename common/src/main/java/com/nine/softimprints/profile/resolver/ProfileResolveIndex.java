@@ -78,7 +78,11 @@ public final class ProfileResolveIndex {
     }
 
     @Nullable
-    public ImprintResolveResult resolve(BlockGetter level, BlockPos pos, BlockState state) {
+    public ImprintResolveResult resolve(
+            BlockGetter level,
+            BlockPos pos,
+            BlockState state
+    ) {
         List<Route> routes = routesByBlock.get(state.getBlock());
         if (routes == null || routes.isEmpty()) {
             return null;

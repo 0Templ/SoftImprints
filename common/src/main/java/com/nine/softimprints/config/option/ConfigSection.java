@@ -10,21 +10,23 @@ public enum ConfigSection implements ConfigOption {
 
     ;
 
-    @Override
-    public void apply(ConfigSpec spec) {
-        spec.section = this;
-    }
-
     public final String key;
     public final ConfigSection parent;
-
     ConfigSection(String key) {
         this(null, key);
     }
 
-    ConfigSection(ConfigSection parent, String key) {
+    ConfigSection(
+            ConfigSection parent,
+            String key
+    ) {
         this.parent = parent;
         this.key = key;
+    }
+
+    @Override
+    public void apply(ConfigSpec spec) {
+        spec.section = this;
     }
 
     public String getFullKey() {

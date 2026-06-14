@@ -45,9 +45,15 @@ public final class EntitySearchEntry implements SearchableEntry<EntityType<?>> {
     @Override
     public void render(
             GuiGraphicsExtractor graphics,
-            int x, int y, int width, int height,
-            int mouseX, int mouseY, float partialTick,
-            boolean hovered, boolean selected
+            int x,
+            int y,
+            int width,
+            int height,
+            int mouseX,
+            int mouseY,
+            float partialTick,
+            boolean hovered,
+            boolean selected
     ) {
         IconNameRowRenderer.render(
                 graphics, x, y, width, height, mouseX, mouseY,

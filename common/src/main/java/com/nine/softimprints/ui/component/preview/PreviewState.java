@@ -20,29 +20,34 @@ import java.util.Map;
 
 public class PreviewState {
 
+    public final BrushHistory history;
     private final int activeWidth;
     private final int activeHeight;
     private final Map<Long, byte[]> columns = new LinkedHashMap<>();
-
-    public final BrushHistory history;
+    private final double minAllowedDist;
     private boolean dragging = false;
     private double lastX, lastY;
-    private final double minAllowedDist;
     private double allowedDist;
 
     @Nullable
     private DraftHolder<ImprintProfile> profileDraft;
 
-    public PreviewState(int size, double minAllowedDist, DraftHolder<ImprintProfile> profileDraft, BrushHistory brushHistory) {
+    public PreviewState(
+            int size,
+            double minAllowedDist,
+            DraftHolder<ImprintProfile> profileDraft,
+            BrushHistory brushHistory
+    ) {
         this(size, size, minAllowedDist, profileDraft, brushHistory);
     }
 
     public PreviewState(
-            int width, int height,
+            int width,
+            int height,
             double minAllowedDist,
             @Nullable DraftHolder<ImprintProfile> profileDraft,
             BrushHistory brushHistory
-    ){
+    ) {
         this.activeWidth = width;
         this.activeHeight = height;
         this.minAllowedDist = minAllowedDist;
@@ -50,7 +55,22 @@ public class PreviewState {
         this.history = brushHistory;
     }
 
-    public int mapSize(){
+    public static long columnKey(
+            int x,
+            int y
+    ) {
+        return ((long) x << 32) | (y & 0xFFFFFFFFL);
+    }
+
+    public static int columnX(long key) {
+        return (int) (key >> 32);
+    }
+
+    public static int columnY(long key) {
+        return (int) key;
+    }
+
+    public int mapSize() {
         return currentMapSize();
     }
 
@@ -66,28 +86,32 @@ public class PreviewState {
         this.profileDraft = profileDraft;
     }
 
-    public void setAllowedDist(double dist){
+    public void setAllowedDist(double dist) {
         this.allowedDist = Math.max(minAllowedDist, dist);
         rebuild();
     }
 
-    public void setDragging(boolean value){
-        if (dragging != value){
+    public void setDragging(boolean value) {
+        if (dragging != value) {
             this.lastX = -1;
             this.lastY = -1;
         }
         this.dragging = value;
     }
 
-    public void addStroke(double normX, double normY, double size) {
+    public void addStroke(
+            double normX,
+            double normY,
+            double size
+    ) {
         int seed = StampSeedHelper.mixSeed(Double.hashCode(normX), Double.hashCode(normY));
 
         if (dragging) {
-            if (lastX != -1 && lastY != -1){
+            if (lastX != -1 && lastY != -1) {
                 var dx = normX - lastX;
                 var dy = normY - lastY;
                 var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < minAllowedDist){
+                if (dist < minAllowedDist) {
                     return;
                 }
             }
@@ -116,7 +140,10 @@ public class PreviewState {
 
     }
 
-    private void applyStroke(ImprintProfile profile, BrushStroke stroke) {
+    private void applyStroke(
+            ImprintProfile profile,
+            BrushStroke stroke
+    ) {
         int mapSize = Math.max(1, profile.resolution().mapSize());
         double profileScale = mapSize
                 / (double) Constants.PREVIEW_BLOCK_RESOLUTION;
@@ -145,8 +172,10 @@ public class PreviewState {
         pasteStamp(stamp, mapSize);
     }
 
-
-    private void pasteStamp(StampRaster stampRaster, int mapSize){
+    private void pasteStamp(
+            StampRaster stampRaster,
+            int mapSize
+    ) {
         var src = stampRaster.mask();
         int w = stampRaster.width();
         int h = stampRaster.height();
@@ -156,7 +185,7 @@ public class PreviewState {
         int blockWidth = Math.ceilDiv(activeWidth, Constants.PREVIEW_BLOCK_RESOLUTION);
         int blockHeight = Math.ceilDiv(activeHeight, Constants.PREVIEW_BLOCK_RESOLUTION);
 
-        for (int sy = 0; sy < h; sy++){
+        for (int sy = 0; sy < h; sy++) {
             int globalY = originY + sy;
             int blockY = Math.floorDiv(globalY, mapSize);
             if (blockY < 0) continue;
@@ -176,7 +205,7 @@ public class PreviewState {
                 byte[] column = columns.computeIfAbsent(columnKey(blockX, blockY), key -> new byte[mapSize * mapSize]);
                 int dstIndex = localY * mapSize + localX;
                 byte cur = column[dstIndex];
-                if (cur == 0 || (value & 0xFF) < (cur & 0xFF)){
+                if (cur == 0 || (value & 0xFF) < (cur & 0xFF)) {
                     column[dstIndex] = value;
                 }
             }
@@ -190,18 +219,6 @@ public class PreviewState {
     public int currentMapSize() {
         if (profileDraft == null) return Constants.PREVIEW_BLOCK_RESOLUTION;
         return Math.max(1, profileDraft.getDraft().resolution().mapSize());
-    }
-
-    public static long columnKey(int x, int y) {
-        return ((long) x << 32) | (y & 0xFFFFFFFFL);
-    }
-
-    public static int columnX(long key) {
-        return (int) (key >> 32);
-    }
-
-    public static int columnY(long key) {
-        return (int) key;
     }
 
 

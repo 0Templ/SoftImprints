@@ -21,17 +21,11 @@ import java.util.function.BooleanSupplier;
 
 public class LabelWidget extends AbstractWidget {
 
-    public enum Mode {
-        WRAPPED,
-        SINGLE_LINE
-    }
-
     private static final int MARKER_SIZE = 11;
     private static final int MARKER_GAP = 4;
     private static final int TOOLTIP_MAX_WIDTH = 160;
     private static final int MARKER_COLOR = 0xFFFF8800;
     private static final int MARKER_COLOR_HOVERED = 0xFFFFAA00;
-
     private final Component text;
     @Nullable
     private final Component tooltip;
@@ -47,18 +41,57 @@ public class LabelWidget extends AbstractWidget {
     private final int labelColor;
     private final int labelColorHovered;
     private final Mode mode;
-
     private List<FormattedCharSequence> wrappedLines = List.of();
 
-    public static LabelWidget wrapped(Component text, int linesGap) {
+    public LabelWidget(
+            Component text,
+            int linesGap,
+            int labelColor,
+            int labelColorHovered,
+            @Nullable Component tooltip,
+            @Nullable Component marker,
+            @Nullable Component markerTooltip,
+            BooleanSupplier markerVisible,
+            @Nullable Runnable onClickAction,
+            Mode mode
+    ) {
+        super(0, 0, 0, 0, text);
+        this.text = text;
+        this.linesGap = linesGap;
+        this.labelColor = labelColor;
+        this.labelColorHovered = labelColorHovered;
+        this.tooltip = tooltip;
+        this.marker = marker;
+        this.markerTooltip = markerTooltip;
+        this.markerVisible = markerVisible;
+        this.onClickAction = onClickAction;
+        this.mode = mode;
+        this.font = Minecraft.getInstance().font;
+        if (tooltip != null) {
+            this.setTooltip(Tooltip.create(tooltip));
+        }
+    }
+
+    public static LabelWidget wrapped(
+            Component text,
+            int linesGap
+    ) {
         return wrapped(text, linesGap, null, null);
     }
 
-    public static LabelWidget wrapped(Component text, int linesGap, @Nullable Component tooltip) {
+    public static LabelWidget wrapped(
+            Component text,
+            int linesGap,
+            @Nullable Component tooltip
+    ) {
         return wrapped(text, linesGap, tooltip, null);
     }
 
-    public static LabelWidget wrapped(Component text, int linesGap, @Nullable Runnable onClickAction) {
+    public static LabelWidget wrapped(
+            Component text,
+            int linesGap,
+            @Nullable Runnable onClickAction
+    ) {
         return wrapped(text, linesGap, null, onClickAction);
     }
 
@@ -76,11 +109,17 @@ public class LabelWidget extends AbstractWidget {
         return singleLine(text, null, null);
     }
 
-    public static LabelWidget singleLine(Component text, @Nullable Component tooltip) {
+    public static LabelWidget singleLine(
+            Component text,
+            @Nullable Component tooltip
+    ) {
         return singleLine(text, tooltip, null);
     }
 
-    public static LabelWidget singleLine(Component text, @Nullable Runnable onClickAction) {
+    public static LabelWidget singleLine(
+            Component text,
+            @Nullable Runnable onClickAction
+    ) {
         return singleLine(text, null, onClickAction);
     }
 
@@ -124,44 +163,46 @@ public class LabelWidget extends AbstractWidget {
                 null, null, () -> false, onClickAction, Mode.SINGLE_LINE);
     }
 
-    public static LabelWidget link(Component text, URI uri) {
+    public static LabelWidget link(
+            Component text,
+            URI uri
+    ) {
         return singleLine(text, openLinkAction(uri));
     }
 
-    public static LabelWidget link(Component text, Component tooltip, URI uri) {
+    public static LabelWidget link(
+            Component text,
+            Component tooltip,
+            URI uri
+    ) {
         return singleLine(text, tooltip, openLinkAction(uri));
     }
 
-    public LabelWidget(
-            Component text,
-            int linesGap,
-            int labelColor,
-            int labelColorHovered,
-            @Nullable Component tooltip,
-            @Nullable Component marker,
-            @Nullable Component markerTooltip,
-            BooleanSupplier markerVisible,
-            @Nullable Runnable onClickAction,
-            Mode mode
-    ) {
-        super(0, 0, 0, 0, text);
-        this.text = text;
-        this.linesGap = linesGap;
-        this.labelColor = labelColor;
-        this.labelColorHovered = labelColorHovered;
-        this.tooltip = tooltip;
-        this.marker = marker;
-        this.markerTooltip = markerTooltip;
-        this.markerVisible = markerVisible;
-        this.onClickAction = onClickAction;
-        this.mode = mode;
-        this.font = Minecraft.getInstance().font;
-        if (tooltip != null) {
-            this.setTooltip(Tooltip.create(tooltip));
-        }
+    /// /
+    public static Runnable openLinkAction(URI uri) {
+        return () -> openLink(uri);
     }
 
-    public void updateLayout(int x, int y, int width) {
+    private static void openLink(URI uri) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Screen previous = minecraft.screen;
+        minecraft.setScreen(new ConfirmLinkScreen(
+                confirmed -> {
+                    if (confirmed) {
+                        Util.getPlatform().openUri(uri);
+                    }
+                    minecraft.setScreen(previous);
+                },
+                uri.toString(),
+                true
+        ));
+    }
+
+    public void updateLayout(
+            int x,
+            int y,
+            int width
+    ) {
         this.setX(x);
         this.setY(y);
         this.setWidth(width);
@@ -193,7 +234,12 @@ public class LabelWidget extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         boolean textHovered = isMouseOverText(mouseX, mouseY);
         if (mode == Mode.SINGLE_LINE) {
             renderSingleLineText(graphics, textHovered);
@@ -207,7 +253,10 @@ public class LabelWidget extends AbstractWidget {
         }
     }
 
-    private void renderSingleLineText(GuiGraphicsExtractor graphics, boolean hovered) {
+    private void renderSingleLineText(
+            GuiGraphicsExtractor graphics,
+            boolean hovered
+    ) {
         int color = hovered ? labelColorHovered : labelColor;
         int textY = getY() + Math.max(0, (getHeight() - font.lineHeight) / 2);
         graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE)
@@ -220,7 +269,10 @@ public class LabelWidget extends AbstractWidget {
                 );
     }
 
-    private void renderWrappedText(GuiGraphicsExtractor graphics, boolean hovered) {
+    private void renderWrappedText(
+            GuiGraphicsExtractor graphics,
+            boolean hovered
+    ) {
         int y = getY();
         int color = hovered ? labelColorHovered : labelColor;
         for (FormattedCharSequence line : wrappedLines) {
@@ -235,7 +287,11 @@ public class LabelWidget extends AbstractWidget {
         }
     }
 
-    private boolean renderMarker(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    private boolean renderMarker(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY
+    ) {
         if (marker == null || !markerVisible.getAsBoolean()) {
             return false;
         }
@@ -271,7 +327,10 @@ public class LabelWidget extends AbstractWidget {
         return Math.max(1, width - markerReserve);
     }
 
-    private boolean isMouseOverText(int mouseX, int mouseY) {
+    private boolean isMouseOverText(
+            int mouseX,
+            int mouseY
+    ) {
         if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
@@ -306,7 +365,10 @@ public class LabelWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         if (event.button() == 0 && onClickAction != null && isMouseOverText((int) event.x(), (int) event.y())) {
             onClickAction.run();
             return true;
@@ -319,25 +381,8 @@ public class LabelWidget extends AbstractWidget {
         this.defaultButtonNarrationText(output);
     }
 
-
-
-    ////
-    public static Runnable openLinkAction(URI uri) {
-        return () -> openLink(uri);
-    }
-
-    private static void openLink(URI uri) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Screen previous = minecraft.screen;
-        minecraft.setScreen(new ConfirmLinkScreen(
-                confirmed -> {
-                    if (confirmed) {
-                        Util.getPlatform().openUri(uri);
-                    }
-                    minecraft.setScreen(previous);
-                },
-                uri.toString(),
-                true
-        ));
+    public enum Mode {
+        WRAPPED,
+        SINGLE_LINE
     }
 }

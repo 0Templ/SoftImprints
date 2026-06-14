@@ -7,27 +7,27 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-    public record JsonProfile(
-            int version,
-            List<ImprintLayer> layers,
-            @SerializedName("supported_blocks")
-            Set<String> supportedBlocks,
-            @SerializedName("surface")
-            JsonSurfaceSettings surface,
-            @SerializedName("texture_sets")
-            JsonTextureSets textureSets,
-            @SerializedName("resolution")
-            JsonImprintResolution resolution,
+public record JsonProfile(
+        int version,
+        List<ImprintLayer> layers,
+        @SerializedName("supported_blocks")
+        Set<String> supportedBlocks,
+        @SerializedName("surface")
+        JsonSurfaceSettings surface,
+        @SerializedName("texture_sets")
+        JsonTextureSets textureSets,
+        @SerializedName("resolution")
+        JsonImprintResolution resolution,
 
-            @SerializedName("preview")
-            JsonImprintPreviewAssets preview,
-            int priority
-    ) {
+        @SerializedName("preview")
+        JsonImprintPreviewAssets preview,
+        int priority
+) {
 
     public static final String SCHEMA_KEY = "version";
     public static final int CURRENT_SCHEMA = 2;
 
-    public JsonProfile merge(JsonProfile with){
+    public JsonProfile merge(JsonProfile with) {
         return new JsonProfile(
                 this.version,
                 with.layers() != null ? with.layers() : this.layers(),
@@ -40,7 +40,7 @@ import java.util.Set;
         );
     }
 
-    public JsonProfile nullifyAgainst(JsonProfile against){
+    public JsonProfile nullifyAgainst(JsonProfile against) {
         return new JsonProfile(
                 this.version,
                 Objects.equals(against.layers, this.layers) ? null : this.layers,
@@ -53,7 +53,7 @@ import java.util.Set;
         );
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return layers == null
                 && supportedBlocks == null
                 && surface == null

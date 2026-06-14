@@ -14,7 +14,17 @@ public final class ModelContactCapturePolicy {
     public ModelContactCapturePolicy() {
     }
 
-    public void setMode(int entityId, ModelContactCaptureMode mode) {
+    private static int resolveInterval(ModelContactCaptureMode mode) {
+        return switch (mode) {
+            case OFTEN -> 1;
+            default -> SIConfig.Performance.IMPRINT_SNAPSHOT_INTERVAL.get();
+        };
+    }
+
+    public void setMode(
+            int entityId,
+            ModelContactCaptureMode mode
+    ) {
         if (mode == null) {
             this.modes.remove(entityId);
             return;
@@ -40,7 +50,10 @@ public final class ModelContactCapturePolicy {
         this.immediateRequests.clear();
     }
 
-    public boolean shouldCaptureThisFrame(int entityId, long frameIndex) {
+    public boolean shouldCaptureThisFrame(
+            int entityId,
+            long frameIndex
+    ) {
         if (frameIndex == 0L) {
             return false;
         }
@@ -49,12 +62,5 @@ public final class ModelContactCapturePolicy {
             return false;
         }
         return frameIndex % resolveInterval(mode) == 0L;
-    }
-
-    private static int resolveInterval(ModelContactCaptureMode mode) {
-        return switch (mode) {
-            case OFTEN -> 1;
-            default -> SIConfig.Performance.IMPRINT_SNAPSHOT_INTERVAL.get();
-        };
     }
 }

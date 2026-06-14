@@ -19,7 +19,11 @@ final class SettingsControls {
     private SettingsControls() {
     }
 
-    static Button booleanButton(GroupBuildContext context, String labelKey, ConfigValue<Boolean> config) {
+    static Button booleanButton(
+            GroupBuildContext context,
+            String labelKey,
+            ConfigValue<Boolean> config
+    ) {
         DraftHolder<Boolean> draft = context.editorContext().config().draft(config);
         return Button.builder(booleanText(labelKey, draft.getDraft()), button -> {
                     boolean next = !Boolean.TRUE.equals(draft.getDraft());
@@ -46,7 +50,11 @@ final class SettingsControls {
                 .build();
     }
 
-    public static ExtendedSlider intSlider(GroupBuildContext context, String labelKey, ConfigValue<Integer> config) {
+    public static ExtendedSlider intSlider(
+            GroupBuildContext context,
+            String labelKey,
+            ConfigValue<Integer> config
+    ) {
         ConfigSession configSession = context.editorContext().config();
         ExtendedSlider slider = slider(
                 labelKey,
@@ -60,7 +68,7 @@ final class SettingsControls {
         return slider;
     }
 
-    public static ExtendedSlider doubleSlider (
+    public static ExtendedSlider doubleSlider(
             GroupBuildContext context,
             String labelKey,
             ConfigValue<Double> config,
@@ -110,7 +118,10 @@ final class SettingsControls {
                 .build();
     }
 
-    private static Component booleanText(String labelKey, boolean value) {
+    private static Component booleanText(
+            String labelKey,
+            boolean value
+    ) {
         return Component.translatable(labelKey, SIText.onOffState(value));
     }
 

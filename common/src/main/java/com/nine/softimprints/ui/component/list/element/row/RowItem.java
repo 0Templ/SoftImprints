@@ -4,19 +4,17 @@ import net.minecraft.client.gui.components.AbstractWidget;
 
 public sealed interface RowItem permits WeightedWidget, WeightedSpace, FixedWidget, FixedSpace {
 
-    default int weight() {
-        return 0;
-    }
-
-    default int fixedWidth() {
-        return 0;
-    }
-
-    static RowItem widget(int weight, AbstractWidget widget) {
+    static RowItem widget(
+            int weight,
+            AbstractWidget widget
+    ) {
         return new WeightedWidget(weight, widget);
     }
 
-    static RowItem fixedWidget(int width, AbstractWidget widget) {
+    static RowItem fixedWidget(
+            int width,
+            AbstractWidget widget
+    ) {
         return new FixedWidget(width, widget);
     }
 
@@ -26,5 +24,13 @@ public sealed interface RowItem permits WeightedWidget, WeightedSpace, FixedWidg
 
     static RowItem fixedSpace(int width) {
         return new FixedSpace(width);
+    }
+
+    default int weight() {
+        return 0;
+    }
+
+    default int fixedWidth() {
+        return 0;
     }
 }

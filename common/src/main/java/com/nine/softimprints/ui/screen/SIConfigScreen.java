@@ -43,31 +43,23 @@ public class SIConfigScreen extends Screen {
     private static final double PREVIEW_COLUMN_RATIO = 0.365D;
     private static final double RIGHT_COLUMN_RATIO = 0.18D;
     private static final int COLUMN_GAP = 2;
-
-    private static int SWITCHER_HEIGHT = 42;
     private static final int LEFT_SWITCHER_INSET = 6;
     private static final int PREVIEW_SWITCHER_INSET = 6;
     private static final int RIGHT_SWITCHER_INSET = 6;
-
     private static final int PREVIEW_FRAME_INSET = 2;
     private static final int PROFILE_SWITCHER_GAP = 6;
-
     private static final int CONTROL_HEIGHT = 20;
     private static final int CONTROL_PADDING = 6;
     private static final int CONTROL_GAP = 4;
-
     private static final int BOTTOM_BUTTON_WIDTH = 150;
     private static final int BOTTOM_BUTTON_GAP = 8;
     private static final int BOTTOM_BUTTON_BOTTOM_INSET = 28;
-
     private static final int MIN_PREVIEW_RESOLUTION = 16;
-    
     private static final int MIN_BRUSH_SIZE = 1;
     private static final int MAX_BRUSH_SIZE = 48;
-
     private static final Identifier INWORLD_MENU_BACKGROUND =
             Identifier.withDefaultNamespace("textures/gui/inworld_menu_background.png");
-
+    private static int SWITCHER_HEIGHT = 42;
     private final Screen parent;
     private final EditorContext context;
     private final PreviewSettings previewSettings;
@@ -97,6 +89,46 @@ public class SIConfigScreen extends Screen {
         this.context.addSelectedProfileListener(this::onSelectedProfileChanged);
     }
 
+    private static OptionEntry<EditorGroup> groupEntry(
+            EditorGroup group,
+            Component label,
+            TabEdge edge
+    ) {
+        int fixedWidth = group.fixedSwitcherWidth();
+        if (fixedWidth > 0) {
+            return new OptionEntry<>(group, label, edge, fixedWidth);
+        }
+        return new OptionEntry<>(group, label, edge);
+    }
+
+    private static void place(
+            AbstractWidget widget,
+            int x,
+            int y,
+            int width
+    ) {
+        widget.setX(x);
+        widget.setY(y);
+        widget.setWidth(width);
+    }
+
+    public static void extractMenuBackground(
+            Minecraft mc,
+            GuiGraphicsExtractor graphics,
+            int x,
+            int y,
+            int width,
+            int height
+    ) {
+        extractMenuBackgroundTexture(
+                graphics,
+                mc.level == null ? MENU_BACKGROUND : INWORLD_MENU_BACKGROUND,
+                x, y,
+                0.0F, 0.0F,
+                width, height
+        );
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -108,7 +140,6 @@ public class SIConfigScreen extends Screen {
         setupRightControls(layout);
         setupBottomButtons();
     }
-
 
     private void setupSettingsArea(Layout layout) {
         LayoutRect bounds = layout.settingsList();
@@ -136,11 +167,18 @@ public class SIConfigScreen extends Screen {
         this.bottomLeftGroupSwitcher = addGroupSwitcher(GroupZone.RIGHT_BOT, layout.bottomRightSwitcher(), TabEdge.BOTTOM);
     }
 
-    private GroupSwitcher<EditorGroup> addGroupSwitcher(GroupZone zone, LayoutRect bounds) {
+    private GroupSwitcher<EditorGroup> addGroupSwitcher(
+            GroupZone zone,
+            LayoutRect bounds
+    ) {
         return addGroupSwitcher(zone, bounds, TabEdge.TOP);
     }
 
-    private GroupSwitcher<EditorGroup> addGroupSwitcher(GroupZone zone, LayoutRect bounds, TabEdge edge) {
+    private GroupSwitcher<EditorGroup> addGroupSwitcher(
+            GroupZone zone,
+            LayoutRect bounds,
+            TabEdge edge
+    ) {
         GroupSwitcher<EditorGroup> switcher = new GroupSwitcher<>(
                 bounds.x(), bounds.y(), bounds.width(), bounds.height(),
                 settingsNavigation::select
@@ -153,14 +191,6 @@ public class SIConfigScreen extends Screen {
         this.settingsNavigation.select(UICache.editorGroup());
         this.addRenderableWidget(switcher);
         return switcher;
-    }
-
-    private static OptionEntry<EditorGroup> groupEntry(EditorGroup group, Component label, TabEdge edge) {
-        int fixedWidth = group.fixedSwitcherWidth();
-        if (fixedWidth > 0) {
-            return new OptionEntry<>(group, label, edge, fixedWidth);
-        }
-        return new OptionEntry<>(group, label, edge);
     }
 
     private void setupPreviewArea(Layout layout) {
@@ -207,7 +237,7 @@ public class SIConfigScreen extends Screen {
         int totalWidth = BOTTOM_BUTTON_WIDTH * 2 + BOTTOM_BUTTON_GAP;
         int y = this.height - BOTTOM_BUTTON_BOTTOM_INSET;
         int x = (this.width - totalWidth) / 2;
-        if (x + totalWidth >= maxX){
+        if (x + totalWidth >= maxX) {
             x -= ((x + totalWidth) - maxX) + 10;
         }
 
@@ -262,16 +292,14 @@ public class SIConfigScreen extends Screen {
         return Component.translatable("config.softimprints.preview.debug", SIText.onOffState(previewSettings.debugMode()));
     }
 
-    private int addStackedControl(AbstractWidget widget, LayoutRect controls, int y) {
+    private int addStackedControl(
+            AbstractWidget widget,
+            LayoutRect controls,
+            int y
+    ) {
         place(widget, controls.x(), y, controls.width());
         this.addRenderableWidget(widget);
         return y + CONTROL_HEIGHT + CONTROL_GAP;
-    }
-
-    private static void place(AbstractWidget widget, int x, int y, int width) {
-        widget.setX(x);
-        widget.setY(y);
-        widget.setWidth(width);
     }
 
     private void onSelectedProfileChanged() {
@@ -330,13 +358,23 @@ public class SIConfigScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
         graphics.centeredText(this.font, this.title, this.width / 2, 4, SIColors.WHITE);
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
         renderChromeLines(graphics, layout);
@@ -345,7 +383,10 @@ public class SIConfigScreen extends Screen {
         renderRightBackground(graphics, layout);
     }
 
-    private void renderChromeLines(GuiGraphicsExtractor graphics, Layout layout) {
+    private void renderChromeLines(
+            GuiGraphicsExtractor graphics,
+            Layout layout
+    ) {
         renderHorizontalSwitcherSeparators(
                 graphics,
                 TOP_CONTENT_OFFSET - HEADER_LINE_OFFSET,
@@ -363,9 +404,14 @@ public class SIConfigScreen extends Screen {
         ChromeRenderer.leftDivider(graphics, layout.rightPanel().x() - COLUMN_GAP, layout.y(), layout.height());
     }
 
-    private void renderHorizontalSwitcherSeparators(GuiGraphicsExtractor graphics, int y, boolean header, GroupSwitcher<?>... switchers) {
+    private void renderHorizontalSwitcherSeparators(
+            GuiGraphicsExtractor graphics,
+            int y,
+            boolean header,
+            GroupSwitcher<?>... switchers
+    ) {
         int x = 0;
-        for (var switcher : switchers){
+        for (var switcher : switchers) {
             x = renderHorizontalLine(graphics, switcher, header, x, y);
         }
         if (x < width) {
@@ -378,7 +424,8 @@ public class SIConfigScreen extends Screen {
             GuiGraphicsExtractor graphics,
             GroupSwitcher<?> switcher,
             boolean header,
-            int x, int y
+            int x,
+            int y
     ) {
         if (switcher == null || switcher.size() == 0) return x;
         if (switcher.getX() > x) {
@@ -398,7 +445,10 @@ public class SIConfigScreen extends Screen {
         );
     }
 
-    private void renderPreviewBackground(GuiGraphicsExtractor graphics, Layout layout) {
+    private void renderPreviewBackground(
+            GuiGraphicsExtractor graphics,
+            Layout layout
+    ) {
         if (previewWidget == null || profileSwitchWidget == null) return;
 
         LayoutRect panel = layout.previewPanel();
@@ -422,23 +472,21 @@ public class SIConfigScreen extends Screen {
         );
     }
 
-    private void renderRightBackground(GuiGraphicsExtractor graphics, Layout layout) {
+    private void renderRightBackground(
+            GuiGraphicsExtractor graphics,
+            Layout layout
+    ) {
         LayoutRect panel = layout.rightPanel();
         extractMenuBackground(minecraft, graphics, panel.x(), panel.y(), panel.width(), panel.height());
     }
 
-    public static void extractMenuBackground(Minecraft mc, GuiGraphicsExtractor graphics,
-                                              int x, int y, int width, int height) {
-        extractMenuBackgroundTexture(
-                graphics,
-                mc.level == null ? MENU_BACKGROUND : INWORLD_MENU_BACKGROUND,
-                x, y,
-                0.0F, 0.0F,
-                width, height
-        );
-    }
-
-    private void drawMenuBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
+    private void drawMenuBackground(
+            GuiGraphicsExtractor graphics,
+            int x,
+            int y,
+            int width,
+            int height
+    ) {
         extractMenuBackground(this.minecraft, graphics, x, y, width, height);
     }
 
@@ -510,14 +558,14 @@ public class SIConfigScreen extends Screen {
 
         LayoutRect bottomLeftSwitcher() {
             return new LayoutRect(
-                    settingsX + LEFT_SWITCHER_INSET, height + y ,
+                    settingsX + LEFT_SWITCHER_INSET, height + y,
                     rightW - RIGHT_SWITCHER_INSET * 2 - 1, ((23))
             );
         }
 
         LayoutRect bottomRightSwitcher() {
             return new LayoutRect(
-                    rightX + RIGHT_SWITCHER_INSET, height + y ,
+                    rightX + RIGHT_SWITCHER_INSET, height + y,
                     rightW - RIGHT_SWITCHER_INSET * 2 - 1, ((23))
             );
         }

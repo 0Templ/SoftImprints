@@ -37,12 +37,51 @@ public final class BlockSearchEntry implements SearchableEntry<Block> {
     private ItemStack iconStack = ItemStack.EMPTY;
     private boolean iconResolved = false;
 
-    public BlockSearchEntry(Block block, EditorContext editorContext) {
+    public BlockSearchEntry(
+            Block block,
+            EditorContext editorContext
+    ) {
         this.block = block;
         this.editorContext = editorContext;
         this.item = block.asItem();
         this.displayName = block.getName().getString();
         this.registryKey = BuiltInRegistries.BLOCK.getKey(block).toString();
+    }
+
+    private static boolean supports(
+            ImprintProfile profile,
+            Block block
+    ) {
+        return profile.supportedBlocks().stream()
+                .map(SurfaceBlock::block)
+                .filter(Objects::nonNull)
+                .anyMatch(block::equals);
+    }
+
+    private static MutableComponent joinCandidateNames(List<ProfileCandidate> candidates) {
+        MutableComponent ret = Component.empty();
+        for (int i = 0; i < candidates.size(); i++) {
+            if (i > 0) {
+                ret.append(Component.literal(", "));
+            }
+            ret.append(candidateName(candidates.get(i)));
+        }
+        return ret;
+    }
+
+    private static Component candidateName(ProfileCandidate candidate) {
+        Identifier profileId = candidate.profileId();
+        if (profileId != null) {
+            return profileName(profileId);
+        }
+        Identifier pluginId = candidate.pluginId();
+        return pluginId == null
+                ? Component.literal("Plugin resolver")
+                : Component.literal(pluginId.toString());
+    }
+
+    private static Component profileName(Identifier id) {
+        return Component.translatable("imprint_profile." + id.toLanguageKey());
     }
 
     @Override
@@ -59,9 +98,15 @@ public final class BlockSearchEntry implements SearchableEntry<Block> {
     @Override
     public void render(
             GuiGraphicsExtractor graphics,
-            int x, int y, int width, int height,
-            int mouseX, int mouseY, float partialTick,
-            boolean hovered, boolean selected
+            int x,
+            int y,
+            int width,
+            int height,
+            int mouseX,
+            int mouseY,
+            float partialTick,
+            boolean hovered,
+            boolean selected
     ) {
         int rowX = x;
         int rowWidth = width;
@@ -125,39 +170,6 @@ public final class BlockSearchEntry implements SearchableEntry<Block> {
                 "config.softimprints.group.blocks.priority_conflict.current_loses.tooltip",
                 otherNames
         );
-    }
-
-    private static boolean supports(ImprintProfile profile, Block block) {
-        return profile.supportedBlocks().stream()
-                .map(SurfaceBlock::block)
-                .filter(Objects::nonNull)
-                .anyMatch(block::equals);
-    }
-
-    private static MutableComponent joinCandidateNames(List<ProfileCandidate> candidates) {
-        MutableComponent ret = Component.empty();
-        for (int i = 0; i < candidates.size(); i++) {
-            if (i > 0) {
-                ret.append(Component.literal(", "));
-            }
-            ret.append(candidateName(candidates.get(i)));
-        }
-        return ret;
-    }
-
-    private static Component candidateName(ProfileCandidate candidate) {
-        Identifier profileId = candidate.profileId();
-        if (profileId != null) {
-            return profileName(profileId);
-        }
-        Identifier pluginId = candidate.pluginId();
-        return pluginId == null
-                ? Component.literal("Plugin resolver")
-                : Component.literal(pluginId.toString());
-    }
-
-    private static Component profileName(Identifier id) {
-        return Component.translatable("imprint_profile." + id.toLanguageKey());
     }
 
     private ItemStack resolveIcon() {

@@ -30,14 +30,11 @@ import java.util.*;
 
 public class ProfileSwitchWidget extends AbstractWidget {
 
-    private enum FilterMode { ALL, FILTERED }
-
     private static final int LABEL_ARROWS_PADDING = 4;
     private static final int ARROW_ZONE_WIDTH = 12;
     private static final int ARROW_ZONE_TOP_PADDING = 13;
     private static final int LABEL_Y_OFFSET = 3;
     private static final int TOOLTIP_MAX_WIDTH = 180;
-
     private static final int CARD_SIZE_STEP = 2;
     private static final int PROFILE_GAP = 4;
     private static final int ACTIVE_CARD_SIZE = 24;
@@ -45,12 +42,10 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private static final int CARDS_PADDING = 2;
     private static final int CARDS_CENTER_Y_OFFSET = 6;
     private static final int MAX_VISIBLE_RADIUS = 4;
-
     private final EditorContext context;
     private final List<Identifier> allProfiles;
     private final List<ProfilesGroup> groups;
-
-
+    private final Map<Identifier, Identifier> iconsCache = new HashMap<>();
     private FilterMode filterMode = FilterMode.ALL;
     private int groupIndex;
     private int profileIndex;
@@ -64,8 +59,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private Label labelGroup = Label.empty();
     private Label labelProfile = Label.empty();
     private List<ProfileButtonData> visibleProfiles = List.of();
-
-    private final Map<Identifier, Identifier> iconsCache = new HashMap<>();
 
     public ProfileSwitchWidget(
             int x,
@@ -100,6 +93,43 @@ public class ProfileSwitchWidget extends AbstractWidget {
         List<ProfilesGroup> result = new ArrayList<>();
         byNamespace.forEach((namespace, profiles) -> result.add(new ProfilesGroup(namespace, profiles)));
         return List.copyOf(result);
+    }
+
+    private static Identifier firstPresent(
+            Identifier candidate,
+            List<Identifier> profiles
+    ) {
+        if (candidate != null && profiles.contains(candidate)) {
+            return candidate;
+        }
+        return null;
+    }
+
+    private static String profileTranslationKey(Identifier id) {
+        return "imprint_profile." + id.toLanguageKey();
+    }
+
+    private static int cardSizeForOffset(int offset) {
+        return Math.max(
+                MIN_CARD_SIZE,
+                ACTIVE_CARD_SIZE - Math.abs(offset) * CARD_SIZE_STEP
+        );
+    }
+
+    private static void scaleAroundCenter(
+            GuiGraphicsExtractor graphics,
+            int x,
+            int y,
+            int w,
+            int h,
+            float scale
+    ) {
+        float cx = x + w / 2.0F;
+        float cy = y + h / 2.0F;
+
+        graphics.pose().translate(cx, cy);
+        graphics.pose().scale(scale, scale);
+        graphics.pose().translate(-cx, -cy);
     }
 
     private void onSelectedProfileUpdate() {
@@ -242,13 +272,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
         }
     }
 
-    private static Identifier firstPresent(Identifier candidate, List<Identifier> profiles) {
-        if (candidate != null && profiles.contains(candidate)) {
-            return candidate;
-        }
-        return null;
-    }
-
     private void rebuildHeaderLayout() {
         int padding = 2;
         int maxWidth = getWidth() - padding * 2;
@@ -294,14 +317,10 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private Component profileLabel() {
         Identifier id = context.currentId();
         var ret = Component.translatable(profileTranslationKey(id));
-        if (context.currentEntry() instanceof InvalidProfileEntry){
+        if (context.currentEntry() instanceof InvalidProfileEntry) {
             ret.withColor(SIColors.SOFT_RED);
         }
         return ret;
-    }
-
-    private static String profileTranslationKey(Identifier id) {
-        return "imprint_profile." + id.toLanguageKey();
     }
 
     private void rebuildVisibleProfiles() {
@@ -374,13 +393,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
         return radius;
     }
 
-    private static int cardSizeForOffset(int offset) {
-        return Math.max(
-                MIN_CARD_SIZE,
-                ACTIVE_CARD_SIZE - Math.abs(offset) * CARD_SIZE_STEP
-        );
-    }
-
     @Override
     protected void extractWidgetRenderState(
             @NonNull GuiGraphicsExtractor graphics,
@@ -421,7 +433,11 @@ public class ProfileSwitchWidget extends AbstractWidget {
         }
     }
 
-    private void renderLabel(GuiGraphicsExtractor graphics, Label label, boolean hovered) {
+    private void renderLabel(
+            GuiGraphicsExtractor graphics,
+            Label label,
+            boolean hovered
+    ) {
         int color = hovered ? SIColors.WHITE : SIColors.ALMOST_WHITE;
         graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE)
                 .acceptScrollingWithDefaultCenter(label.text().copy().withColor(color),
@@ -431,22 +447,30 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
     private Component groupTooltip() {
-        if (filterMode == FilterMode.ALL){
+        if (filterMode == FilterMode.ALL) {
             return Component.translatable("gui.softimprints.profile_switch.group.tooltip.all");
-        }
-        else {
+        } else {
             return Component.translatable("gui.softimprints.profile_switch.group.tooltip.filtered")
                     .append("\n")
                     .append(Component.translatable("gui.softimprints.profile_switch.group.tooltip.filtered_all"));
         }
     }
 
-    private void renderTooltip(GuiGraphicsExtractor graphics, Component tooltip, int mouseX, int mouseY) {
+    private void renderTooltip(
+            GuiGraphicsExtractor graphics,
+            Component tooltip,
+            int mouseX,
+            int mouseY
+    ) {
         Font font = Minecraft.getInstance().font;
         graphics.setTooltipForNextFrame(font, font.split(tooltip, TOOLTIP_MAX_WIDTH), mouseX, mouseY);
     }
 
-    private void renderProfileCards(GuiGraphicsExtractor graphics, double mouseX, double mouseY) {
+    private void renderProfileCards(
+            GuiGraphicsExtractor graphics,
+            double mouseX,
+            double mouseY
+    ) {
         ProfileButtonData hovered = null;
         for (ProfileButtonData profile : visibleProfiles) {
             if (profile.containsMouse(mouseX, mouseY)) {
@@ -460,22 +484,31 @@ public class ProfileSwitchWidget extends AbstractWidget {
         }
     }
 
-    private void renderProfileCard(GuiGraphicsExtractor graphics, ProfileButtonData data, double mouseX, double mouseY, boolean hovered) {
+    private void renderProfileCard(
+            GuiGraphicsExtractor graphics,
+            ProfileButtonData data,
+            double mouseX,
+            double mouseY,
+            boolean hovered
+    ) {
         renderCardBorders(graphics, data, hovered);
         var profile = ImprintProfiles.getProfile(data.identifier());
         if (profile != null) {
             renderCardIcon(graphics, data, profile);
         }
         var entry = context.session().entryOrNull(data.identifier);
-        if (entry instanceof InvalidProfileEntry invalid){
+        if (entry instanceof InvalidProfileEntry invalid) {
             renderCardWaring(graphics, data, invalid.issue(), mouseX, mouseY, hovered);
         }
     }
 
-    private void renderCardWaring(GuiGraphicsExtractor graphics, ProfileButtonData data,
-                                  ProfileIssue issue,
-                                  double mouseX, double mouseY,
-                                  boolean hovered
+    private void renderCardWaring(
+            GuiGraphicsExtractor graphics,
+            ProfileButtonData data,
+            ProfileIssue issue,
+            double mouseX,
+            double mouseY,
+            boolean hovered
     ) {
 
         int subBorderSize = (data.size / 2) + 2;
@@ -527,12 +560,16 @@ public class ProfileSwitchWidget extends AbstractWidget {
                 subBorderSize - 2
         );
 
-        if (hovered){
+        if (hovered) {
             renderTooltip(graphics, issue.tooltip(), (int) mouseX, (int) mouseY);
         }
     }
 
-    private void renderCardIcon(GuiGraphicsExtractor graphics, ProfileButtonData data, ImprintProfile profile) {
+    private void renderCardIcon(
+            GuiGraphicsExtractor graphics,
+            ProfileButtonData data,
+            ImprintProfile profile
+    ) {
         TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
                 .getTextureManager()
                 .getTexture(TextureAtlas.LOCATION_BLOCKS);
@@ -554,12 +591,20 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
 
-    private void renderCardBorders(GuiGraphicsExtractor graphics, ProfileButtonData data, boolean hovered){
+    private void renderCardBorders(
+            GuiGraphicsExtractor graphics,
+            ProfileButtonData data,
+            boolean hovered
+    ) {
         BoxRenderer.render(graphics, hovered ? BoxSkins.TAB_HOVERED : BoxSkins.TAB,
                 data.x(), data.y(), data.size(), data.size());
     }
 
-    private void renderArrows(GuiGraphicsExtractor graphics, boolean left, boolean right) {
+    private void renderArrows(
+            GuiGraphicsExtractor graphics,
+            boolean left,
+            boolean right
+    ) {
         int arrowH = 8;
         int arrowY = getY() + (getHeight() / 2 - arrowH) + CARDS_CENTER_Y_OFFSET;
         int textureW = 8;
@@ -596,7 +641,10 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         int button = event.button();
         if (!this.active || !this.visible || (button != 0 && button != 1) || !this.isMouseOver(event.x(), event.y())) {
             return false;
@@ -654,31 +702,34 @@ public class ProfileSwitchWidget extends AbstractWidget {
         return super.mouseReleased(event);
     }
 
-    private static void scaleAroundCenter(GuiGraphicsExtractor graphics, int x, int y, int w, int h, float scale) {
-        float cx = x + w / 2.0F;
-        float cy = y + h / 2.0F;
-
-        graphics.pose().translate(cx, cy);
-        graphics.pose().scale(scale, scale);
-        graphics.pose().translate(-cx, -cy);
-    }
-
-    private boolean labelGroupHovered(double mouseX, double mouseY) {
+    private boolean labelGroupHovered(
+            double mouseX,
+            double mouseY
+    ) {
         return isMouseOver(mouseX, mouseY) && labelGroup.containsMouse(mouseX, mouseY);
     }
 
-    private boolean labelProfileHovered(double mouseX, double mouseY) {
+    private boolean labelProfileHovered(
+            double mouseX,
+            double mouseY
+    ) {
         return isMouseOver(mouseX, mouseY) && labelProfile.containsMouse(mouseX, mouseY);
     }
 
-    private boolean onArrowLeft(double mouseX, double mouseY) {
+    private boolean onArrowLeft(
+            double mouseX,
+            double mouseY
+    ) {
         if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
         return mouseX < getX() + ARROW_ZONE_WIDTH + LABEL_ARROWS_PADDING * 2 && mouseY > getY() + ARROW_ZONE_TOP_PADDING;
     }
 
-    private boolean onArrowRight(double mouseX, double mouseY) {
+    private boolean onArrowRight(
+            double mouseX,
+            double mouseY
+    ) {
         if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
@@ -690,13 +741,18 @@ public class ProfileSwitchWidget extends AbstractWidget {
         defaultButtonNarrationText(output);
     }
 
+    private enum FilterMode {ALL, FILTERED}
+
     private record Label(Component text, int x, int y, int width, int height) {
 
         private static Label empty() {
             return new Label(Component.empty(), 0, 0, 0, 0);
         }
 
-        private boolean containsMouse(double mouseX, double mouseY) {
+        private boolean containsMouse(
+                double mouseX,
+                double mouseY
+        ) {
             return mouseX >= x && mouseX < x + width
                     && mouseY >= y && mouseY < y + height;
         }
@@ -710,7 +766,10 @@ public class ProfileSwitchWidget extends AbstractWidget {
             int x,
             int y
     ) {
-        private boolean containsMouse(double mouseX, double mouseY) {
+        private boolean containsMouse(
+                double mouseX,
+                double mouseY
+        ) {
             return mouseX >= x && mouseX < x + size
                     && mouseY >= y && mouseY < y + size;
         }

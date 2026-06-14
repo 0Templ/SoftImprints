@@ -39,7 +39,9 @@ public class GroupsPanel {
         list.setGroups(groups, selectedIndex());
     }
 
-    /** Rebuilds all groups, discarding any cached static groups. */
+    /**
+     * Rebuilds all groups, discarding any cached static groups.
+     */
     public void rebuildFull() {
         staticGroups.clear();
         rebuild();

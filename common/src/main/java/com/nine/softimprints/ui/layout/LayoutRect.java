@@ -14,7 +14,12 @@ public record LayoutRect(int x, int y, int width, int height) {
         return inset(value, value, value, value);
     }
 
-    public LayoutRect inset(int left, int top, int right, int bottom) {
+    public LayoutRect inset(
+            int left,
+            int top,
+            int right,
+            int bottom
+    ) {
         int nextX = x + left;
         int nextY = y + top;
         int nextW = Math.max(0, width - left - right);

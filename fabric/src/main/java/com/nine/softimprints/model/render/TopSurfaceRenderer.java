@@ -13,9 +13,20 @@ import net.minecraft.core.Direction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopSurfaceRenderer implements ImprintSurfaceRenderer{
+public class TopSurfaceRenderer implements ImprintSurfaceRenderer {
 
     private static final QuadTransform DROP_TOP_FACE = TopSurfaceRenderer::keepOnlySidesAndBottom;
+
+    private static boolean keepOnlySidesAndBottom(MutableQuadView quad) {
+        return quad.nominalFace() != Direction.UP;
+    }
+
+    private static TextureAtlasSprite zeroLayerSprite(net.minecraft.resources.Identifier texture) {
+        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
+                .getTextureManager()
+                .getTexture(TextureAtlas.LOCATION_BLOCKS);
+        return atlas.getSprite(texture);
+    }
 
     @Override
     public void emit(ImprintRenderContext context) {
@@ -58,25 +69,13 @@ public class TopSurfaceRenderer implements ImprintSurfaceRenderer{
             TextureAtlasSprite texture;
             if (value == 0) {
                 texture = zeroLayer;
-            }
-            else {
+            } else {
                 texture = set.spriteFor(value);
                 if (texture == null) return;
             }
             EmitHelper.emitStrip(emitter, texture, strip, context.map().size(), depth, entry.rotation());
         }, context.map());
 
-    }
-
-    private static boolean keepOnlySidesAndBottom(MutableQuadView quad) {
-        return quad.nominalFace() != Direction.UP;
-    }
-
-    private static TextureAtlasSprite zeroLayerSprite(net.minecraft.resources.Identifier texture) {
-        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
-                .getTextureManager()
-                .getTexture(TextureAtlas.LOCATION_BLOCKS);
-        return atlas.getSprite(texture);
     }
 
 }

@@ -82,16 +82,6 @@ public class ImprintPreviewWidget extends AbstractWidget {
         rebuildRenderCache();
     }
 
-    private record RenderColumn(int blockX, int blockY, int mapSize, List<MaskRect> rectList) {}
-
-    private record MaskRect(
-            byte value,
-            int x0, int y0,
-            int x1, int y1
-    ){}
-
-
-
     private void syncAllowedDistanceFromConfig() {
         double stepDistanceBlocks = editorContext.config().draftValue(SIConfig.General.IMPRINT_STEP_DISTANCE);
         previewState.setAllowedDist(stepDistanceBlocks * Constants.PREVIEW_BLOCK_RESOLUTION);
@@ -132,7 +122,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         spritesByValue.clear();
         renderColumns.clear();
         var profile = editorContext.currentProfile();
-        if (profile != null){
+        if (profile != null) {
             updateSpriteCache(profile);
             updateRenderCache();
         }
@@ -142,7 +132,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         int mapSize = previewState.mapSize();
         var columns = previewState.columns();
 
-        for (var column : columns.entrySet()){
+        for (var column : columns.entrySet()) {
             int blockX = PreviewState.columnX(column.getKey());
             int blockY = PreviewState.columnY(column.getKey());
 
@@ -173,7 +163,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         }
     }
 
-    private void updateSpriteCache(@Nonnull ImprintProfile profile){
+    private void updateSpriteCache(@Nonnull ImprintProfile profile) {
         var textureSet = previewSettings.debugMode()
                 ? ImprintTextureSet.DEBUG_SET
                 : profile.textureSets.getCurrent();
@@ -185,7 +175,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         spritesByValue.put((byte) 0, atlas.getSprite(profile.preview.base()));
     }
 
-    public void clearPreview(){
+    public void clearPreview() {
         this.previewState.clear();
         this.rebuildRenderCache();
     }
@@ -248,7 +238,10 @@ public class ImprintPreviewWidget extends AbstractWidget {
 
     }
 
-    private void renderBaseLayer(GuiGraphicsExtractor graphics, int mapSize){
+    private void renderBaseLayer(
+            GuiGraphicsExtractor graphics,
+            int mapSize
+    ) {
         TextureAtlasSprite sprite = spritesByValue.get((byte) 0);
         if (sprite == null) return;
 
@@ -276,13 +269,12 @@ public class ImprintPreviewWidget extends AbstractWidget {
 
     }
 
-
-    private void renderPreviewLayers(GuiGraphicsExtractor graphics){
+    private void renderPreviewLayers(GuiGraphicsExtractor graphics) {
         int blockRes = Constants.PREVIEW_BLOCK_RESOLUTION;
         int viewX1 = viewX + visibleWidth();
         int viewY1 = viewY + visibleHeight();
 
-        for (var column : renderColumns){
+        for (var column : renderColumns) {
             int blockPreviewX = column.blockX() * blockRes;
             int blockPreviewY = column.blockY() * blockRes;
             if (blockPreviewX + blockRes <= viewX
@@ -303,9 +295,10 @@ public class ImprintPreviewWidget extends AbstractWidget {
     private void renderRect(
             GuiGraphicsExtractor graphics,
             MaskRect rect,
-            int x, int y,
+            int x,
+            int y,
             int mapSize
-    ){
+    ) {
         var sprite = spritesByValue.get(rect.value());
         if (sprite == null) return;
 
@@ -323,8 +316,12 @@ public class ImprintPreviewWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
-        if (!isMouseOver(event.x(), event.y())){
+    public boolean mouseDragged(
+            MouseButtonEvent event,
+            double dx,
+            double dy
+    ) {
+        if (!isMouseOver(event.x(), event.y())) {
             previewState.setDragging(false);
             return super.mouseDragged(event, dx, dy);
         }
@@ -337,12 +334,20 @@ public class ImprintPreviewWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
+    public boolean mouseScrolled(
+            double x,
+            double y,
+            double scrollX,
+            double scrollY
+    ) {
         return false;
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         return addStrokeAt(event.x(), event.y());
     }
 
@@ -353,7 +358,10 @@ public class ImprintPreviewWidget extends AbstractWidget {
         refreshRenderCache();
     }
 
-    private boolean addStrokeAt(double mouseX, double mouseY) {
+    private boolean addStrokeAt(
+            double mouseX,
+            double mouseY
+    ) {
         MapPoint point = toMapPoint(mouseX, mouseY);
         if (point == null) return false;
         previewState.addStroke(point.x(), point.y(), previewSettings.brushSize());
@@ -363,7 +371,10 @@ public class ImprintPreviewWidget extends AbstractWidget {
         return true;
     }
 
-    private MapPoint toMapPoint(double mouseX, double mouseY) {
+    private MapPoint toMapPoint(
+            double mouseX,
+            double mouseY
+    ) {
         int visibleWidth = visibleWidth();
         int visibleHeight = visibleHeight();
         if (visibleWidth <= 0 || visibleHeight <= 0) return null;
@@ -422,10 +433,19 @@ public class ImprintPreviewWidget extends AbstractWidget {
         return false;
     }
 
-
     @Override
     protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
+    }
+
+    private record RenderColumn(int blockX, int blockY, int mapSize, List<MaskRect> rectList) {
+    }
+
+    private record MaskRect(
+            byte value,
+            int x0, int y0,
+            int x1, int y1
+    ) {
     }
 
     private record MapPoint(double x, double y) {

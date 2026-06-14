@@ -13,27 +13,50 @@ public final class ModelContactMeshVertexConsumer implements VertexConsumer {
 
     private int vertexCount;
 
-    public ModelContactMeshVertexConsumer(VertexConsumer delegate, ModelContactCaptureSession session) {
+    public ModelContactMeshVertexConsumer(
+            VertexConsumer delegate,
+            ModelContactCaptureSession session
+    ) {
         this.delegate = delegate;
         this.session = session;
     }
 
     @Override
-    public VertexConsumer addVertex(float x, float y, float z) {
+    public VertexConsumer addVertex(
+            float x,
+            float y,
+            float z
+    ) {
         captureVertex(x, y, z);
         this.delegate.addVertex(x, y, z);
         return this;
     }
 
     @Override
-    public void addVertex(float x, float y, float z, int color, float u, float v, int overlay, int light,
-                          float normalX, float normalY, float normalZ) {
+    public void addVertex(
+            float x,
+            float y,
+            float z,
+            int color,
+            float u,
+            float v,
+            int overlay,
+            int light,
+            float normalX,
+            float normalY,
+            float normalZ
+    ) {
         captureVertex(x, y, z);
         this.delegate.addVertex(x, y, z, color, u, v, overlay, light, normalX, normalY, normalZ);
     }
 
     @Override
-    public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+    public VertexConsumer setColor(
+            int red,
+            int green,
+            int blue,
+            int alpha
+    ) {
         this.delegate.setColor(red, green, blue, alpha);
         return this;
     }
@@ -45,25 +68,38 @@ public final class ModelContactMeshVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public VertexConsumer setUv(float u, float v) {
+    public VertexConsumer setUv(
+            float u,
+            float v
+    ) {
         this.delegate.setUv(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer setUv1(int u, int v) {
+    public VertexConsumer setUv1(
+            int u,
+            int v
+    ) {
         this.delegate.setUv1(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer setUv2(int u, int v) {
+    public VertexConsumer setUv2(
+            int u,
+            int v
+    ) {
         this.delegate.setUv2(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
+    public VertexConsumer setNormal(
+            float normalX,
+            float normalY,
+            float normalZ
+    ) {
         this.delegate.setNormal(normalX, normalY, normalZ);
         return this;
     }
@@ -74,7 +110,11 @@ public final class ModelContactMeshVertexConsumer implements VertexConsumer {
         return this;
     }
 
-    private void captureVertex(float x, float y, float z) {
+    private void captureVertex(
+            float x,
+            float y,
+            float z
+    ) {
         int index = this.vertexCount++;
         this.x[index] = x;
         this.y[index] = y;

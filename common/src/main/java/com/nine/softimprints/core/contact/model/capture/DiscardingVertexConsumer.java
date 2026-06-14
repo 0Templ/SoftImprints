@@ -7,17 +7,37 @@ public enum DiscardingVertexConsumer implements VertexConsumer {
     INSTANCE;
 
     @Override
-    public VertexConsumer addVertex(float x, float y, float z) {
+    public VertexConsumer addVertex(
+            float x,
+            float y,
+            float z
+    ) {
         return this;
     }
 
     @Override
-    public void addVertex(float x, float y, float z, int color, float u, float v, int overlay, int light,
-                          float normalX, float normalY, float normalZ) {
+    public void addVertex(
+            float x,
+            float y,
+            float z,
+            int color,
+            float u,
+            float v,
+            int overlay,
+            int light,
+            float normalX,
+            float normalY,
+            float normalZ
+    ) {
     }
 
     @Override
-    public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+    public VertexConsumer setColor(
+            int red,
+            int green,
+            int blue,
+            int alpha
+    ) {
         return this;
     }
 
@@ -27,22 +47,35 @@ public enum DiscardingVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public VertexConsumer setUv(float u, float v) {
+    public VertexConsumer setUv(
+            float u,
+            float v
+    ) {
         return this;
     }
 
     @Override
-    public VertexConsumer setUv1(int u, int v) {
+    public VertexConsumer setUv1(
+            int u,
+            int v
+    ) {
         return this;
     }
 
     @Override
-    public VertexConsumer setUv2(int u, int v) {
+    public VertexConsumer setUv2(
+            int u,
+            int v
+    ) {
         return this;
     }
 
     @Override
-    public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
+    public VertexConsumer setNormal(
+            float normalX,
+            float normalY,
+            float normalZ
+    ) {
         return this;
     }
 

@@ -9,7 +9,10 @@ public final class ImprintMap implements IImprintMap {
         this(size, new byte[size * size]);
     }
 
-    public ImprintMap(int size, byte[] bytes) {
+    public ImprintMap(
+            int size,
+            byte[] bytes
+    ) {
         this.size = size;
         this.data = bytes;
     }
@@ -25,11 +28,17 @@ public final class ImprintMap implements IImprintMap {
     }
 
     @Override
-    public byte get(int x, int y) {
+    public byte get(
+            int x,
+            int y
+    ) {
         return this.data[indexOf(x, y)];
     }
 
-    private int indexOf(int x, int y) {
+    private int indexOf(
+            int x,
+            int y
+    ) {
         return y * this.size + x;
     }
 

@@ -16,20 +16,18 @@ public class EditorContext {
 
     private final ProfilesSession session;
     private final ConfigSession configSession = new ConfigSession();
-    private Identifier selected;
-
     private final List<Runnable> selectedProfileListeners = new ArrayList<>();
     private final List<Runnable> selectedProfileDraftListeners = new ArrayList<>();
     private final List<Runnable> onCloseListeners = new ArrayList<>();
-
     private final Runnable selectedDraftRelay = this::notifySelectedProfileDraftChanged;
+    private Identifier selected;
 
     public EditorContext(ProfilesSession session) {
         this.session = session;
         this.selected = session.entryOrFirst(UICache.selectedProfile()).id();
 
         var draft = currentDraft();
-        if (draft != null){
+        if (draft != null) {
             draft.addListener(selectedDraftRelay);
         }
     }

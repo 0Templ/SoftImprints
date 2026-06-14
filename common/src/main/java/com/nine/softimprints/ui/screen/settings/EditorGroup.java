@@ -27,11 +27,18 @@ public enum EditorGroup {
         this(translationKey, 0);
     }
 
-    EditorGroup(String translationKey, int fixedSwitcherWidth) {
+    EditorGroup(
+            String translationKey,
+            int fixedSwitcherWidth
+    ) {
         this(translationKey, fixedSwitcherWidth, () -> null);
     }
 
-    EditorGroup(String translationKey, int fixedSwitcherWidth, Supplier<GroupMarker> markerProvider) {
+    EditorGroup(
+            String translationKey,
+            int fixedSwitcherWidth,
+            Supplier<GroupMarker> markerProvider
+    ) {
         this.translationKey = translationKey;
         this.fixedSwitcherWidth = fixedSwitcherWidth;
         this.markerProvider = markerProvider;

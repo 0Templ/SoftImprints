@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class NeoImprintPluginLoader {
 
-    public static void load(){
+    public static void load() {
         List<ImprintPlugin> plugins = new ArrayList<>();
         for (String className : findPluginClasses()) {
             try {

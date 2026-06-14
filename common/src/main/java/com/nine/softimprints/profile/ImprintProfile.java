@@ -25,7 +25,7 @@ public final class ImprintProfile {
 
     public final ImprintResolution resolution;
 
-    public final ImprintPreviewAssets preview ;
+    public final ImprintPreviewAssets preview;
 
     public final int priority;
 
@@ -141,15 +141,14 @@ public final class ImprintProfile {
 
     public static final class Builder {
 
+        public final ImprintPreviewAssets preview;
         private final Identifier id;
+        private final int priority;
         private List<ImprintLayer> layers;
         private Set<SurfaceBlock> supportedBlocks;
         private SurfaceSettings surface;
         private ImprintTextures textureSets;
         private ImprintResolution resolution;
-
-        public final ImprintPreviewAssets preview;
-        private final int priority;
 
         private Builder(ImprintProfile src) {
             this.id = src.id;
@@ -168,12 +167,18 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder replaceLayer(int index, ImprintLayer layer) {
+        public Builder replaceLayer(
+                int index,
+                ImprintLayer layer
+        ) {
             this.layers.set(index, layer);
             return this;
         }
 
-        public Builder mutateLayer(byte value, UnaryOperator<ImprintLayer> fn) {
+        public Builder mutateLayer(
+                byte value,
+                UnaryOperator<ImprintLayer> fn
+        ) {
             for (int i = 0; i < this.layers.size(); i++) {
                 ImprintLayer layer = this.layers.get(i);
                 if (layer.value() == value) {
@@ -184,7 +189,10 @@ public final class ImprintProfile {
             return this;
         }
 
-        public Builder mutateLayer(int index, UnaryOperator<ImprintLayer> fn) {
+        public Builder mutateLayer(
+                int index,
+                UnaryOperator<ImprintLayer> fn
+        ) {
             this.layers.set(index, fn.apply(this.layers.get(index)));
             return this;
         }

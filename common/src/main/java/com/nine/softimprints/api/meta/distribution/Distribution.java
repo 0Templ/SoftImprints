@@ -5,20 +5,14 @@ public enum Distribution {
     MODRINTH("modrinth"),
     CURSEFORGE("curseforge"),
     GITHUB("github"),
-    UNKNOWN("unknown");
-
-    ;
+    UNKNOWN("unknown");;
 
     private final String labelKey;
     private final String key;
 
-    Distribution(String id){
+    Distribution(String id) {
         this.key = id;
         this.labelKey = "config.softimprints.group.info.distribution." + id;
-    }
-
-    public String getLabelKey(){
-        return labelKey;
     }
 
     public static Distribution fromJsonKey(String key) {
@@ -29,6 +23,10 @@ public enum Distribution {
         }
 
         return null;
+    }
+
+    public String getLabelKey() {
+        return labelKey;
     }
 
 

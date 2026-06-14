@@ -6,8 +6,6 @@ public enum SurfaceMode {
 
     OVERLAY,
     @SerializedName(value = "repaint", alternate = {"TOP", "top"})
-    REPAINT
-
-    ;
+    REPAINT;
 
 }

@@ -1,6 +1,5 @@
 {
   "screen.softimprints.config.title": "Soft Imprints Config",
-
   "gui.softimprints.search.search_hint": "Search…",
   "gui.softimprints.search.type_something": "Type something to search…",
   "gui.softimprints.search.no_results": "No results",
@@ -12,32 +11,26 @@
   "gui.softimprints.profile_switch.group.tooltip.all": "LBM to filter by profile pack",
   "gui.softimprints.profile_switch.group.tooltip.filtered": "LBM to switch profile pack",
   "gui.softimprints.profile_switch.group.tooltip.filtered_all": "RBM to show all packs",
-
   "config.softimprints.reset": "Reset",
   "config.softimprints.reset.approve": "Sure?",
   "config.softimprints.reset.tooltip": "Resets all Soft Imprints settings and profiles to defaults",
-
   "config.softimprints.preview.clear": "Clear",
   "config.softimprints.preview.resolution": "Resolution: %s",
   "config.softimprints.preview.brush_size": "Brush size: %s",
   "config.softimprints.preview.debug": "Debug: %s",
-
   "config.softimprints.group.layers.title": "Layers",
   "config.softimprints.group.layers.zero_layer_source": "Base from: %s",
   "config.softimprints.group.layers.zero_layer_source.original": "Surface",
   "config.softimprints.group.layers.zero_layer_source.original.tooltip": "Uses the block's current top texture for cells untouched by imprints in Repaint mode",
   "config.softimprints.group.layers.zero_layer_source.profile": "Profile",
   "config.softimprints.group.layers.zero_layer_source.profile.tooltip": "Uses the current profile's zero-layer texture for cells untouched by imprints in Repaint mode",
-
   "config.softimprints.group.layers.map_size": "Map size: %s",
   "config.softimprints.group.layers.map_size.tooltip": "Uses the current profile's zero-layer texture for cells untouched by imprints in Repaint mode",
-
   "config.softimprints.group.layers.emit_strategy": "Emit: %s",
   "config.softimprints.group.layers.emit_strategy.repaint": "Repaint",
   "config.softimprints.group.layers.emit_strategy.repaint.tooltip": "Replaces the original top face and redraws the surface",
   "config.softimprints.group.layers.emit_strategy.overlay": "Overlay",
   "config.softimprints.group.layers.emit_strategy.overlay.tooltip": "Keeps the block model unchanged and draws imprints slightly above the surface",
-
   "config.softimprints.group.layers.texture_set": "Texture set: %s",
   "config.softimprints.group.layers.texture_set.tooltip": "Switches between texture variants defined by the current profile",
   "config.softimprints.group.layers.layer_enabled": "Enabled: %s",
@@ -50,19 +43,16 @@
   "config.softimprints.group.layers.inner_jitter.tooltip": "Adds noise along the inner edge of this layer",
   "config.softimprints.group.layers.outer_jitter": "Outer jitter: %s",
   "config.softimprints.group.layers.outer_jitter.tooltip": "Adds noise along the outer edge of this layer",
-
   "config.softimprints.group.blocks.title": "Blocks",
   "config.softimprints.group.blocks.section": "Surface Blocks",
   "config.softimprints.group.blocks.section.tooltip": "Blocks selected here can receive imprints for the current profile",
   "config.softimprints.group.blocks.reload_required.tooltip": "Newly added blocks require F3+T before model wrapping is applied",
   "config.softimprints.group.blocks.priority_conflict.current_wins.tooltip": "%s has higher priority. Other profiles will not use this block: %s",
   "config.softimprints.group.blocks.priority_conflict.current_loses.tooltip": "Other profiles have equal or higher priority and will use this block instead of current profile: %s",
-
   "config.softimprints.group.targets.title": "Targets",
   "config.softimprints.group.targets.section": "Entity Targets",
   "config.softimprints.group.targets.mode.blacklist": "Blacklist",
   "config.softimprints.group.targets.mode.whitelist": "Whitelist",
-
   "config.softimprints.group.general.title": "General",
   "config.softimprints.group.general.section.core": "Core",
   "config.softimprints.group.general.section.surface": "Surface Render",
@@ -83,15 +73,12 @@
   "config.softimprints.group.general.fallback_policy.last_snapshot.tooltip": "Reuses the latest compatible model snapshot without forcing an offscreen render",
   "config.softimprints.group.general.snapshot_interval": "Snapshot interval: %s",
   "config.softimprints.group.general.contact_band_height": "Contact band: %s",
-
   "config.softimprints.group.general.rotation_step_degrees": "Rotation step: %s",
   "config.softimprints.group.general.rotation_step_degrees.tooltip": "Minimum body rotation before placing a new model-contact stamp",
-
   "config.softimprints.group.general.enable_imprints.tooltip": "Master switch for all imprint capture",
   "config.softimprints.group.general.model_contact.tooltip.on": "Uses render-model snapshots to place stamps from the visible entity shape",
   "config.softimprints.group.general.model_contact.tooltip.off": "Uses bounding-box contact to place stamps",
   "config.softimprints.group.general.contact_band_height.tooltip": "Vertical tolerance above the surface for model-contact sampling",
-
   "config.softimprints.group.storage.title": "Performance",
   "config.softimprints.group.storage.section.entities": "Entity Tracking",
   "config.softimprints.group.storage.section.model_capture": "Model Capture",
@@ -113,71 +100,49 @@
   "config.softimprints.group.storage.max_cached_imprint_blocks.tooltip": "Maximum imprint block maps kept in the client cache before old entries are discarded",
   "config.softimprints.group.storage.max_track_range": "Track range: %s",
   "config.softimprints.group.storage.max_track_range.tooltip": "Maximum distance from the observer for entity imprint tracking",
-
   "config.softimprints.group.plugins.title": "Plugins",
   "config.softimprints.group.plugins.section.installed": "Loaded Plugins",
   "config.softimprints.group.plugins.empty": "No plugins loaded",
-
   "config.softimprints.group.info.title": "?",
-
   "config.softimprints.group.info.distribution": "Distribution source:",
   "config.softimprints.group.info.distribution.tooltip": "Where this mod come from",
   "config.softimprints.group.info.distribution.curseforge": "Curse Forge",
   "config.softimprints.group.info.distribution.modrinth": "Modrinth",
   "config.softimprints.group.info.distribution.github": "Github",
   "config.softimprints.group.info.distribution.unknown": "Unknown",
-
   "config.softimprints.group.info.meta.version": "Mod version: %s",
   "config.softimprints.group.info.meta.report_a_bug": "Report a Bug",
   "config.softimprints.group.info.meta.create_pack": "Create your own Imprints",
-
   "config.softimprints.group.info.update.abailable": "Update available:",
   "config.softimprints.group.info.update.up_to_date": "Mod is up to date",
   "config.softimprints.group.info.update.download": "Download:",
   "config.softimprints.group.info.update.download.tooltip": "Follow download link: %s",
   "config.softimprints.group.info.update.not_found": "Couldn't find update",
-
   "config.softimprints.unlimited": "Unlimited",
   "config.softimprints.disabled": "Disabled",
-
   "imprint_profile.softimprints.red_sand": "Red Sand",
   "imprint_profile.softimprints.red_sand.standard": "Standard",
   "imprint_profile.softimprints.red_sand.warm": "Warm",
-
   "imprint_profile.softimprints.sand": "Sand",
   "imprint_profile.softimprints.sand.standard": "Standard",
   "imprint_profile.softimprints.sand.warm": "Warm",
   "imprint_profile.softimprints.sand.pale": "Pale",
-
   "imprint_profile.softimprints.snow": "Snow",
   "imprint_profile.softimprints.snow.standard": "Standard",
   "imprint_profile.softimprints.snow.icy": "Icy",
   "imprint_profile.softimprints.snow.slush": "Slush",
-
   "imprint_profile.issue.unsupported_profile": "Unsupported Profile",
   "imprint_profile.issue.source": "Source: %s",
-
   "imprint_profile.issue.unsupported_schema_version.title": "Unsupported profile version",
   "imprint_profile.issue.unsupported_schema_version.details_0": "Profile schema: %s. Supported: %s and below",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Update Soft Imprints or install a compatible profile pack",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Profile requires a newer Soft Imprints version",
-
-
   "imprint_pack.all": "All Profiles",
-
   "imprint_pack.unknown": "Unknow pack",
-
   "imprint_pack.softimprints": "Default Profiles",
-
   "imprint_pack.debug_imprints": "Debug Imprints",
   "imprint_pack.debug_imprints.desc": "Test imprint profile",
-
-
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Lets Ecliptic Seasons snowy surfaces use matching imprint profiles automatically",
-
-
-
-
   "___end.": ""
 }

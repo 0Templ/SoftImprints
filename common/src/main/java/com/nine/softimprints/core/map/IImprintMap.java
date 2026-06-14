@@ -6,7 +6,10 @@ public interface IImprintMap {
 
     byte[] data();
 
-    byte get(int x, int y);
+    byte get(
+            int x,
+            int y
+    );
 
     default boolean isEmpty() {
         int size = size();

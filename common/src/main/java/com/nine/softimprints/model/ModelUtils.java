@@ -11,7 +11,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class ModelUtils {
 
 
-    public static float resolveTopY(BlockState state, BlockGetter level, BlockPos pos) {
+    public static float resolveTopY(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos
+    ) {
         if (state.getBlock() instanceof SnowLayerBlock) {
             return state.getValue(SnowLayerBlock.LAYERS) / 8.0f;
         }
@@ -21,7 +25,6 @@ public class ModelUtils {
         }
         return 1.0f;
     }
-
 
 
 }

@@ -19,18 +19,36 @@ public interface ConfigListEntry {
 
     int getHeight();
 
-    void updateEntryLayout(int x, int y, int width);
+    void updateEntryLayout(
+            int x,
+            int y,
+            int width
+    );
 
     void updateHeight(int height);
 
-    void attachToList(ConfigListWidget list, ListGroup group);
+    void attachToList(
+            ConfigListWidget list,
+            ListGroup group
+    );
 
-    void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick);
+    void render(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    );
 
-    default void mouseMoved(double x, double y) {
+    default void mouseMoved(
+            double x,
+            double y
+    ) {
     }
 
-    default boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    default boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         return false;
     }
 
@@ -38,11 +56,20 @@ public interface ConfigListEntry {
         return false;
     }
 
-    default boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    default boolean mouseDragged(
+            MouseButtonEvent event,
+            double dragX,
+            double dragY
+    ) {
         return false;
     }
 
-    default boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    default boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
         return false;
     }
 
@@ -66,14 +93,17 @@ public interface ConfigListEntry {
         return true;
     }
 
-    default void setFocused(boolean focused) {
-    }
-
     default boolean isFocused() {
         return false;
     }
 
-    default boolean isMouseOver(double mouseX, double mouseY) {
+    default void setFocused(boolean focused) {
+    }
+
+    default boolean isMouseOver(
+            double mouseX,
+            double mouseY
+    ) {
         return mouseX >= getX()
                 && mouseY >= getY()
                 && mouseX < getX() + getWidth()

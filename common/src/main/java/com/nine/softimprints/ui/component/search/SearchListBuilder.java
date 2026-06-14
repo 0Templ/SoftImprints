@@ -13,6 +13,8 @@ public final class SearchListBuilder<T> {
     private static final String DEFAULT_MODE_ID = "default";
 
     private final List<SearchableEntry<T>> entries = new ArrayList<>();
+    private final List<T> singleModeInitial = new ArrayList<>();
+    private final List<SearchListMode<T>> modes = new ArrayList<>();
     private int rowHeight = 20;
     private int visibleRows = 6;
     private SearchListEntry.Tab defaultTab;
@@ -21,15 +23,13 @@ public final class SearchListBuilder<T> {
     private Component emptyHint;
     private Component browseTabLabel;
     private Component selectedTabLabel;
-
-    private Consumer<Set<T>> singleModeListener = ignored -> {};
-    private final List<T> singleModeInitial = new ArrayList<>();
-
-    private final List<SearchListMode<T>> modes = new ArrayList<>();
+    private Consumer<Set<T>> singleModeListener = ignored -> {
+    };
     private String initialActiveModeId;
     private Consumer<String> modeChangeListener;
 
-    private SearchListBuilder() {}
+    private SearchListBuilder() {
+    }
 
     public static <T> SearchListBuilder<T> create() {
         return new SearchListBuilder<>();
@@ -76,7 +76,8 @@ public final class SearchListBuilder<T> {
     }
 
     public SearchListBuilder<T> onChange(Consumer<Set<T>> listener) {
-        this.singleModeListener = listener != null ? listener : ignored -> {};
+        this.singleModeListener = listener != null ? listener : ignored -> {
+        };
         return this;
     }
 

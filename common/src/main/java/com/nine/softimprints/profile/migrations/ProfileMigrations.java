@@ -20,7 +20,7 @@ public class ProfileMigrations {
             JsonObject json,
             int from,
             int to
-    ){
+    ) {
         int prevStep = -1;
         var ret = json.deepCopy();
         for (int v = from + 1; v <= to; v++) {
@@ -28,10 +28,10 @@ public class ProfileMigrations {
             if (!MIGRATION_STEPS.containsKey(v)) continue;
             ret = step.apply(ret);
             if (ret == null) {
-                if (v != prevStep){
+                if (v != prevStep) {
                     throw new IllegalArgumentException("No migration step from v" + prevStep + " to v" + v);
                 } else {
-                    throw new IllegalArgumentException("Couldn't migrate profile to v" + v  );
+                    throw new IllegalArgumentException("Couldn't migrate profile to v" + v);
                 }
             }
             prevStep = v;
@@ -40,7 +40,7 @@ public class ProfileMigrations {
         return ret;
     }
 
-    private static JsonObject v1_to_v2(JsonObject prev){
+    private static JsonObject v1_to_v2(JsonObject prev) {
         JsonObject next = prev.deepCopy();
 
         rename(next, "supportedBlocks", "supported_blocks");
@@ -75,24 +75,33 @@ public class ProfileMigrations {
     }
 
 
-
-    private static JsonObject v0_to_v1(JsonObject prev){
+    private static JsonObject v0_to_v1(JsonObject prev) {
         return prev;
     }
 
 
-    private static void rename(JsonObject obj, String from, String to) {
+    private static void rename(
+            JsonObject obj,
+            String from,
+            String to
+    ) {
         if (!obj.has(from)) return;
         if (obj.has(to)) return;
         obj.add(to, obj.remove(from));
     }
 
-    private static JsonObject object(JsonObject obj, String key) {
+    private static JsonObject object(
+            JsonObject obj,
+            String key
+    ) {
         JsonElement element = obj.get(key);
         return element != null && element.isJsonObject() ? element.getAsJsonObject() : null;
     }
 
-    private static JsonArray array(JsonObject obj, String key) {
+    private static JsonArray array(
+            JsonObject obj,
+            String key
+    ) {
         JsonElement element = obj.get(key);
         return element != null && element.isJsonArray() ? element.getAsJsonArray() : null;
     }

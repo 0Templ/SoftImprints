@@ -1,6 +1,5 @@
 {
   "screen.softimprints.config.title": "Настройки Soft Imprints",
-
   "gui.softimprints.search.search_hint": "Поиск...",
   "gui.softimprints.search.type_something": "Введите текст для поиска...",
   "gui.softimprints.search.no_results": "Ничего не найдено",
@@ -12,32 +11,26 @@
   "gui.softimprints.profile_switch.group.tooltip.all": "ЛКМ - показать профили выбранного набора",
   "gui.softimprints.profile_switch.group.tooltip.filtered": "ЛКМ - следующий набор профилей",
   "gui.softimprints.profile_switch.group.tooltip.filtered_all": "ПКМ - показать все наборы",
-
   "config.softimprints.reset": "Сброс",
   "config.softimprints.reset.approve": "Точно?",
   "config.softimprints.reset.tooltip": "Сбрасывает все настройки и профили Soft Imprints к значениям по умолчанию",
-
   "config.softimprints.preview.clear": "Очистить",
   "config.softimprints.preview.resolution": "Разрешение: %s",
   "config.softimprints.preview.brush_size": "Размер кисти: %s",
   "config.softimprints.preview.debug": "Отладка: %s",
-
   "config.softimprints.group.layers.title": "Слои",
   "config.softimprints.group.layers.zero_layer_source": "Основа из: %s",
   "config.softimprints.group.layers.zero_layer_source.original": "Поверхности",
   "config.softimprints.group.layers.zero_layer_source.original.tooltip": "Использовать реальную текущую верхнюю текстуру блока для ячеек, не затронутых следами в режиме перерисовки",
   "config.softimprints.group.layers.zero_layer_source.profile": "Профиля",
   "config.softimprints.group.layers.zero_layer_source.profile.tooltip": "Использовать установленную текущим профилем текстуру для ячеек, не затронутых следами в режиме перерисовки",
-
   "config.softimprints.group.layers.map_size": "Размер карты: %s",
   "config.softimprints.group.layers.map_size.tooltip": "Размер внутренней карты маски на один блок. Чем больше значение, тем выше детализация следа и нагрузка",
-
   "config.softimprints.group.layers.emit_strategy": "Рендер: %s",
   "config.softimprints.group.layers.emit_strategy.repaint": "Перерисовка",
   "config.softimprints.group.layers.emit_strategy.repaint.tooltip": "Заменяет исходную верхнюю грань и заново рисует поверхность",
   "config.softimprints.group.layers.emit_strategy.overlay": "Оверлей",
   "config.softimprints.group.layers.emit_strategy.overlay.tooltip": "Оставляет модель блока без изменений и рисует следы немного выше поверхности",
-
   "config.softimprints.group.layers.texture_set": "Набор текстур: %s",
   "config.softimprints.group.layers.texture_set.tooltip": "Переключает варианты текстур, заданные текущим профилем",
   "config.softimprints.group.layers.layer_enabled": "Включено: %s",
@@ -50,19 +43,16 @@
   "config.softimprints.group.layers.inner_jitter.tooltip": "Шум вдоль внутреннего края этого слоя",
   "config.softimprints.group.layers.outer_jitter": "Внеш. шум: %s",
   "config.softimprints.group.layers.outer_jitter.tooltip": "Шум вдоль внешнего края этого слоя",
-
   "config.softimprints.group.blocks.title": "Блоки",
   "config.softimprints.group.blocks.section": "Блоки поверхности",
   "config.softimprints.group.blocks.section.tooltip": "Выбранные здесь блоки могут получать следы для текущего профиля",
   "config.softimprints.group.blocks.reload_required.tooltip": "При добавлении новых блоков следует перезагрузить ресурсы(F3+T), дабы те могли отображать следы",
   "config.softimprints.group.blocks.priority_conflict.current_wins.tooltip": "%s имеет более высокий приоритет. Другие профили не будут использовать этот блок: %s",
   "config.softimprints.group.blocks.priority_conflict.current_loses.tooltip": "Другие профили имеют такой же или более высокий приоритет и будут использовать этот блок вместо выбранного профиля: %s",
-
   "config.softimprints.group.targets.title": "Цели",
   "config.softimprints.group.targets.section": "Цели-сущности",
   "config.softimprints.group.targets.mode.blacklist": "Чёрный список",
   "config.softimprints.group.targets.mode.whitelist": "Белый список",
-
   "config.softimprints.group.general.title": "Общие",
   "config.softimprints.group.general.section.core": "Основное",
   "config.softimprints.group.general.section.surface": "Рендер поверхности",
@@ -83,15 +73,12 @@
   "config.softimprints.group.general.fallback_policy.last_snapshot.tooltip": "Использовать последний совместимый снапшот модели без принудительного offscreen-рендера",
   "config.softimprints.group.general.snapshot_interval": "Интервал снапшотов: %s",
   "config.softimprints.group.general.contact_band_height": "Вертикльный порог контакта: %s",
-
   "config.softimprints.group.general.rotation_step_degrees": "Шаг поворота: %s",
   "config.softimprints.group.general.rotation_step_degrees.tooltip": "Минимальный поворот тела перед постановкой нового штампа контакта по модели",
-
   "config.softimprints.group.general.enable_imprints.tooltip": "Главный переключатель всей системы захвата следов",
   "config.softimprints.group.general.model_contact.tooltip.on": "Использовать рендер-снапшоты модели, чтобы ставить следы по реальной модели сущности",
   "config.softimprints.group.general.model_contact.tooltip.off": "Использовать контакт по bounding box для постановки штампов",
   "config.softimprints.group.general.contact_band_height.tooltip": "Лимит высоты над поверхностью для сэмплинга контакта по модели",
-
   "config.softimprints.group.storage.title": "Производительность",
   "config.softimprints.group.storage.section.entities": "Отслеживание сущностей",
   "config.softimprints.group.storage.section.model_capture": "Захват модели",
@@ -113,67 +100,48 @@
   "config.softimprints.group.storage.max_cached_imprint_blocks.tooltip": "Максимум карт блоков со следами, хранимых в клиентском кэше, прежде чем старые записи будут удалены",
   "config.softimprints.group.storage.max_track_range": "Дальность: %s",
   "config.softimprints.group.storage.max_track_range.tooltip": "Максимальная дистанция от наблюдателя для отслеживания следов сущностей",
-
   "config.softimprints.group.plugins.title": "Плагины",
   "config.softimprints.group.plugins.section.installed": "Загруженные плагины",
   "config.softimprints.group.plugins.empty": "Пусто...",
-
   "config.softimprints.group.info.title": "?",
-
   "config.softimprints.group.info.distribution": "Источник сборки:",
   "config.softimprints.group.info.distribution.tooltip": "Откуда была получена эта сборка мода",
   "config.softimprints.group.info.distribution.curseforge": "CurseForge",
   "config.softimprints.group.info.distribution.modrinth": "Modrinth",
   "config.softimprints.group.info.distribution.github": "GitHub",
   "config.softimprints.group.info.distribution.unknown": "Неизвестно",
-
   "config.softimprints.group.info.meta.version": "Версия мода: %s",
   "config.softimprints.group.info.meta.report_a_bug": "Сообщить об ошибке",
   "config.softimprints.group.info.meta.create_pack": "Создать свой набор следов",
-
   "config.softimprints.group.info.update.abailable": "Доступно обновление:",
   "config.softimprints.group.info.update.up_to_date": "Мод обновлён",
   "config.softimprints.group.info.update.download": "Скачать:",
   "config.softimprints.group.info.update.download.tooltip": "Открыть ссылку для загрузки: %s",
-
   "config.softimprints.unlimited": "Без лимита",
   "config.softimprints.disabled": "Отключено",
-
   "imprint_profile.softimprints.red_sand": "Красный песок",
   "imprint_profile.softimprints.red_sand.standard": "Стандартный",
   "imprint_profile.softimprints.red_sand.warm": "Тёплый",
-
   "imprint_profile.softimprints.sand": "Песок",
   "imprint_profile.softimprints.sand.standard": "Стандартный",
   "imprint_profile.softimprints.sand.warm": "Тёплый",
   "imprint_profile.softimprints.sand.pale": "Бледный",
-
   "imprint_profile.softimprints.snow": "Снег",
   "imprint_profile.softimprints.snow.standard": "Стандартный",
   "imprint_profile.softimprints.snow.icy": "Ледяной",
   "imprint_profile.softimprints.snow.slush": "Рыхлый",
-
   "imprint_profile.issue.unsupported_profile": "Неподдерживаемый профиль",
   "imprint_profile.issue.source": "Источник: %s",
-
   "imprint_profile.issue.unsupported_schema_version.title": "Неподдерживаемая версия профиля",
   "imprint_profile.issue.unsupported_schema_version.details_0": "Схема профиля: %s. Поддерживается: %s и ниже",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Обновите Soft Imprints или установите совместимый пак профилей",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Профилю нужна более новая версия Soft Imprints",
-
-
   "imprint_pack.all": "Все профили",
   "imprint_pack.unknown": "Профили",
   "imprint_pack.softimprints": "Стандартные профили",
   "imprint_pack.debug_imprints": "Отладочные следы",
   "imprint_pack.debug_imprints.desc": "Тестовый профиль следов",
-
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Позволяет заснеженным поверхностям Ecliptic Seasons автоматически использовать подходящие профили следов",
-
-
-
-
-
   "___end.": ""
 }

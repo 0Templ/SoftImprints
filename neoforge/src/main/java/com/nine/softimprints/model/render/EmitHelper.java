@@ -49,17 +49,32 @@ public final class EmitHelper {
     private static void emitCorner(
             VertexConsumer consumer,
             TextureAtlasSprite sprite,
-            float x, float y, float z,
-            float u, float v,
+            float x,
+            float y,
+            float z,
+            float u,
+            float v,
             int rotation
     ) {
         float ru;
         float rv;
         switch (rotation & 3) {
-            case 1 -> { ru = 1.0F - v; rv = u; }
-            case 2 -> { ru = 1.0F - u; rv = 1.0F - v; }
-            case 3 -> { ru = v; rv = 1.0F - u; }
-            default -> { ru = u; rv = v; }
+            case 1 -> {
+                ru = 1.0F - v;
+                rv = u;
+            }
+            case 2 -> {
+                ru = 1.0F - u;
+                rv = 1.0F - v;
+            }
+            case 3 -> {
+                ru = v;
+                rv = 1.0F - u;
+            }
+            default -> {
+                ru = u;
+                rv = v;
+            }
         }
         float atlasU = sprite.getU0() + ru * (sprite.getU1() - sprite.getU0());
         float atlasV = sprite.getV0() + rv * (sprite.getV1() - sprite.getV0());

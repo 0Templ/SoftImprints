@@ -18,12 +18,39 @@ public final class EntityMotionTracker {
 
     private final Int2ObjectOpenHashMap<MotionFrame> frames = new Int2ObjectOpenHashMap<>();
 
+    private static boolean validForTrack(
+            Entity entity,
+            EntityTargetFilter.Snapshot targetFilter
+    ) {
+        return entity.isAlive()
+                && !entity.isRemoved()
+                && !entity.isSpectator()
+                && targetFilter.allows(entity)
+                && entity.getBoundingBox().getXsize() > 0.0D
+                && entity.getBoundingBox().getZsize() > 0.0D;
+    }
+
+    private static Pose resolvePose(Entity entity) {
+        return entity instanceof LivingEntity living ? living.getPose() : null;
+    }
+
+    private static float resolveBodyYaw(Entity entity) {
+        return entity instanceof LivingEntity living ? living.yBodyRot : 0.0F;
+    }
+
+    private static double resolveFallDistance(Entity entity) {
+        return entity instanceof LivingEntity living ? living.fallDistance : 0.0D;
+    }
+
     public void clear() {
         this.states.clear();
         this.frames.clear();
     }
 
-    public void tick(ClientLevel level, Entity observer) {
+    public void tick(
+            ClientLevel level,
+            Entity observer
+    ) {
         this.frames.clear();
 
         var observerPos = observer.blockPosition();
@@ -43,7 +70,7 @@ public final class EntityMotionTracker {
             if (!amountUnlimited && tracked >= maxTracked) {
                 break;
             }
-            if (!distUnlimited){
+            if (!distUnlimited) {
                 double dx = entity.getX() - observerPos.getX();
                 double dz = entity.getZ() - observerPos.getZ();
                 if (!(dx * dx + dz * dz <= reqDist * reqDist)) continue;
@@ -68,7 +95,11 @@ public final class EntityMotionTracker {
         return this.frames.get(entityId);
     }
 
-    private boolean observe(Entity entity, IntSet seen, EntityTargetFilter.Snapshot targetFilter) {
+    private boolean observe(
+            Entity entity,
+            IntSet seen,
+            EntityTargetFilter.Snapshot targetFilter
+    ) {
         if (entity == null) {
             return false;
         }
@@ -112,27 +143,6 @@ public final class EntityMotionTracker {
 
         this.frames.put(id, frame);
         return true;
-    }
-
-    private static boolean validForTrack(Entity entity, EntityTargetFilter.Snapshot targetFilter) {
-        return entity.isAlive()
-                && !entity.isRemoved()
-                && !entity.isSpectator()
-                && targetFilter.allows(entity)
-                && entity.getBoundingBox().getXsize() > 0.0D
-                && entity.getBoundingBox().getZsize() > 0.0D;
-    }
-
-    private static Pose resolvePose(Entity entity) {
-        return entity instanceof LivingEntity living ? living.getPose() : null;
-    }
-
-    private static float resolveBodyYaw(Entity entity) {
-        return entity instanceof LivingEntity living ? living.yBodyRot : 0.0F;
-    }
-
-    private static double resolveFallDistance(Entity entity) {
-        return entity instanceof LivingEntity living ? living.fallDistance : 0.0D;
     }
 
     private static final class MotionState {

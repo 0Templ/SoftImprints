@@ -26,4 +26,5 @@ public record ImprintRenderContext(
         SurfaceSettings surface,
         IImprintMap map,
         BlockRenderData blockRenderData
-) {}
+) {
+}

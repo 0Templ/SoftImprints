@@ -20,6 +20,21 @@ public record MotionFrame(
         double curFallDistance
 ) {
 
+    static MotionFrame seed(Entity entity) {
+        double x = entity.getX();
+        double z = entity.getZ();
+        boolean onGround = entity.onGround();
+        Pose pose = entity instanceof LivingEntity living ? living.getPose() : null;
+        float bodyYaw = entity instanceof LivingEntity living ? living.yBodyRot : 0.0F;
+        double fall = entity instanceof LivingEntity living ? living.fallDistance : 0.0D;
+        return new MotionFrame(
+                entity,
+                x, z, onGround, pose, bodyYaw, fall,
+                x, z, onGround, pose, bodyYaw,
+                fall
+        );
+    }
+
     public int entityId() {
         return this.entity.getId();
     }
@@ -47,20 +62,5 @@ public record MotionFrame(
 
     public boolean poseChanged() {
         return this.curPose != this.prevPose;
-    }
-
-    static MotionFrame seed(Entity entity) {
-        double x = entity.getX();
-        double z = entity.getZ();
-        boolean onGround = entity.onGround();
-        Pose pose = entity instanceof LivingEntity living ? living.getPose() : null;
-        float bodyYaw = entity instanceof LivingEntity living ? living.yBodyRot : 0.0F;
-        double fall = entity instanceof LivingEntity living ? living.fallDistance : 0.0D;
-        return new MotionFrame(
-                entity,
-                x, z, onGround, pose, bodyYaw, fall,
-                x, z, onGround, pose, bodyYaw,
-                fall
-        );
     }
 }

@@ -15,7 +15,11 @@ import java.util.List;
 
 public record BlockRenderData(int rotation, TextureAtlasSprite topSprite) {
 
-    public static BlockRenderData compute(BlockPos pos, BlockStateModel wrapped, BlockState state) {
+    public static BlockRenderData compute(
+            BlockPos pos,
+            BlockStateModel wrapped,
+            BlockState state
+    ) {
         long seed = state.getSeed(pos);
         RandomSource random = RandomSource.create(seed);
 
@@ -29,14 +33,20 @@ public record BlockRenderData(int rotation, TextureAtlasSprite topSprite) {
         return new BlockRenderData(rotation, sprite);
     }
 
-    public static TextureAtlasSprite computeTopSprite(List<BlockStateModelPart> parts, BlockStateModel wrapped) {
+    public static TextureAtlasSprite computeTopSprite(
+            List<BlockStateModelPart> parts,
+            BlockStateModel wrapped
+    ) {
         if (parts.isEmpty()) return wrapped.particleMaterial().sprite();
         List<BakedQuad> quads = parts.getFirst().getQuads(Direction.UP);
         if (quads.isEmpty()) return wrapped.particleMaterial().sprite();
         return quads.getFirst().materialInfo().sprite();
     }
 
-    public static int computeTopRotation(List<BlockStateModelPart> parts, TextureAtlasSprite sprite) {
+    public static int computeTopRotation(
+            List<BlockStateModelPart> parts,
+            TextureAtlasSprite sprite
+    ) {
 
         if (parts.isEmpty()) return 0;
 
@@ -45,8 +55,8 @@ public record BlockRenderData(int rotation, TextureAtlasSprite topSprite) {
 
         BakedQuad q = upQuads.getFirst();
 
-        Vector3fc[] positions = { q.position0(), q.position1(), q.position2(), q.position3() };
-        long[] uvs = { q.packedUV0(), q.packedUV1(), q.packedUV2(), q.packedUV3() };
+        Vector3fc[] positions = {q.position0(), q.position1(), q.position2(), q.position3()};
+        long[] uvs = {q.packedUV0(), q.packedUV1(), q.packedUV2(), q.packedUV3()};
 
         int targetVertex = 0;
         float minSum = Float.POSITIVE_INFINITY;
@@ -74,11 +84,11 @@ public record BlockRenderData(int rotation, TextureAtlasSprite topSprite) {
     }
 
     private static float unpackU(long packedUV) {
-        return Float.intBitsToFloat((int)((packedUV >>> 32) & 0xFFFFFFFFL));
+        return Float.intBitsToFloat((int) ((packedUV >>> 32) & 0xFFFFFFFFL));
     }
 
     private static float unpackV(long packedUV) {
-        return Float.intBitsToFloat((int)(packedUV & 0xFFFFFFFFL));
+        return Float.intBitsToFloat((int) (packedUV & 0xFFFFFFFFL));
     }
 
 }

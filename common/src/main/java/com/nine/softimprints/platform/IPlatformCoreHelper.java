@@ -4,14 +4,14 @@ import java.nio.file.Path;
 
 public interface IPlatformCoreHelper {
 
-	Path getConfigPath();
+    Path getConfigPath();
 
-	boolean inDevEnvironment();
+    boolean inDevEnvironment();
 
-	String modVersion();
+    String modVersion();
 
-	String currentLoader();
+    String currentLoader();
 
-	boolean isModLoaded(String id);
+    boolean isModLoaded(String id);
 
 }

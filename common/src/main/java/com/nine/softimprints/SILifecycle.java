@@ -34,7 +34,7 @@ public class SILifecycle {
     public static void onChunkUnload(ChunkAccess chunk) {
         if (!SIConfig.Performance.CLEAR_IMPRINTS_ON_CHUNK_UNLOAD.get()) return;
         LevelData cache = CacheAccess.current();
-        if (cache != null){
+        if (cache != null) {
             cache.clearAtChunk(chunk.getPos().x(), chunk.getPos().z());
         }
     }
@@ -45,9 +45,6 @@ public class SILifecycle {
             syncLevelCache(level);
         }
     }
-
-
-
 
 
 }

@@ -12,15 +12,19 @@ public class BlockRenderCache {
 
     private final ConcurrentHashMap<Long, BlockRenderData> models = new ConcurrentHashMap<>();
 
-    public BlockRenderData get(Long pos, BlockStateModel wrapped, BlockState state){
+    public BlockRenderData get(
+            Long pos,
+            BlockStateModel wrapped,
+            BlockState state
+    ) {
         return models.computeIfAbsent(pos, k -> BlockRenderData.compute(BlockPos.of(pos), wrapped, state));
     }
 
-    public void clearAt(Long pos){
+    public void clearAt(Long pos) {
         models.remove((long) pos);
     }
 
-    public void clearIf(LongPredicate predicate){
+    public void clearIf(LongPredicate predicate) {
         models.keySet().removeIf(predicate::test);
     }
 

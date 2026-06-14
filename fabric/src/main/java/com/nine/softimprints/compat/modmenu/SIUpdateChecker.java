@@ -6,9 +6,9 @@ import com.terraformersmc.modmenu.api.UpdateChecker;
 
 public class SIUpdateChecker implements UpdateChecker {
 
-	@Override
-	public SIUpdateInfo checkForUpdates() {
-		SIUpdateResult result = SIUpdateService.await();
-		return SIUpdateInfo.from(result);
-	}
+    @Override
+    public SIUpdateInfo checkForUpdates() {
+        SIUpdateResult result = SIUpdateService.await();
+        return SIUpdateInfo.from(result);
+    }
 }

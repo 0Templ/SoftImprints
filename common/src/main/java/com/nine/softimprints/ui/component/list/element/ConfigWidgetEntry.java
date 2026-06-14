@@ -22,7 +22,11 @@ public final class ConfigWidgetEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public void updateEntryLayout(int x, int y, int width) {
+    public void updateEntryLayout(
+            int x,
+            int y,
+            int width
+    ) {
         super.updateEntryLayout(x, y, width);
         this.widget.setX(x);
         this.widget.setY(y);
@@ -31,17 +35,28 @@ public final class ConfigWidgetEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         this.widget.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public void mouseMoved(double x, double y) {
+    public void mouseMoved(
+            double x,
+            double y
+    ) {
         this.widget.mouseMoved(x, y);
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         return this.widget.mouseClicked(event, doubleClick);
     }
 
@@ -51,12 +66,21 @@ public final class ConfigWidgetEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    public boolean mouseDragged(
+            MouseButtonEvent event,
+            double dragX,
+            double dragY
+    ) {
         return this.widget.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
         return this.widget.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
@@ -81,13 +105,13 @@ public final class ConfigWidgetEntry extends AbstractConfigListEntry {
     }
 
     @Override
-    public void setFocused(boolean focused) {
-        super.setFocused(focused);
-        this.widget.setFocused(focused);
+    public boolean isFocused() {
+        return this.widget.isFocused();
     }
 
     @Override
-    public boolean isFocused() {
-        return this.widget.isFocused();
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+        this.widget.setFocused(focused);
     }
 }

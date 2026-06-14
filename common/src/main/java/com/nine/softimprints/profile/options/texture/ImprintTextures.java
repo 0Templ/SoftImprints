@@ -16,6 +16,33 @@ public record ImprintTextures(
         map = Collections.unmodifiableMap(new LinkedHashMap<>(map));
     }
 
+    public static ImprintTextures fromSets(
+            String selected,
+            Identifier initLayer,
+            Iterable<? extends ImprintTextureSet> sets
+    ) {
+        Objects.requireNonNull(sets, "sets");
+        Map<String, ImprintTextureSet> collected = new LinkedHashMap<>();
+        if (selected == null) throw new IllegalArgumentException("Selected set id is not set");
+        if (selected.isBlank()) throw new IllegalArgumentException("Selected set id is blank");
+        for (ImprintTextureSet set : sets) {
+            if (set == null) {
+                throw new IllegalArgumentException("Texture set cannot be null");
+            }
+            String id = Objects.requireNonNull(set.id(), "Texture set selected cannot be null");
+            if (id.isBlank()) {
+                throw new IllegalArgumentException("Texture set selected cannot be blank");
+            }
+            if (collected.putIfAbsent(id, set) != null) {
+                throw new IllegalArgumentException("Duplicate texture set selected: " + id);
+            }
+        }
+        if (!collected.containsKey(selected)) {
+            throw new IllegalArgumentException("Wrong current texture set Id: " + selected);
+        }
+        return new ImprintTextures(selected, initLayer, collected);
+    }
+
     public ImprintTextureSet getCurrent() {
         return map.get(selected);
     }
@@ -39,29 +66,6 @@ public record ImprintTextures(
         int currentIndex = ids.indexOf(selected);
         int nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % ids.size();
         return withSelected(ids.get(nextIndex));
-    }
-
-    public static ImprintTextures fromSets(String selected, Identifier initLayer, Iterable<? extends ImprintTextureSet> sets) {
-        Objects.requireNonNull(sets, "sets");
-        Map<String, ImprintTextureSet> collected = new LinkedHashMap<>();
-        if (selected == null) throw new IllegalArgumentException("Selected set id is not set");
-        if (selected.isBlank()) throw new IllegalArgumentException("Selected set id is blank");
-        for (ImprintTextureSet set : sets) {
-            if (set == null) {
-                throw new IllegalArgumentException("Texture set cannot be null");
-            }
-            String id = Objects.requireNonNull(set.id(), "Texture set selected cannot be null");
-            if (id.isBlank()) {
-                throw new IllegalArgumentException("Texture set selected cannot be blank");
-            }
-            if (collected.putIfAbsent(id, set) != null) {
-                throw new IllegalArgumentException("Duplicate texture set selected: " + id);
-            }
-        }
-        if (!collected.containsKey(selected)) {
-            throw new IllegalArgumentException("Wrong current texture set Id: " + selected);
-        }
-        return new ImprintTextures(selected, initLayer, collected);
     }
 
 }

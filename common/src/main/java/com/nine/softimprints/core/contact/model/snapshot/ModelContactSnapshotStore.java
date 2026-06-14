@@ -23,7 +23,10 @@ public final class ModelContactSnapshotStore {
         state.record(snapshot);
     }
 
-    public synchronized ModelContactSnapshot latest(int entityId, long currentGameTime) {
+    public synchronized ModelContactSnapshot latest(
+            int entityId,
+            long currentGameTime
+    ) {
         SnapshotState state = this.snapshots.get(entityId);
         if (state == null) {
             return null;

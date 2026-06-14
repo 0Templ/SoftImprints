@@ -15,34 +15,10 @@ import static com.nine.softimprints.ui.screen.settings.SettingsControls.doubleSl
 
 public class GeneralGroupFactory implements SettingsGroupFactory {
 
-    @Override
-    public EditorGroup key() {
-        return EditorGroup.GENERAL;
-    }
-
-    @Override
-    public GroupZone zone() {
-        return GroupZone.LEFT;
-    }
-
-    @Override
-    public boolean rebuildOnProfileChange() {
-        return false;
-    }
-
-    @Override
-    public ListGroup build(GroupBuildContext context) {
-        GroupBuilder builder = GroupBuilder.of(label())
-                .spacer(4);
-
-        addCore(context, builder);
-        addModelContact(context, builder);
-        addCompat(context, builder);
-
-        return builder.build();
-    }
-
-    private static void addCore(GroupBuildContext context, GroupBuilder builder) {
+    private static void addCore(
+            GroupBuildContext context,
+            GroupBuilder builder
+    ) {
         builder.widget(applyTooltip(
                 booleanButton(context, "config.softimprints.group.general.enable_imprints", SIConfig.General.ENABLE_IMPRINTS),
                 Component.translatable("config.softimprints.group.general.enable_imprints.tooltip")
@@ -60,7 +36,10 @@ public class GeneralGroupFactory implements SettingsGroupFactory {
         builder.spacer(4);
     }
 
-    private static void addModelContact(GroupBuildContext context, GroupBuilder builder) {
+    private static void addModelContact(
+            GroupBuildContext context,
+            GroupBuilder builder
+    ) {
         builder.section(Component.translatable("config.softimprints.group.general.section.model_contact"));
         builder.widget(modelContactControl(context));
         builder.widget(fallbackPolicyControl(context));
@@ -73,7 +52,10 @@ public class GeneralGroupFactory implements SettingsGroupFactory {
         builder.spacer(4);
     }
 
-    private static void addCompat(GroupBuildContext context, GroupBuilder builder) {
+    private static void addCompat(
+            GroupBuildContext context,
+            GroupBuilder builder
+    ) {
         // moved to plugins
     }
 
@@ -134,9 +116,39 @@ public class GeneralGroupFactory implements SettingsGroupFactory {
         };
     }
 
-    private static <T extends AbstractWidget> T applyTooltip(T widget, Component tooltip) {
+    private static <T extends AbstractWidget> T applyTooltip(
+            T widget,
+            Component tooltip
+    ) {
         widget.setTooltip(Tooltip.create(tooltip));
         return widget;
+    }
+
+    @Override
+    public EditorGroup key() {
+        return EditorGroup.GENERAL;
+    }
+
+    @Override
+    public GroupZone zone() {
+        return GroupZone.LEFT;
+    }
+
+    @Override
+    public boolean rebuildOnProfileChange() {
+        return false;
+    }
+
+    @Override
+    public ListGroup build(GroupBuildContext context) {
+        GroupBuilder builder = GroupBuilder.of(label())
+                .spacer(4);
+
+        addCore(context, builder);
+        addModelContact(context, builder);
+        addCompat(context, builder);
+
+        return builder.build();
     }
 
 }

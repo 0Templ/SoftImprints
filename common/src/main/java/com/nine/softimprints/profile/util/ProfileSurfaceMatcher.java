@@ -29,7 +29,11 @@ public class ProfileSurfaceMatcher {
         return Math.abs(contactY - blockTop) < Constants.BASE_ALLOWED_HEIGHT_CHECK;
     }
 
-    public static double getTopHeight(BlockState state, ClientLevel level, BlockPos pos) {
+    public static double getTopHeight(
+            BlockState state,
+            ClientLevel level,
+            BlockPos pos
+    ) {
         VoxelShape shape = state.getCollisionShape(level, pos);
         if (shape.isEmpty()) {
             shape = state.getShape(level, pos);

@@ -53,7 +53,10 @@ public class PluginsGroupFactory implements SettingsGroupFactory {
         return builder.build();
     }
 
-    private Button pluginButton(ImprintPluginInfo plugin, ConfigSession config) {
+    private Button pluginButton(
+            ImprintPluginInfo plugin,
+            ConfigSession config
+    ) {
         var idStr = plugin.id().toString();
         var disabledPlugins = SIConfig.Plugins.DISABLED_PLUGINS;
         var ret = Button.builder(plugin.title().apply(pluginEnabledFromDraft(config.draftValue(disabledPlugins), idStr)), button -> {
@@ -77,7 +80,10 @@ public class PluginsGroupFactory implements SettingsGroupFactory {
         return ret;
     }
 
-    private boolean pluginEnabledFromDraft(List<String> list, String id) {
+    private boolean pluginEnabledFromDraft(
+            List<String> list,
+            String id
+    ) {
         return !list.contains(id);
     }
 

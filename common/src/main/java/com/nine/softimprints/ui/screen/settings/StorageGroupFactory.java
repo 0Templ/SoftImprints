@@ -17,6 +17,57 @@ import static com.nine.softimprints.ui.screen.settings.SettingsControls.intSlide
 
 public class StorageGroupFactory implements SettingsGroupFactory {
 
+    private static ExtendedSlider maxAsUnlimitedSlider(
+            GroupBuildContext context,
+            String labelKey,
+            ConfigValue<Integer> config
+    ) {
+        return maxAsUnlimitedSlider(context, labelKey, config, 1.0D, 0);
+    }
+
+    private static ExtendedSlider maxAsUnlimitedSlider(
+            GroupBuildContext context,
+            String labelKey,
+            ConfigValue<Integer> config,
+            double stepSize,
+            int precision
+    ) {
+        return configSlider(context, labelKey, config, value -> {
+            int intValue = Math.toIntExact(Math.round(value));
+            return intValue == config.max().intValue()
+                    ? Component.translatable("config.softimprints.unlimited")
+                    : (intValue == 0 ? Component.translatable("config.softimprints.disabled") :
+                    Component.literal(String.valueOf(intValue)));
+        }, stepSize, precision);
+    }
+
+    private static ExtendedSlider configSlider(
+            GroupBuildContext context,
+            String labelKey,
+            ConfigValue<Integer> config,
+            Function<Double, Component> valueFormatter,
+            double stepSize,
+            int precision
+    ) {
+        ConfigSession configSession = context.editorContext().config();
+        return ExtendedSlider.builder(labelKey)
+                .bounds(0, 0, 1, SettingsControls.DEFAULT_HEIGHT)
+                .range(config.min().doubleValue(), config.max().doubleValue())
+                .value(configSession.draftValue(config))
+                .step(stepSize, precision)
+                .valueFormatter(valueFormatter)
+                .build()
+                .addListener(value -> configSession.setDraft(config, Math.toIntExact(Math.round(value))));
+    }
+
+    private static <T extends AbstractWidget> T applyTooltip(
+            T widget,
+            Component tooltip
+    ) {
+        widget.setTooltip(Tooltip.create(tooltip));
+        return widget;
+    }
+
     @Override
     public EditorGroup key() {
         return EditorGroup.STORAGE;
@@ -57,7 +108,6 @@ public class StorageGroupFactory implements SettingsGroupFactory {
                 intSlider(context, "config.softimprints.group.storage.snapshot_interval", SIConfig.Performance.IMPRINT_SNAPSHOT_INTERVAL),
                 Component.translatable("config.softimprints.group.storage.snapshot_interval.tooltip")
         ));
-
 
 
         builder.spacer(2);
@@ -108,55 +158,6 @@ public class StorageGroupFactory implements SettingsGroupFactory {
 //                .label(Component.literal("This group is cached and does not rebuild on priority switch."))
 
         return builder.build();
-    }
-
-
-    private static ExtendedSlider maxAsUnlimitedSlider(
-            GroupBuildContext context,
-            String labelKey,
-            ConfigValue<Integer> config
-    ) {
-        return maxAsUnlimitedSlider(context, labelKey, config, 1.0D, 0);
-    }
-
-    private static ExtendedSlider maxAsUnlimitedSlider(
-            GroupBuildContext context,
-            String labelKey,
-            ConfigValue<Integer> config,
-            double stepSize,
-            int precision
-    ) {
-        return configSlider(context, labelKey, config, value -> {
-            int intValue = Math.toIntExact(Math.round(value));
-            return intValue == config.max().intValue()
-                    ? Component.translatable("config.softimprints.unlimited")
-                    : (intValue == 0 ? Component.translatable("config.softimprints.disabled"):
-                    Component.literal(String.valueOf(intValue)));
-        }, stepSize, precision);
-    }
-
-    private static ExtendedSlider configSlider(
-            GroupBuildContext context,
-            String labelKey,
-            ConfigValue<Integer> config,
-            Function<Double, Component> valueFormatter,
-            double stepSize,
-            int precision
-    ) {
-        ConfigSession configSession = context.editorContext().config();
-        return ExtendedSlider.builder(labelKey)
-                .bounds(0, 0, 1, SettingsControls.DEFAULT_HEIGHT)
-                .range(config.min().doubleValue(), config.max().doubleValue())
-                .value(configSession.draftValue(config))
-                .step(stepSize, precision)
-                .valueFormatter(valueFormatter)
-                .build()
-                .addListener(value -> configSession.setDraft(config, Math.toIntExact(Math.round(value))));
-    }
-
-    private static <T extends AbstractWidget> T applyTooltip(T widget, Component tooltip) {
-        widget.setTooltip(Tooltip.create(tooltip));
-        return widget;
     }
 
 }

@@ -19,27 +19,22 @@ import java.util.List;
 public class ConfigImpl {
 
     private static final File CLIENT_FILE = getConfigPath("softimprints-client");
-
-
-    private static final String OLD_ENABLE_ALL_ENTITIES_KEY = "general.enable_imprints_for_all_entities";
-    private static final String OLD_CUSTOM_ENTITIES_KEY = "general.imprint_custom_entities";
-    private static final String OLD_ACCUMULATE_SNAPSHOTS_KEY = "general.imprint_accumulate_snapshots";
-    private static final String TARGET_FILTER_MODE_KEY = "general.imprint_target_filter_mode";
-    private static final String TARGET_WHITELIST_KEY = "general.imprint_target_whitelist";
-
-    private static final List<String> DEPRECATED_CLIENT_KEYS = List.of(
-            OLD_ENABLE_ALL_ENTITIES_KEY,
-            OLD_CUSTOM_ENTITIES_KEY,
-            OLD_ACCUMULATE_SNAPSHOTS_KEY
-    );
-
-    private static final List<ConfigValue<?>> REGISTERED_VALUES = new ArrayList<>();
-
     public static final CommentedFileConfig CLIENT = CommentedFileConfig.builder(CLIENT_FILE)
             .autosave()
             .sync()
             .preserveInsertionOrder()
             .build();
+    private static final String OLD_ENABLE_ALL_ENTITIES_KEY = "general.enable_imprints_for_all_entities";
+    private static final String OLD_CUSTOM_ENTITIES_KEY = "general.imprint_custom_entities";
+    private static final String OLD_ACCUMULATE_SNAPSHOTS_KEY = "general.imprint_accumulate_snapshots";
+    private static final String TARGET_FILTER_MODE_KEY = "general.imprint_target_filter_mode";
+    private static final String TARGET_WHITELIST_KEY = "general.imprint_target_whitelist";
+    private static final List<String> DEPRECATED_CLIENT_KEYS = List.of(
+            OLD_ENABLE_ALL_ENTITIES_KEY,
+            OLD_CUSTOM_ENTITIES_KEY,
+            OLD_ACCUMULATE_SNAPSHOTS_KEY
+    );
+    private static final List<ConfigValue<?>> REGISTERED_VALUES = new ArrayList<>();
 
     static {
         load();
@@ -51,7 +46,11 @@ public class ConfigImpl {
         removeDeprecatedClientKeys(CLIENT, DEPRECATED_CLIENT_KEYS);
     }
 
-    public static <T> ConfigValue<T> register(String key, T defaultValue, ConfigOption... options) {
+    public static <T> ConfigValue<T> register(
+            String key,
+            T defaultValue,
+            ConfigOption... options
+    ) {
         return register(key, defaultValue, tryGetClass(defaultValue), tryGetListElementClass(defaultValue), options);
     }
 
@@ -133,7 +132,7 @@ public class ConfigImpl {
     }
 
     private static CommentedFileConfig getConfig(ConfigSide side) {
-       return CLIENT;
+        return CLIENT;
     }
 
     private static String buildComment(
@@ -163,7 +162,10 @@ public class ConfigImpl {
         return String.join("\n", lines);
     }
 
-    private static void clampStored(CommentedFileConfig config, ConfigValue<?> value) {
+    private static void clampStored(
+            CommentedFileConfig config,
+            ConfigValue<?> value
+    ) {
         Object current = config.get(value.path());
         Object clamped = tryClamp(value, current);
         if (clamped != null && !clamped.equals(current)) {
@@ -171,7 +173,10 @@ public class ConfigImpl {
         }
     }
 
-    private static Object tryClamp(ConfigValue<?> value, Object input) {
+    private static Object tryClamp(
+            ConfigValue<?> value,
+            Object input
+    ) {
         if (input == null) {
             return null;
         }
@@ -206,7 +211,10 @@ public class ConfigImpl {
         return input;
     }
 
-    private static Object serialize(Object value, Class<?> clazz) {
+    private static Object serialize(
+            Object value,
+            Class<?> clazz
+    ) {
         if (value == null) {
             return null;
         }
@@ -241,7 +249,10 @@ public class ConfigImpl {
         return new File(df, id + ".toml");
     }
 
-    private static void removeDeprecatedClientKeys(CommentedFileConfig config, List<String> keys) {
+    private static void removeDeprecatedClientKeys(
+            CommentedFileConfig config,
+            List<String> keys
+    ) {
         boolean changed = false;
         for (String key : keys) {
             if (config.contains(key)) {

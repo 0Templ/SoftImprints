@@ -20,10 +20,10 @@ import java.util.List;
 
 public class ImprintProcessor {
 
-    public record Result(List<BlockMask> masks, IntSet applied) {
-    }
-
-    public static Result getBlockMasks(ClientLevel level, IntSet ids) {
+    public static Result getBlockMasks(
+            ClientLevel level,
+            IntSet ids
+    ) {
 
         List<BlockMask> ret = new ArrayList<>();
         IntSet applied = new IntOpenHashSet();
@@ -72,6 +72,9 @@ public class ImprintProcessor {
 
         return new Result(ret, applied);
 
+    }
+
+    public record Result(List<BlockMask> masks, IntSet applied) {
     }
 
 }

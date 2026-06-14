@@ -12,8 +12,8 @@
     "feature.model.GameRendererMixin",
     "feature.model.LivingEntityRendererMixin",
     "feature.model.ModelFeatureRendererMixin",
-    "feature.model.ModelPartAccessor",
-    "feature.model.ModelFeatureRendererStorageMixin"
+    "feature.model.ModelFeatureRendererStorageMixin",
+    "feature.model.ModelPartAccessor"
   ],
   "server": [],
   "injectors": {

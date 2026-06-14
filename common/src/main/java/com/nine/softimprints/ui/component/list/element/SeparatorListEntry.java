@@ -31,7 +31,7 @@ public class SeparatorListEntry extends AbstractConfigListEntry {
             int mouseY,
             float partialTick
     ) {
-        if (label != null){
+        if (label != null) {
             // Todo: tests
             if (true) return;
             int labelW = font.width(label);
@@ -57,8 +57,7 @@ public class SeparatorListEntry extends AbstractConfigListEntry {
             ChromeAtlas.BORDER_LIGHT_FILL.render(graphics, rightX - 1, lineY, 1, 2);
             graphics.centeredText(font, label, centerX, getY(), SIColors.GRAY);
 
-        }
-        else {
+        } else {
             ChromeRenderer.footerLine(graphics, getX(), getY(), getWidth());
         }
     }

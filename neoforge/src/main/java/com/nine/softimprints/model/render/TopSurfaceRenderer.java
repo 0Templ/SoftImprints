@@ -14,6 +14,13 @@ import java.util.List;
 
 public class TopSurfaceRenderer implements ImprintSurfaceRenderer {
 
+    private static TextureAtlasSprite zeroLayerSprite(Identifier texture) {
+        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
+                .getTextureManager()
+                .getTexture(TextureAtlas.LOCATION_BLOCKS);
+        return atlas.getSprite(texture);
+    }
+
     @Override
     public void emit(ImprintRenderContext context) {
         List<BlockStateModelPart> parts = context.parts();
@@ -50,12 +57,5 @@ public class TopSurfaceRenderer implements ImprintSurfaceRenderer {
         if (!quads.isEmpty()) {
             parts.add(ImprintParts.staticUpPart(quads, entry.topSprite()));
         }
-    }
-
-    private static TextureAtlasSprite zeroLayerSprite(Identifier texture) {
-        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
-                .getTextureManager()
-                .getTexture(TextureAtlas.LOCATION_BLOCKS);
-        return atlas.getSprite(texture);
     }
 }

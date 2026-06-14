@@ -19,6 +19,38 @@ import java.util.stream.Collectors;
 
 public class BlocksGroupFactory implements SettingsGroupFactory {
 
+    private static void applySelection(
+            EditorContext editor,
+            Set<Block> selected
+    ) {
+        Set<SurfaceBlock> next = new HashSet<>();
+        for (Block block : selected) {
+            next.add(SurfaceBlock.of(block));
+        }
+        var draft = editor.currentDraft();
+        if (draft == null) return;
+        draft.updateDraft(profile ->
+                profile.toBuilder().setSupportedBlocks(next).build()
+        );
+    }
+
+    private static boolean hasNewSurfaceBlocks(EditorContext editor) {
+        var draft = editor.currentDraft();
+        if (draft == null) return false;
+        Set<Identifier> currentIds = draft
+                .getCurrent()
+                .supportedBlocks()
+                .stream()
+                .map(SurfaceBlock::id)
+                .collect(Collectors.toSet());
+
+        return draft.getDraft()
+                .supportedBlocks()
+                .stream()
+                .map(SurfaceBlock::id)
+                .anyMatch(id -> !currentIds.contains(id));
+    }
+
     @Override
     public EditorGroup key() {
         return EditorGroup.BLOCKS;
@@ -41,7 +73,7 @@ public class BlocksGroupFactory implements SettingsGroupFactory {
         var builder = GroupBuilder.of(label())
                 .spacer(3);
 
-        if (editor.currentEntry() instanceof InvalidProfileEntry entry){
+        if (editor.currentEntry() instanceof InvalidProfileEntry entry) {
             builder.issueDetails(entry);
             return builder.build();
         }
@@ -76,34 +108,5 @@ public class BlocksGroupFactory implements SettingsGroupFactory {
         builder.searchList(blockList);
         builder.spacer(10);
         return builder.build();
-    }
-
-    private static void applySelection(EditorContext editor, Set<Block> selected) {
-        Set<SurfaceBlock> next = new HashSet<>();
-        for (Block block : selected) {
-            next.add(SurfaceBlock.of(block));
-        }
-        var draft = editor.currentDraft();
-        if (draft == null) return;
-        draft.updateDraft(profile ->
-                profile.toBuilder().setSupportedBlocks(next).build()
-        );
-    }
-
-    private static boolean hasNewSurfaceBlocks(EditorContext editor) {
-        var draft = editor.currentDraft();
-        if (draft == null) return false;
-        Set<Identifier> currentIds = draft
-                .getCurrent()
-                .supportedBlocks()
-                .stream()
-                .map(SurfaceBlock::id)
-                .collect(Collectors.toSet());
-
-        return draft.getDraft()
-                .supportedBlocks()
-                .stream()
-                .map(SurfaceBlock::id)
-                .anyMatch(id -> !currentIds.contains(id));
     }
 }

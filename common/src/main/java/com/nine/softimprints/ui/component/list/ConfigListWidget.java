@@ -47,7 +47,12 @@ public class ConfigListWidget extends AbstractWidget {
     private int contentWidth;
     private boolean scrollbarVisible;
 
-    public ConfigListWidget(int x, int y, int width, int height) {
+    public ConfigListWidget(
+            int x,
+            int y,
+            int width,
+            int height
+    ) {
         super(x, y, width, height, Component.empty());
     }
 
@@ -64,7 +69,10 @@ public class ConfigListWidget extends AbstractWidget {
         this.invalidateLayout();
     }
 
-    public void setGroups(List<ListGroup> groups, int activeGroupIndex) {
+    public void setGroups(
+            List<ListGroup> groups,
+            int activeGroupIndex
+    ) {
         this.groups.clear();
         for (ListGroup group : groups) {
             group.attachToList(this);
@@ -94,6 +102,13 @@ public class ConfigListWidget extends AbstractWidget {
         return this.groups.get(index);
     }
 
+    public ListGroup getActiveGroup() {
+        if (this.activeGroupIndex < 0 || this.activeGroupIndex >= this.groups.size()) {
+            return null;
+        }
+        return this.groups.get(this.activeGroupIndex);
+    }
+
     public void setActiveGroup(int groupIndex) {
         if (groupIndex < 0 || groupIndex >= this.groups.size() || this.activeGroupIndex == groupIndex) {
             return;
@@ -115,19 +130,17 @@ public class ConfigListWidget extends AbstractWidget {
         }
     }
 
-    public ListGroup getActiveGroup() {
-        if (this.activeGroupIndex < 0 || this.activeGroupIndex >= this.groups.size()) {
-            return null;
-        }
-        return this.groups.get(this.activeGroupIndex);
-    }
-
     public int getActiveGroupIndex() {
         return this.activeGroupIndex;
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         this.ensureLayout();
 
         int left = this.getX();
@@ -160,7 +173,10 @@ public class ConfigListWidget extends AbstractWidget {
     }
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {
+    public void mouseMoved(
+            double mouseX,
+            double mouseY
+    ) {
         this.ensureLayout();
         for (ConfigListEntry entry : this.activeEntries()) {
             entry.mouseMoved(mouseX, mouseY);
@@ -168,7 +184,10 @@ public class ConfigListWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         if (!this.active || !this.visible) {
             return false;
         }
@@ -241,7 +260,11 @@ public class ConfigListWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    public boolean mouseDragged(
+            MouseButtonEvent event,
+            double dragX,
+            double dragY
+    ) {
         if (event.button() == 0 && this.scrolling) {
             this.scrollToMouse(event.y(), this.getY(), this.getY() + this.getHeight());
             return true;
@@ -252,7 +275,12 @@ public class ConfigListWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
         int left = this.getX();
         int top = this.getY();
         int right = left + this.getWidth();
@@ -460,7 +488,7 @@ public class ConfigListWidget extends AbstractWidget {
         }
     }
 
-    private int elementPadding(ConfigListEntry entry){
+    private int elementPadding(ConfigListEntry entry) {
         return entry.fullWidth() ? 0 : ELEMENT_SIDE_PADDING;
     }
 
@@ -488,7 +516,10 @@ public class ConfigListWidget extends AbstractWidget {
         return this.scrollbarVisible;
     }
 
-    private int getScrollbarThumbHeight(int contentTop, int contentBottom) {
+    private int getScrollbarThumbHeight(
+            int contentTop,
+            int contentBottom
+    ) {
         int viewportHeight = Math.max(0, contentBottom - contentTop);
         if (viewportHeight <= 0 || this.contentHeight <= 0) {
             return viewportHeight;
@@ -500,7 +531,10 @@ public class ConfigListWidget extends AbstractWidget {
         return Mth.clamp(thumb, minThumbHeight, maxThumbHeight);
     }
 
-    private int getScrollbarThumbTop(int contentTop, int contentBottom) {
+    private int getScrollbarThumbTop(
+            int contentTop,
+            int contentBottom
+    ) {
         double maxScroll = this.getMaxScroll();
         if (maxScroll <= 0.0D) {
             return contentTop;
@@ -511,7 +545,11 @@ public class ConfigListWidget extends AbstractWidget {
         return contentTop + Mth.floor(this.scrollAmount * travel / maxScroll);
     }
 
-    private void scrollToMouse(double mouseY, int contentTop, int contentBottom) {
+    private void scrollToMouse(
+            double mouseY,
+            int contentTop,
+            int contentBottom
+    ) {
         double maxScroll = this.getMaxScroll();
         if (maxScroll <= 0.0D) {
             this.setScrollAmount(0.0D);
@@ -524,7 +562,11 @@ public class ConfigListWidget extends AbstractWidget {
         this.setScrollAmount(thumbTop / trackHeight * maxScroll);
     }
 
-    private double resolveScrollbarGrabOffset(double mouseY, int contentTop, int contentBottom) {
+    private double resolveScrollbarGrabOffset(
+            double mouseY,
+            int contentTop,
+            int contentBottom
+    ) {
         int thumbTop = this.getScrollbarThumbTop(contentTop, contentBottom);
         int thumbHeight = this.getScrollbarThumbHeight(contentTop, contentBottom);
         int thumbBottom = thumbTop + thumbHeight;
@@ -534,7 +576,12 @@ public class ConfigListWidget extends AbstractWidget {
         return thumbHeight / 2.0D;
     }
 
-    private void renderScrollbar(GuiGraphicsExtractor graphics, int right, int contentTop, int contentBottom) {
+    private void renderScrollbar(
+            GuiGraphicsExtractor graphics,
+            int right,
+            int contentTop,
+            int contentBottom
+    ) {
         int trackHeight = Math.max(0, contentBottom - contentTop);
         if (trackHeight <= 0 || !this.isScrollbarVisible()) {
             return;

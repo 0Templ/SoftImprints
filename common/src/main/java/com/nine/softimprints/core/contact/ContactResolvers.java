@@ -11,7 +11,7 @@ public class ContactResolvers {
 
     public static final ContactResolver MODEL_RESOLVER = new ModelContactResolver(BB_RESOLVER);
 
-    public static ContactResolver getResolver(Entity entity){
+    public static ContactResolver getResolver(Entity entity) {
         if (entity instanceof LivingEntity) {
             return MODEL_RESOLVER;
         }

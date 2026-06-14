@@ -22,40 +22,19 @@ public class ImprintCache {
 
     }
 
-    public IImprintMap getImprintMap(Long pos){
+    private static long sectionOf(long pos) {
+        return SectionPos.asLong(
+                SectionPos.blockToSectionCoord(BlockPos.getX(pos)),
+                SectionPos.blockToSectionCoord(BlockPos.getY(pos)),
+                SectionPos.blockToSectionCoord(BlockPos.getZ(pos))
+        );
+    }
+
+    public IImprintMap getImprintMap(Long pos) {
         var map = maps.getOrDefault(pos, null);
         if (map == null) return null;
 
         return new ImprintMap(map.mapSize(), Arrays.copyOf(map.values(), map.values().length));
-    }
-
-    public void apply(List<BlockMask> masks, long gameTime){
-        boolean changed = false;
-        for (var mask : masks){
-//            var current = maps.get(mask.blockPos());
-//            if (current == null || current.mapSize() != mask.mapSize()) {
-//                current = new ImprintBlockMap(mask.mapSize(), Arrays.copyOf(mask.map(), mask.map().length));
-//            }
-            ImprintBlockMap map = maps.get(mask.blockPos());
-            if (map == null || map.mapSize() != mask.mapSize()) {
-                map = new ImprintBlockMap(
-                        mask.mapSize(),
-                        new byte[mask.mapSize() * mask.mapSize()]);
-                maps.put(mask.blockPos(), map);
-            }
-//            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
-//                    pos -> {
-//                        return new ImprintBlockMap(
-//                                mask.mapSize(),
-//                                new byte[mask.mapSize() * mask.mapSize()]);
-//                    });
-            if (rasterize(map, mask)){
-                dirtySections.add(sectionOf(mask.blockPos()));
-                lastTouchedTick.put(mask.blockPos(), gameTime);
-                changed = true;
-            }
-        }
-        if (changed) evictOverflow();
     }
 
 
@@ -75,11 +54,42 @@ public class ImprintCache {
         if (changed) evictOverflow();
     }*/
 
+    public void apply(
+            List<BlockMask> masks,
+            long gameTime
+    ) {
+        boolean changed = false;
+        for (var mask : masks) {
+//            var current = maps.get(mask.blockPos());
+//            if (current == null || current.mapSize() != mask.mapSize()) {
+//                current = new ImprintBlockMap(mask.mapSize(), Arrays.copyOf(mask.map(), mask.map().length));
+//            }
+            ImprintBlockMap map = maps.get(mask.blockPos());
+            if (map == null || map.mapSize() != mask.mapSize()) {
+                map = new ImprintBlockMap(
+                        mask.mapSize(),
+                        new byte[mask.mapSize() * mask.mapSize()]);
+                maps.put(mask.blockPos(), map);
+            }
+//            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
+//                    pos -> {
+//                        return new ImprintBlockMap(
+//                                mask.mapSize(),
+//                                new byte[mask.mapSize() * mask.mapSize()]);
+//                    });
+            if (rasterize(map, mask)) {
+                dirtySections.add(sectionOf(mask.blockPos()));
+                lastTouchedTick.put(mask.blockPos(), gameTime);
+                changed = true;
+            }
+        }
+        if (changed) evictOverflow();
+    }
 
     private void evictOverflow() {
         int max = SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.get();
         if (max == SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.max().intValue()
-                || max <= 0|| maps.size() <= max) return;
+                || max <= 0 || maps.size() <= max) return;
 
         int toRemove = maps.size() - max;
 
@@ -104,13 +114,13 @@ public class ImprintCache {
         return ret;
     }
 
-    public List<Long> drainAllSections(){
+    public List<Long> drainAllSections() {
         var ret = new ArrayList<>(dirtySections);
         dirtySections.clear();
         return ret;
     }
 
-    public void clearAt(Long pos){
+    public void clearAt(Long pos) {
         removeMap(pos, true);
     }
 
@@ -122,7 +132,10 @@ public class ImprintCache {
         }
     }
 
-    private void removeMap(long blockPos, boolean markDirty) {
+    private void removeMap(
+            long blockPos,
+            boolean markDirty
+    ) {
         maps.remove(blockPos);
         lastTouchedTick.remove(blockPos);
         if (markDirty) {
@@ -130,7 +143,10 @@ public class ImprintCache {
         }
     }
 
-    private boolean rasterize(ImprintBlockMap map, BlockMask mask) {
+    private boolean rasterize(
+            ImprintBlockMap map,
+            BlockMask mask
+    ) {
         var dst = map.values();
         byte[] src = mask.map();
         boolean changed = false;
@@ -147,15 +163,6 @@ public class ImprintCache {
         }
         return changed;
     }
-
-    private static long sectionOf(long pos){
-        return SectionPos.asLong(
-                SectionPos.blockToSectionCoord(BlockPos.getX(pos)),
-                SectionPos.blockToSectionCoord(BlockPos.getY(pos)),
-                SectionPos.blockToSectionCoord(BlockPos.getZ(pos))
-        );
-    }
-
 
 
 }

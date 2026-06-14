@@ -23,6 +23,25 @@ public class EclipticImprintPlugin implements ImprintPlugin {
 
     private static final String ECLIPTIC_MOD_ID = "eclipticseasons";
 
+    private static List<Block> fullBlocks() {
+        List<Block> ret = new ArrayList<>();
+        for (Block block : BuiltInRegistries.BLOCK) {
+            if (hasFullBlockState(block)) {
+                ret.add(block);
+            }
+        }
+        return ret;
+    }
+
+    private static boolean hasFullBlockState(Block block) {
+        for (var state : block.getStateDefinition().getPossibleStates()) {
+            if (EclipticCompat.isFullBlockState(state)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void register(ImprintRegistrar registrar) {
         if (!Platform.CORE.isModLoaded(ECLIPTIC_MOD_ID)) {
@@ -46,26 +65,6 @@ public class EclipticImprintPlugin implements ImprintPlugin {
                 Component.translatable("plugin.softimprints.ecliptic_seasons.tooltip"),
                 true
         );
-    }
-
-
-    private static List<Block> fullBlocks() {
-        List<Block> ret = new ArrayList<>();
-        for (Block block : BuiltInRegistries.BLOCK) {
-            if (hasFullBlockState(block)) {
-                ret.add(block);
-            }
-        }
-        return ret;
-    }
-
-    private static boolean hasFullBlockState(Block block) {
-        for (var state : block.getStateDefinition().getPossibleStates()) {
-            if (EclipticCompat.isFullBlockState(state)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

@@ -6,11 +6,17 @@ import java.nio.file.Path;
 
 public class ProfilePaths {
 
-    public static Path toConfigPath(Path configBase, Identifier id) {
+    public static Path toConfigPath(
+            Path configBase,
+            Identifier id
+    ) {
         return configBase.resolve(id.getNamespace()).resolve(id.getPath() + ".json");
     }
 
-    public static String toResourceRelative(String folder, Identifier id) {
+    public static String toResourceRelative(
+            String folder,
+            Identifier id
+    ) {
         return folder + "/" + id.getPath() + ".json";
     }
 

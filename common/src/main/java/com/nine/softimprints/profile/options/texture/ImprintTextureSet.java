@@ -36,7 +36,10 @@ public class ImprintTextureSet {
     // Todo: move to external cache class?
     private volatile TextureAtlasSprite[] spriteCache;
 
-    public ImprintTextureSet(String id, Map<Byte, Identifier> byValue){
+    public ImprintTextureSet(
+            String id,
+            Map<Byte, Identifier> byValue
+    ) {
         this.id = Objects.requireNonNull(id, "id");
         this.byValue = Collections.unmodifiableMap(new LinkedHashMap<>(byValue));
         for (Byte value : this.byValue.keySet()) {
@@ -49,7 +52,7 @@ public class ImprintTextureSet {
         }
     }
 
-    public String id(){
+    public String id() {
         return id;
     }
 
@@ -58,36 +61,36 @@ public class ImprintTextureSet {
     }
 
     @Nullable
-    public TextureAtlasSprite spriteFor(byte value){
+    public TextureAtlasSprite spriteFor(byte value) {
         var cache = spriteCache;
-        if (cache == null){
+        if (cache == null) {
             cache = bind();
         }
         int index = value & 0xFF;
         return index >= cache.length ? null : cache[index];
     }
 
-    private synchronized TextureAtlasSprite[] bind(){
+    private synchronized TextureAtlasSprite[] bind() {
         if (byValue.isEmpty()) return spriteCache = new TextureAtlasSprite[0];
-        
+
         var current = spriteCache;
         if (current != null) return current;
 
         int max = 0;
-        for (var b : byValue.entrySet()){
+        for (var b : byValue.entrySet()) {
             int val = b.getKey() & 0xFF;
             if (val > max) max = val;
         }
         var ret = new TextureAtlasSprite[max + 1];
         var atlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS);
-        for (var b : byValue.entrySet()){
+        for (var b : byValue.entrySet()) {
             int index = b.getKey() & 0xFF;
             ret[index] = atlas.getSprite(b.getValue());
         }
         return spriteCache = ret;
     }
 
-    public void invalidate(){
+    public void invalidate() {
         this.spriteCache = null;
     }
 

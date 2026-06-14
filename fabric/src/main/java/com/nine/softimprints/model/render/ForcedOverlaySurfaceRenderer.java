@@ -7,7 +7,10 @@ public final class ForcedOverlaySurfaceRenderer {
     private ForcedOverlaySurfaceRenderer() {
     }
 
-    public static void emit(ImprintRenderContext context, float forcedY) {
+    public static void emit(
+            ImprintRenderContext context,
+            float forcedY
+    ) {
         var emitter = context.emitter();
         context.wrapped().emitQuads(
                 emitter,

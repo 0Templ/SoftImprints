@@ -5,26 +5,27 @@ import com.nine.softimprints.ui.util.constant.SITextures;
 public final class ChromeAtlas {
 
     private static final int TEXTURE_SIZE = 128;
+    public static final UIRegion BORDER_LIGHT_FILL = region(1, 1, 1, 1);
+    public static final UIRegion BORDER_DARK_FILL = region(0, 0, 1, 1);
+    public static final UIRegion BLACK_FILL = region(112, 0, 16, 16);
+    public static final UIRegion TAB_HOVER_ACCENT = region(1, 35, 1, 1);
+    public static final UIRegion WHITE_FILL = region(1, 33, 1, 1);
     private static final int FRAME_WIDTH = 64;
     private static final int FRAME_HEIGHT = 16;
     private static final int BORDER = 2;
-
-    private ChromeAtlas() {
-    }
-
     public static final Frame TAB = frame(0);
     public static final Frame SECTION = frame(16);
     public static final Frame TAB_HOVERED = frame(32);
 
-    public static final UIRegion BORDER_LIGHT_FILL = region(1, 1, 1, 1);
-    public static final UIRegion BORDER_DARK_FILL = region(0, 0, 1, 1);
+    private ChromeAtlas() {
+    }
 
-    public static final UIRegion BLACK_FILL = region(112, 0, 16, 16);
-    public static final UIRegion TAB_HOVER_ACCENT = region(1, 35, 1, 1);
-
-    public static final UIRegion WHITE_FILL = region(1, 33, 1, 1);
-
-    public static UIRegion region(int u, int v, int w, int h) {
+    public static UIRegion region(
+            int u,
+            int v,
+            int w,
+            int h
+    ) {
         return UIRegion.of(SITextures.UI_CHROME, u, v, w, h, TEXTURE_SIZE, TEXTURE_SIZE);
     }
 

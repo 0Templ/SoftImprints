@@ -10,8 +10,14 @@ public interface SearchableEntry<T> {
 
     void render(
             GuiGraphicsExtractor graphics,
-            int x, int y, int width, int height,
-            int mouseX, int mouseY, float partialTick,
-            boolean hovered, boolean selected
+            int x,
+            int y,
+            int width,
+            int height,
+            int mouseX,
+            int mouseY,
+            float partialTick,
+            boolean hovered,
+            boolean selected
     );
 }

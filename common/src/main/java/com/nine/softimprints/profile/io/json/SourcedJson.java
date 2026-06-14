@@ -5,4 +5,5 @@ import com.google.gson.JsonElement;
 public record SourcedJson(
         JsonElement json,
         JsonSource source
-) {}
+) {
+}

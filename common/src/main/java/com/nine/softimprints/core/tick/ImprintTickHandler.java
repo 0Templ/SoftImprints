@@ -16,12 +16,10 @@ import java.util.List;
 
 public class ImprintTickHandler {
 
-    private static ClientLevel level;
-
     private static final EntityMotionTracker motionTracker = new EntityMotionTracker();
     private static final ImprintEntityTracker stampTracker = new ImprintEntityTracker();
     private static final ModelContactCaptureDriver modelCaptureDriver = new ModelContactCaptureDriver();
-
+    private static ClientLevel level;
     private static long tickCounter;
 
     public static void tick(Minecraft client) {
@@ -58,7 +56,10 @@ public class ImprintTickHandler {
         }
     }
 
-    private static boolean shouldTick(long value, long interval) {
+    private static boolean shouldTick(
+            long value,
+            long interval
+    ) {
         return value % interval == 0L;
     }
 

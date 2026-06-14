@@ -8,13 +8,13 @@ import net.minecraft.util.Mth;
 
 public class ConfigValue<T> {
 
-    private final CommentedFileConfig config;
-    private final T defaultValue;
-    private final ConfigSection section;
     public final String key;
     public final Class<T> clazz;
     public final ConfigSide side;
     public final LoaderTarget target;
+    private final CommentedFileConfig config;
+    private final T defaultValue;
+    private final ConfigSection section;
     private final boolean shouldSync;
     private final Class<?> elementClass;
     private final ConfigRange<?> range;

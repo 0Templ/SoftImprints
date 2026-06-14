@@ -8,7 +8,10 @@ public abstract class ProfileLoadException extends RuntimeException {
         super(message);
     }
 
-    public ProfileLoadException(String message, Throwable cause) {
+    public ProfileLoadException(
+            String message,
+            Throwable cause
+    ) {
         super(message, cause);
     }
 

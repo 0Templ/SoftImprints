@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 
 public class BoundingBoxContactResolver implements ContactResolver {
 
-    public ContactResult resolve(Entity entity){
+    public ContactResult resolve(Entity entity) {
         var bb = entity.getBoundingBox();
 
         double xW = bb.maxX - bb.minX;

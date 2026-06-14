@@ -15,7 +15,10 @@ public class GroupNavigation {
         this.panel = panel;
     }
 
-    public void register(GroupZone zone, GroupSwitcher<EditorGroup> switcher) {
+    public void register(
+            GroupZone zone,
+            GroupSwitcher<EditorGroup> switcher
+    ) {
         switchers.put(zone, switcher);
         syncSwitchers();
     }

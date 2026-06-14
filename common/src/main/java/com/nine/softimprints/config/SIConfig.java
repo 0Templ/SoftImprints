@@ -10,6 +10,9 @@ import java.util.List;
 
 public class SIConfig {
 
+    public static void init() {
+    }
+
     public static final class General {
 
         public static final ConfigValue<Boolean> DEBUG_MODE =
@@ -234,8 +237,5 @@ public class SIConfig {
                                 .line("Resolvers from disabled plugins are ignored while the plugin remains disabled.")
                 );
 
-    }
-
-    public static void init() {
     }
 }

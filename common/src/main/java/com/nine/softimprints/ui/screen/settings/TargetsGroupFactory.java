@@ -20,6 +20,24 @@ import java.util.Set;
 
 public class TargetsGroupFactory implements SettingsGroupFactory {
 
+    private static Set<EntityType<?>> readEntitySet(List<String> ids) {
+        Set<EntityType<?>> result = new LinkedHashSet<>();
+        for (String raw : ids) {
+            Identifier id = Identifier.tryParse(raw);
+            if (id == null) continue;
+            BuiltInRegistries.ENTITY_TYPE.getOptional(id).ifPresent(result::add);
+        }
+        return result;
+    }
+
+    private static List<String> writeEntitySet(Set<EntityType<?>> entities) {
+        List<String> result = new ArrayList<>(entities.size());
+        for (EntityType<?> type : entities) {
+            result.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        }
+        return result;
+    }
+
     @Override
     public EditorGroup key() {
         return EditorGroup.TARGETS;
@@ -70,24 +88,6 @@ public class TargetsGroupFactory implements SettingsGroupFactory {
         builder.searchList(entityList);
         builder.spacer(10);
         return builder.build();
-    }
-
-    private static Set<EntityType<?>> readEntitySet(List<String> ids) {
-        Set<EntityType<?>> result = new LinkedHashSet<>();
-        for (String raw : ids) {
-            Identifier id = Identifier.tryParse(raw);
-            if (id == null) continue;
-            BuiltInRegistries.ENTITY_TYPE.getOptional(id).ifPresent(result::add);
-        }
-        return result;
-    }
-
-    private static List<String> writeEntitySet(Set<EntityType<?>> entities) {
-        List<String> result = new ArrayList<>(entities.size());
-        for (EntityType<?> type : entities) {
-            result.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
-        }
-        return result;
     }
 
 }

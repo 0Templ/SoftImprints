@@ -7,7 +7,7 @@ public final class CacheAccess {
     private static volatile LevelData currentCache;
     private static volatile ClientLevel currentLevel;
 
-    public static LevelData current(){
+    public static LevelData current() {
         return currentCache;
     }
 

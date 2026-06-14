@@ -38,6 +38,19 @@ public class NeoBaseNeoImprintableStateModel extends NeoImprintableStateModel {
         this.modelResolvers = sortResolvers(modelResolvers);
     }
 
+    private static ImprintSurfaceRenderer getRenderer(SurfaceMode mode) {
+        return switch (mode) {
+            case OVERLAY -> OVERLAY_SURFACE_RENDERER;
+            case REPAINT -> TOP_SURFACE_RENDERER;
+        };
+    }
+
+    private static List<ProfileResolverEntry> sortResolvers(List<ProfileResolverEntry> resolvers) {
+        return resolvers.stream()
+                .sorted(Comparator.comparingInt(ProfileResolverEntry::priority).reversed())
+                .toList();
+    }
+
     public BlockStateModel wrappedModel() {
         return this.delegate;
     }
@@ -123,18 +136,5 @@ public class NeoBaseNeoImprintableStateModel extends NeoImprintableStateModel {
             }
         }
         return ImprintProfiles.resolve(level, pos, state);
-    }
-
-    private static ImprintSurfaceRenderer getRenderer(SurfaceMode mode) {
-        return switch (mode) {
-            case OVERLAY -> OVERLAY_SURFACE_RENDERER;
-            case REPAINT -> TOP_SURFACE_RENDERER;
-        };
-    }
-
-    private static List<ProfileResolverEntry> sortResolvers(List<ProfileResolverEntry> resolvers) {
-        return resolvers.stream()
-                .sorted(Comparator.comparingInt(ProfileResolverEntry::priority).reversed())
-                .toList();
     }
 }

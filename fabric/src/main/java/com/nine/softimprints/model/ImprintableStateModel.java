@@ -33,13 +33,25 @@ public class ImprintableStateModel implements BlockStateModel, FabricBlockStateM
     }
 
     @Override
-    public void emitQuads(QuadEmitter emitter, BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, Predicate<@Nullable Direction> cullTest) {
+    public void emitQuads(
+            QuadEmitter emitter,
+            BlockAndTintGetter level,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random,
+            Predicate<@Nullable Direction> cullTest
+    ) {
         this.wrapped.emitQuads(emitter, level, pos, state, random, cullTest);
     }
 
 
     @Override
-    public @Nullable Object createGeometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+    public @Nullable Object createGeometryKey(
+            BlockAndTintGetter level,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random
+    ) {
         return this.wrapped.createGeometryKey(level, pos, state, random);
     }
 

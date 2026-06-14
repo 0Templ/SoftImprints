@@ -9,20 +9,91 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 
-public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdge, boolean fixedWidth) implements GroupEntry<T> {
+public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdge,
+                             boolean fixedWidth) implements GroupEntry<T> {
 
     private static final int TAB_INACTIVE_INSET = 4;
 
-    public OptionEntry(T value, Component label, TabEdge tabEdge) {
+    public OptionEntry(
+            T value,
+            Component label,
+            TabEdge tabEdge
+    ) {
         this(value, Minecraft.getInstance().font.width(label), label, tabEdge, false);
     }
 
-    public OptionEntry(T value, Component label, TabEdge tabEdge, int fixedWidth) {
+    public OptionEntry(
+            T value,
+            Component label,
+            TabEdge tabEdge,
+            int fixedWidth
+    ) {
         this(value, fixedWidth, label, tabEdge, true);
     }
 
-    public OptionEntry(T value, int width, Component label, TabEdge tabEdge) {
+    public OptionEntry(
+            T value,
+            int width,
+            Component label,
+            TabEdge tabEdge
+    ) {
         this(value, width, label, tabEdge, false);
+    }
+
+    public static void tabBorder(
+            GuiGraphicsExtractor graphics,
+            int x,
+            int y,
+            int width,
+            int height,
+            boolean active,
+            boolean hovered,
+            TabEdge edge
+    ) {
+        BoxSkin skin = hovered ? BoxSkins.TAB_HOVERED : BoxSkins.TAB;
+        switch (edge) {
+            case TOP -> {
+                BoxRenderer.render(graphics, skin, x, y, width, height - 2, BorderSides.NO_BOTTOM);
+            }
+            case BOTTOM -> {
+                BoxRenderer.render(graphics, skin, x, y + 2, width, height - 2, BorderSides.NO_TOP);
+                //return;
+                // return;
+            }
+        }
+        if (active) {
+            UIRegion side;
+            switch (edge) {
+                case TOP -> {
+                    side = hovered ? ChromeAtlas.TAB_HOVERED.bottom() : ChromeAtlas.TAB.bottom();
+                    side.render(graphics, x + 1, y + height - 2, 1, 2);
+                    side.render(graphics, x + width - 2, y + height - 2, 1, 2);
+                    ChromeAtlas.TAB.bottom().render(graphics, x, y + height - 2, 1, 2);
+                    ChromeAtlas.TAB.bottom().render(graphics, x + width - 1, y + height - 2, 1, 2);
+                }
+                case BOTTOM -> {
+                    side = hovered ? ChromeAtlas.TAB_HOVERED.top() : ChromeAtlas.TAB.top();
+                    side.render(graphics, x + 1, y, 1, 2);
+                    side.render(graphics, x + width - 2, y, 1, 2);
+                    ChromeAtlas.TAB.top().render(graphics, x, y, 1, 2);
+                    ChromeAtlas.TAB.top().render(graphics, x + width - 1, y, 1, 2);
+                }
+            }
+        } else {
+            switch (edge) {
+                case TOP -> {
+                    ChromeAtlas.TAB.bottom().render(graphics, x, y + height - 2, width, 2);
+                    if (hovered) {
+                        ChromeAtlas.TAB_HOVER_ACCENT.render(graphics, x + 2, y + height - 3, width - 4, 1);
+                    }
+                }
+                case BOTTOM -> {
+                    ChromeAtlas.TAB.top().render(graphics, x, y, width, 2);
+
+                }
+            }
+
+        }
     }
 
     @Override
@@ -47,7 +118,7 @@ public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdg
             GroupMarker marker
     ) {
         if (!active) {
-            switch (tabEdge){
+            switch (tabEdge) {
                 case BOTTOM -> {
                     // return;
                 }
@@ -57,13 +128,13 @@ public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdg
             }
             height -= TAB_INACTIVE_INSET;
         }
-		
-		final int border = 2;
 
-		int bgX = x + border;
-		int bgY = y + border;
-		int bgW = this.width - border * 2;
-		int bgH = height - border * 2;
+        final int border = 2;
+
+        int bgX = x + border;
+        int bgY = y + border;
+        int bgW = this.width - border * 2;
+        int bgH = height - border * 2;
 
         if (active) {
             switch (tabEdge) {
@@ -74,16 +145,17 @@ public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdg
                     bgY -= 2;
                     bgH += 2;
                 }
-            };
+            }
+            ;
             Screen.extractMenuBackgroundTexture(
                     graphics, Screen.MENU_BACKGROUND,
-					bgX, bgY,
+                    bgX, bgY,
                     0,
                     0,
-					bgW, bgH
+                    bgW, bgH
             );
         } else {
-			ChromeRenderer.blackFill(graphics, bgX, bgY, bgW, bgH);
+            ChromeRenderer.blackFill(graphics, bgX, bgY, bgW, bgH);
         }
         tabBorder(graphics, x, y, width, height, active, hovered, tabEdge);
         renderMarker(graphics, marker, x, y, height, active);
@@ -100,7 +172,7 @@ public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdg
             int lineX = x + (this.width - lineWidth) / 2;
 
             int underlineY = 0;
-            switch (tabEdge){
+            switch (tabEdge) {
                 case BOTTOM -> {
                     underlineY = y + 1;
                 }
@@ -170,62 +242,6 @@ public record OptionEntry<T>(T value, int width, Component label, TabEdge tabEdg
             }
         }
         graphics.disableScissor();
-    }
-
-    public static void tabBorder(
-            GuiGraphicsExtractor graphics,
-            int x,
-            int y,
-            int width,
-            int height,
-            boolean active,
-            boolean hovered,
-            TabEdge edge
-    ) {
-        BoxSkin skin = hovered ? BoxSkins.TAB_HOVERED : BoxSkins.TAB;
-        switch (edge) {
-            case TOP -> {
-                BoxRenderer.render(graphics, skin, x, y, width, height - 2, BorderSides.NO_BOTTOM);
-            }
-            case BOTTOM -> {
-                BoxRenderer.render(graphics, skin, x, y + 2, width, height - 2, BorderSides.NO_TOP);
-                //return;
-                // return;
-            }
-        }
-        if (active) {
-            UIRegion side;
-            switch (edge) {
-                case TOP -> {
-                    side = hovered ? ChromeAtlas.TAB_HOVERED.bottom() : ChromeAtlas.TAB.bottom();
-                    side.render(graphics, x + 1, y + height - 2, 1, 2);
-                    side.render(graphics, x + width - 2, y + height - 2, 1, 2);
-                    ChromeAtlas.TAB.bottom().render(graphics, x, y + height - 2, 1, 2);
-                    ChromeAtlas.TAB.bottom().render(graphics, x + width - 1, y + height - 2, 1, 2);
-                }
-                case BOTTOM -> {
-                    side = hovered ? ChromeAtlas.TAB_HOVERED.top() : ChromeAtlas.TAB.top();
-                    side.render(graphics, x + 1, y, 1, 2);
-                    side.render(graphics, x + width - 2, y, 1, 2);
-                    ChromeAtlas.TAB.top().render(graphics, x, y, 1, 2);
-                    ChromeAtlas.TAB.top().render(graphics, x + width - 1, y, 1, 2);
-                }
-            }
-        } else {
-            switch (edge) {
-                case TOP -> {
-                    ChromeAtlas.TAB.bottom().render(graphics, x, y + height - 2, width, 2);
-                    if (hovered) {
-                        ChromeAtlas.TAB_HOVER_ACCENT.render(graphics, x + 2, y + height - 3, width - 4, 1);
-                    }
-                }
-                case BOTTOM -> {
-                    ChromeAtlas.TAB.top().render(graphics, x, y, width, 2);
-
-                }
-            }
-
-        }
     }
 
 }

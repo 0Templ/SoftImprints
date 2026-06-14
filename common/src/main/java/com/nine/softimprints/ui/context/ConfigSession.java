@@ -23,7 +23,10 @@ public class ConfigSession {
         return draft(config).getDraft();
     }
 
-    public <T> boolean setDraft(ConfigValue<T> config, T value) {
+    public <T> boolean setDraft(
+            ConfigValue<T> config,
+            T value
+    ) {
         return draft(config).setDraft(config.normalize(value));
     }
 
@@ -59,7 +62,10 @@ public class ConfigSession {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void copyHolderToConfigDraft(ConfigValue<?> rawConfig, DraftHolder<?> rawHolder) {
+    private <T> void copyHolderToConfigDraft(
+            ConfigValue<?> rawConfig,
+            DraftHolder<?> rawHolder
+    ) {
         ConfigValue<T> config = (ConfigValue<T>) rawConfig;
         DraftHolder<T> holder = (DraftHolder<T>) rawHolder;
         if (holder.hasUnsavedChanges()) {

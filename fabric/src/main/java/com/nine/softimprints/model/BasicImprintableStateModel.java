@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 public class BasicImprintableStateModel extends ImprintableStateModel {
 
+    private static final ImprintSurfaceRenderer OVERLAY_SURFACE_RENDERER = new OverlaySurfaceRenderer();
+    private static final ImprintSurfaceRenderer TOP_SURFACE_RENDERER = new TopSurfaceRenderer();
     private final List<ProfileResolverEntry> modelResolvers;
 
     public BasicImprintableStateModel(BlockStateModel wrapped) {
@@ -36,6 +38,19 @@ public class BasicImprintableStateModel extends ImprintableStateModel {
     ) {
         super(wrapped);
         this.modelResolvers = sortResolvers(modelResolvers);
+    }
+
+    private static ImprintSurfaceRenderer getRenderer(SurfaceMode mode) {
+        return switch (mode) {
+            case OVERLAY -> OVERLAY_SURFACE_RENDERER;
+            case REPAINT -> TOP_SURFACE_RENDERER;
+        };
+    }
+
+    private static List<ProfileResolverEntry> sortResolvers(List<ProfileResolverEntry> resolvers) {
+        return resolvers.stream()
+                .sorted(Comparator.comparingInt(ProfileResolverEntry::priority).reversed())
+                .toList();
     }
 
     public BlockStateModel wrappedModel() {
@@ -96,17 +111,6 @@ public class BasicImprintableStateModel extends ImprintableStateModel {
         getRenderer(resolved.surface().mode()).emit(context);
     }
 
-    private static final ImprintSurfaceRenderer OVERLAY_SURFACE_RENDERER = new OverlaySurfaceRenderer();
-
-    private static final ImprintSurfaceRenderer TOP_SURFACE_RENDERER = new TopSurfaceRenderer();
-
-    private static ImprintSurfaceRenderer getRenderer(SurfaceMode mode) {
-        return switch (mode) {
-            case OVERLAY -> OVERLAY_SURFACE_RENDERER;
-            case REPAINT -> TOP_SURFACE_RENDERER;
-        };
-    }
-
     private ResolvedImprintProfile resolveProfile(
             BlockAndTintGetter level,
             BlockPos pos,
@@ -122,12 +126,6 @@ public class BasicImprintableStateModel extends ImprintableStateModel {
             }
         }
         return ImprintProfiles.resolve(level, pos, state);
-    }
-
-    private static List<ProfileResolverEntry> sortResolvers(List<ProfileResolverEntry> resolvers) {
-        return resolvers.stream()
-                .sorted(Comparator.comparingInt(ProfileResolverEntry::priority).reversed())
-                .toList();
     }
 
 }

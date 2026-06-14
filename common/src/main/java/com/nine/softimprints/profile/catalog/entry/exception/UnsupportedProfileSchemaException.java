@@ -8,7 +8,10 @@ public class UnsupportedProfileSchemaException extends ProfileLoadException {
     private final int foundVersion;
     private final int supportedVersion;
 
-    public UnsupportedProfileSchemaException(int foundVersion, int supportedVersion) {
+    public UnsupportedProfileSchemaException(
+            int foundVersion,
+            int supportedVersion
+    ) {
         super("Profile schema " + foundVersion + " is newer than supported " + supportedVersion);
         this.foundVersion = foundVersion;
         this.supportedVersion = supportedVersion;

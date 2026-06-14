@@ -30,7 +30,12 @@ public class NeoImprintableStateModel extends DelegateBlockStateModel implements
 
 
     @Override
-    public Object createGeometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+    public Object createGeometryKey(
+            BlockAndTintGetter level,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random
+    ) {
         return this.delegate.createGeometryKey(level, pos, state, random);
     }
 }

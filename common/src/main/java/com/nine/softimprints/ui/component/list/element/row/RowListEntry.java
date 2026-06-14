@@ -13,7 +13,11 @@ public final class RowListEntry extends CompositeListEntry {
     private final int totalFixedWidth;
     private final int weightedItemCount;
 
-    public RowListEntry(int height, int gap, List<RowItem> items) {
+    public RowListEntry(
+            int height,
+            int gap,
+            List<RowItem> items
+    ) {
         super(height);
         this.gap = gap;
         this.items = List.copyOf(items);
@@ -32,7 +36,11 @@ public final class RowListEntry extends CompositeListEntry {
     }
 
     @Override
-    public void updateEntryLayout(int x, int y, int width) {
+    public void updateEntryLayout(
+            int x,
+            int y,
+            int width
+    ) {
         super.updateEntryLayout(x, y, width);
 
         int gapsWidth = Math.max(0, (items.size() - 1) * gap);
@@ -66,7 +74,11 @@ public final class RowListEntry extends CompositeListEntry {
         }
     }
 
-    private void place(AbstractWidget widget, int x, int width) {
+    private void place(
+            AbstractWidget widget,
+            int x,
+            int width
+    ) {
         widget.setX(x);
         widget.setY(getY());
         widget.setWidth(Math.max(0, width));

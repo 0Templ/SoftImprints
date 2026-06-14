@@ -40,7 +40,10 @@ public class FabricClientEvents {
                 .register(ModelModifier.WRAP_PHASE, FabricClientEvents::wrapModels));
     }
 
-    private static BlockStateModel wrapModels(BlockStateModel model, ModelModifier.AfterBakeBlock.Context ctx) {
+    private static BlockStateModel wrapModels(
+            BlockStateModel model,
+            ModelModifier.AfterBakeBlock.Context ctx
+    ) {
         ProfilesLoader.ensureLoaded(Minecraft.getInstance().getResourceManager());
         var blockMatch = ImprintProfiles.supportsBlock(ctx.state().getBlock());
         return blockMatch ? wrap(model) : model;
@@ -50,7 +53,10 @@ public class FabricClientEvents {
         return wrap(original, null);
     }
 
-    private static BlockStateModel wrap(BlockStateModel original, ProfileResolverEntry resolver) {
+    private static BlockStateModel wrap(
+            BlockStateModel original,
+            ProfileResolverEntry resolver
+    ) {
         if (original instanceof BasicImprintableStateModel imprintable) {
             return resolver == null ? original : imprintable.withModelResolver(resolver);
         }

@@ -26,11 +26,18 @@ public final class ModelContactAreaAdapter {
     private ModelContactAreaAdapter() {
     }
 
-    public static CompositeContactShape adapt(ModelContactSnapshot snapshot, Entity entity) {
+    public static CompositeContactShape adapt(
+            ModelContactSnapshot snapshot,
+            Entity entity
+    ) {
         return adapt(snapshot, entity, 0.0D);
     }
 
-    public static CompositeContactShape adapt(ModelContactSnapshot snapshot, Entity entity, double yawDeltaRadians) {
+    public static CompositeContactShape adapt(
+            ModelContactSnapshot snapshot,
+            Entity entity,
+            double yawDeltaRadians
+    ) {
         if (snapshot == null || snapshot.isEmpty() || entity == null) {
             return null;
         }
@@ -143,7 +150,12 @@ public final class ModelContactAreaAdapter {
         return builder.build(stampY);
     }
 
-    private static double resolveGroundY(Entity entity, double x, double y, double z) {
+    private static double resolveGroundY(
+            Entity entity,
+            double x,
+            double y,
+            double z
+    ) {
         if (entity.onGround()) {
             return y;
         }

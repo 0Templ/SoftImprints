@@ -18,7 +18,11 @@ public abstract class GameRendererMixin {
             require = 1,
             allow = 1
     )
-    private void softimprints$beginRenderFrame(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+    private void softimprints$beginRenderFrame(
+            DeltaTracker deltaTracker,
+            boolean renderLevel,
+            CallbackInfo ci
+    ) {
         ModelContactSnapshotCache.onRenderFrame(renderLevel);
     }
 
@@ -28,7 +32,10 @@ public abstract class GameRendererMixin {
             require = 1,
             allow = 1
     )
-    private void softimprints$captureFirstPersonPlayer(DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void softimprints$captureFirstPersonPlayer(
+            DeltaTracker deltaTracker,
+            CallbackInfo ci
+    ) {
         FirstPersonContactCapturer.captureIfApplicable(deltaTracker.getGameTimeDeltaPartialTick(true));
     }
 }

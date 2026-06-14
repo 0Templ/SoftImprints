@@ -55,10 +55,18 @@ public final class ModelContactCaptureSession {
     }
 
     public void captureMeshQuad(
-            double x0, double y0, double z0,
-            double x1, double y1, double z1,
-            double x2, double y2, double z2,
-            double x3, double y3, double z3
+            double x0,
+            double y0,
+            double z0,
+            double x1,
+            double y1,
+            double z1,
+            double x2,
+            double y2,
+            double z2,
+            double x3,
+            double y3,
+            double z3
     ) {
         if (this.boxes.size() >= MAX_CAPTURED_BOXES) {
             return;
@@ -84,11 +92,21 @@ public final class ModelContactCaptureSession {
     }
 
     public void captureObb(
-            double centerX, double centerY, double centerZ,
-            double colXx, double colXy, double colXz,
-            double colYx, double colYy, double colYz,
-            double colZx, double colZy, double colZz,
-            double halfX, double halfY, double halfZ
+            double centerX,
+            double centerY,
+            double centerZ,
+            double colXx,
+            double colXy,
+            double colXz,
+            double colYx,
+            double colYy,
+            double colYz,
+            double colZx,
+            double colZy,
+            double colZz,
+            double halfX,
+            double halfY,
+            double halfZ
     ) {
         if (this.boxes.size() >= MAX_CAPTURED_BOXES) {
             return;

@@ -7,11 +7,11 @@ public class LevelData {
     private final ImprintCache maps = new ImprintCache();
     private final BlockRenderCache models = new BlockRenderCache();
 
-    public ImprintCache getImprintCache(){
+    public ImprintCache getImprintCache() {
         return maps;
     }
 
-    public BlockRenderCache getBlockRenderCache(){
+    public BlockRenderCache getBlockRenderCache() {
         return models;
     }
 
@@ -20,7 +20,10 @@ public class LevelData {
         models.clearAt(pos);
     }
 
-    public void clearAtChunk(int chunkX, int chunkZ) {
+    public void clearAtChunk(
+            int chunkX,
+            int chunkZ
+    ) {
         int minBlockX = chunkX << 4;
         int maxBlockX = minBlockX + 15;
         int minBlockZ = chunkZ << 4;

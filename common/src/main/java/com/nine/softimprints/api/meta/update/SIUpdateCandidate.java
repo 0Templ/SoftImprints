@@ -4,4 +4,5 @@ public record SIUpdateCandidate(
         SIUpdateChannel channel,
         String url,
         String version
-) {}
+) {
+}

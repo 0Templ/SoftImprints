@@ -13,7 +13,7 @@ public class SICommon {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public static void init(){
+    public static void init() {
         Platform.init();
         SIConfig.init();
         SIUpdateService.startAsync();

@@ -16,10 +16,13 @@ import java.util.Map;
 
 public class ProfilesReader {
 
-    public static Map<Identifier, SourcedJson> readRawProfilesFromResources(ResourceManager manager, String path){
+    public static Map<Identifier, SourcedJson> readRawProfilesFromResources(
+            ResourceManager manager,
+            String path
+    ) {
         var rawRaw = manager.listResources(path, id -> id.getPath().endsWith(".json"));
         Map<Identifier, SourcedJson> ret = new HashMap<>();
-        for (var entry : rawRaw.entrySet()){
+        for (var entry : rawRaw.entrySet()) {
             var rawId = entry.getKey();
             Identifier normalizedId;
             try {
@@ -34,12 +37,10 @@ public class ProfilesReader {
             }
             try (Reader reader = entry.getValue().openAsReader()) {
                 var el = JsonParser.parseReader(reader);
-                if (ret.containsKey(normalizedId)){
+                if (ret.containsKey(normalizedId)) {
                     SICommon.LOGGER.warn("Profile with id {} already exists, skipping", rawId);
-                }
-                else ret.put(normalizedId, new SourcedJson(el, new JsonSource(rawId.toString())));
-            }
-            catch (Exception e) {
+                } else ret.put(normalizedId, new SourcedJson(el, new JsonSource(rawId.toString())));
+            } catch (Exception e) {
                 SICommon.LOGGER.error("Failed to read imprint priority {}: {}", rawId, e.getMessage());
             }
         }
@@ -53,7 +54,7 @@ public class ProfilesReader {
             stream.filter(Files::isRegularFile).filter(f -> f.getFileName().toString().endsWith(".json"))
                     .forEach(file -> {
                         Path relative = path.relativize(file);
-                        if (relative.getNameCount() < 2){
+                        if (relative.getNameCount() < 2) {
                             SICommon.LOGGER.warn("Profile config file {} must be inside a namespace folder " +
                                     "(e.g. <namespace>/<name>.json), skipping", relative);
                             return;

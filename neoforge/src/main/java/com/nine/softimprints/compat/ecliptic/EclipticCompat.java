@@ -44,7 +44,11 @@ public final class EclipticCompat {
         return isPresent();
     }
 
-    public static boolean isSnowySurface(Level level, BlockPos pos, BlockState state) {
+    public static boolean isSnowySurface(
+            Level level,
+            BlockPos pos,
+            BlockState state
+    ) {
         if (!isAvailable() || level == null || pos == null || state == null) {
             return false;
         }
@@ -60,7 +64,11 @@ public final class EclipticCompat {
         return isFullBlockSurface(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);
     }
 
-    public static boolean isFullBlockSurface(BlockGetter level, BlockPos pos, BlockState state) {
+    public static boolean isFullBlockSurface(
+            BlockGetter level,
+            BlockPos pos,
+            BlockState state
+    ) {
         if (level == null || pos == null || state == null) {
             return false;
         }
@@ -112,7 +120,10 @@ public final class EclipticCompat {
         }
     }
 
-    private static void handleHookFailure(String op, Throwable t) {
+    private static void handleHookFailure(
+            String op,
+            Throwable t
+    ) {
         synchronized (EclipticCompat.class) {
             isSnowyBlockMH = null;
         }

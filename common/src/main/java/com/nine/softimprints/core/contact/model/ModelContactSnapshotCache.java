@@ -2,12 +2,7 @@ package com.nine.softimprints.core.contact.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nine.softimprints.config.SIConfig;
-import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
-import com.nine.softimprints.core.contact.model.capture.ModelContactCaptureMode;
-import com.nine.softimprints.core.contact.model.capture.ModelContactCapturePolicy;
-import com.nine.softimprints.core.contact.model.capture.ModelContactCaptureSession;
-import com.nine.softimprints.core.contact.model.capture.ModelContactMeshVertexConsumer;
-import com.nine.softimprints.core.contact.model.capture.ModelPartObbCapturer;
+import com.nine.softimprints.core.contact.model.capture.*;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshot;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshotStore;
 import net.minecraft.client.Minecraft;
@@ -36,6 +31,7 @@ public final class ModelContactSnapshotCache {
     // To cfg? Tests
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
     private static final long MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS = 80L;
+    private static final double MAX_YAW_DELTA_RADIANS = 0.35D;
     private static long frameIndex;
     private static ClientLevel activeLevel;
 
@@ -78,7 +74,10 @@ public final class ModelContactSnapshotCache {
         return frameIndex;
     }
 
-    public static void setCaptureMode(int entityId, ModelContactCaptureMode mode) {
+    public static void setCaptureMode(
+            int entityId,
+            ModelContactCaptureMode mode
+    ) {
         POLICY.setMode(entityId, mode);
     }
 
@@ -105,8 +104,6 @@ public final class ModelContactSnapshotCache {
         return livingEntity;
     }
 
-    private static final double MAX_YAW_DELTA_RADIANS = 0.35D;
-
     public static ModelContactSnapshot resolveUsableSnapshot(Entity entity) {
         if (!(entity instanceof LivingEntity living)) {
             return null;
@@ -127,14 +124,20 @@ public final class ModelContactSnapshotCache {
         return isSnapshotCompatibleForLastSnapshotFallback(snapshot, living) ? snapshot : null;
     }
 
-    public static double rotationFromSnapshotToCurrent(ModelContactSnapshot snapshot, Entity entity) {
+    public static double rotationFromSnapshotToCurrent(
+            ModelContactSnapshot snapshot,
+            Entity entity
+    ) {
         if (snapshot == null || !(entity instanceof LivingEntity living)) {
             return 0.0D;
         }
         return Math.toRadians(Mth.wrapDegrees(snapshot.captureBodyYaw() - living.yBodyRot));
     }
 
-    private static boolean isSnapshotUsable(ModelContactSnapshot snapshot, LivingEntity entity) {
+    private static boolean isSnapshotUsable(
+            ModelContactSnapshot snapshot,
+            LivingEntity entity
+    ) {
         if (snapshot == null || snapshot.isEmpty()) {
             return false;
         }
@@ -151,7 +154,10 @@ public final class ModelContactSnapshotCache {
         return Math.abs(delta) <= MAX_YAW_DELTA_RADIANS;
     }
 
-    private static boolean isSnapshotCompatibleForLastSnapshotFallback(ModelContactSnapshot snapshot, LivingEntity entity) {
+    private static boolean isSnapshotCompatibleForLastSnapshotFallback(
+            ModelContactSnapshot snapshot,
+            LivingEntity entity
+    ) {
         if (snapshot == null || snapshot.isEmpty()) {
             return false;
         }
@@ -169,7 +175,10 @@ public final class ModelContactSnapshotCache {
         BASE_MODEL_SUBMIT_ENTITY.remove();
     }
 
-    public static void markSubmittedBaseModel(RenderType renderType, SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
+    public static void markSubmittedBaseModel(
+            RenderType renderType,
+            SubmitNodeStorage.ModelSubmit<?> modelSubmit
+    ) {
         if (!ModelContactRenderTypes.shouldCapture(renderType)) {
             return;
         }

@@ -54,46 +54,26 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     private static final int ROW_PADDING_H = 2;
 
     private static final int ROW_HOVER_COLOR = 0x33FFFFFF;
-
-    public enum Tab { BROWSE, SELECTED }
-
-    private final class ModeState {
-        final String id;
-        final Component label;
-        final Button switchButton;
-        final Set<T> selectedValues = new LinkedHashSet<>();
-        final List<SearchableEntry<T>> selectedEntries = new ArrayList<>();
-        Consumer<Set<T>> changeListener = ignored -> {};
-        int scrollSelected = 0;
-
-        ModeState(String id, Component label) {
-            this.id = id;
-            this.label = label;
-            this.switchButton = Button.builder(label, b -> switchMode(this.id))
-                    .size(0, MODE_SWITCH_HEIGHT)
-                    .build();
-        }
-    }
-
     private final Minecraft mc;
     private final List<SearchableEntry<T>> allEntries;
     private final List<SearchableEntry<T>> visibleEntries = new ArrayList<>();
     private final Map<String, ModeState> modes = new LinkedHashMap<>();
-    private String activeModeId;
-    private Consumer<String> modeChangeListener = ignored -> {};
-
     private final SearchListConfig config;
     private final EditBox searchBox;
     private final Button browseTab;
     private final Button selectedTab;
-
+    private String activeModeId;
+    private Consumer<String> modeChangeListener = ignored -> {
+    };
     private Tab activeTab = Tab.BROWSE;
     private int scrollBrowse = 0;
-
     private boolean scrollbarDragging = false;
     private double scrollbarGrabOffset = 0;
 
-    public SearchListEntry(SearchListConfig config, List<? extends SearchableEntry<T>> entries) {
+    public SearchListEntry(
+            SearchListConfig config,
+            List<? extends SearchableEntry<T>> entries
+    ) {
         super(0);
         this.mc = Minecraft.getInstance();
         this.config = config;
@@ -116,10 +96,41 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         updateHeight(computeHeight());
     }
 
+    private static int rowsContentX(int lx) {
+        return lx + LIST_FRAME_INSET_X;
+    }
+
+    private static int rowsContentWidth(
+            int lw,
+            boolean withScroll
+    ) {
+        int base = lw - LIST_FRAME_INSET_X * 2;
+        return withScroll ? base - SCROLLBAR_WIDTH - SCROLLBAR_GAP : base;
+    }
+
+    private static int scrollbarX(
+            int lx,
+            int lw
+    ) {
+        return lx + lw - LIST_FRAME_INSET_X - SCROLLBAR_WIDTH;
+    }
+
+    private static boolean isOver(
+            double mx,
+            double my,
+            int x,
+            int y,
+            int w,
+            int h
+    ) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
+    }
+
     public SearchListEntry<T> addMode(SearchListMode<T> mode) {
         Objects.requireNonNull(mode, "mode");
         ModeState state = new ModeState(mode.id(), mode.label());
-        state.changeListener = mode.onChange() != null ? mode.onChange() : ignored -> {};
+        state.changeListener = mode.onChange() != null ? mode.onChange() : ignored -> {
+        };
         modes.put(mode.id(), state);
         for (T value : mode.initialSelected()) {
             addInitialValueToMode(state, value);
@@ -140,7 +151,8 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     public SearchListEntry<T> onModeChanged(Consumer<String> listener) {
-        this.modeChangeListener = listener != null ? listener : ignored -> {};
+        this.modeChangeListener = listener != null ? listener : ignored -> {
+        };
         return this;
     }
 
@@ -153,7 +165,10 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         return activeModeId;
     }
 
-    private void addInitialValueToMode(ModeState state, T value) {
+    private void addInitialValueToMode(
+            ModeState state,
+            T value
+    ) {
         if (state.selectedValues.contains(value)) return;
         for (var entry : allEntries) {
             if (entry.value().equals(value)) {
@@ -165,14 +180,23 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     @Override
-    public void updateEntryLayout(int x, int y, int width) {
+    public void updateEntryLayout(
+            int x,
+            int y,
+            int width
+    ) {
         super.updateEntryLayout(x, y, width);
         updateHeight(computeHeight());
         layoutControls();
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            float partialTick
+    ) {
         layoutControls();
 
         if (hasModeSwitcher()) {
@@ -234,21 +258,11 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         }
     }
 
-    private static int rowsContentX(int lx) {
-        return lx + LIST_FRAME_INSET_X;
-    }
-
-    private static int rowsContentWidth(int lw, boolean withScroll) {
-        int base = lw - LIST_FRAME_INSET_X * 2;
-        return withScroll ? base - SCROLLBAR_WIDTH - SCROLLBAR_GAP : base;
-    }
-
-    private static int scrollbarX(int lx, int lw) {
-        return lx + lw - LIST_FRAME_INSET_X - SCROLLBAR_WIDTH;
-    }
-
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick
+    ) {
         double mx = event.x();
         double my = event.y();
         int button = event.button();
@@ -320,7 +334,11 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+    public boolean mouseDragged(
+            MouseButtonEvent event,
+            double dragX,
+            double dragY
+    ) {
         if (event.button() == 0 && scrollbarDragging) {
             int rowsY = listAreaY() + LIST_PADDING;
             int rowsH = listAreaHeight() - LIST_PADDING * 2;
@@ -331,7 +349,12 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
         int ly = listAreaY();
         int lh = listAreaHeight();
         if (!isOver(mouseX, mouseY, getX(), ly, getWidth(), lh)) return false;
@@ -358,7 +381,6 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     public boolean isFocused() {
         return searchBox.isFocused();
     }
-
 
     private boolean hasModeSwitcher() {
         return modes.size() > 1;
@@ -424,9 +446,16 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     private void renderRow(
-            GuiGraphicsExtractor graphics, SearchableEntry<T> entry,
-            int lx, int rowsY, int rowAreaW, int entryW, int rowIndex,
-            int mouseX, int mouseY, float partialTick
+            GuiGraphicsExtractor graphics,
+            SearchableEntry<T> entry,
+            int lx,
+            int rowsY,
+            int rowAreaW,
+            int entryW,
+            int rowIndex,
+            int mouseX,
+            int mouseY,
+            float partialTick
     ) {
         int rh = config.rowHeight();
         int ry = rowsY + rowIndex * rh;
@@ -454,8 +483,12 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     private void renderRowButton(
-            GuiGraphicsExtractor graphics, int mouseX, int mouseY,
-            int bx, int by, String label
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY,
+            int bx,
+            int by,
+            String label
     ) {
         boolean btnHovered = isOver(mouseX, mouseY, bx, by, ROW_BTN_WIDTH, ROW_BTN_HEIGHT);
         Identifier sprite = btnHovered ? BUTTON_HIGHLIGHTED_SPRITE : BUTTON_SPRITE;
@@ -466,7 +499,13 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
                 bx + ROW_BTN_WIDTH / 2, by + (ROW_BTN_HEIGHT - mc.font.lineHeight) / 2, color);
     }
 
-    private void renderEmptyHint(GuiGraphicsExtractor graphics, int lx, int ly, int lw, int lh) {
+    private void renderEmptyHint(
+            GuiGraphicsExtractor graphics,
+            int lx,
+            int ly,
+            int lw,
+            int lh
+    ) {
         Component msg = activeTab == Tab.BROWSE
                 ? (searchBox.getValue().isEmpty() ? config.typeHint() : config.emptyHint())
                 : Component.translatable("gui.softimprints.search.selected_empty");
@@ -476,8 +515,12 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
     }
 
     private void renderScrollbar(
-            GuiGraphicsExtractor graphics, int right, int ry, int rh,
-            List<SearchableEntry<T>> rows, int scrollIdx
+            GuiGraphicsExtractor graphics,
+            int right,
+            int ry,
+            int rh,
+            List<SearchableEntry<T>> rows,
+            int scrollIdx
     ) {
         int barLeft = right - SCROLLBAR_WIDTH;
         int thumbH = thumbHeight(rh, rows);
@@ -578,13 +621,21 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         return Math.max(0, rows.size() - config.visibleRows());
     }
 
-    private int thumbHeight(int trackH, List<SearchableEntry<T>> rows) {
+    private int thumbHeight(
+            int trackH,
+            List<SearchableEntry<T>> rows
+    ) {
         if (maxScrollIndex(rows) <= 0) return trackH;
         int thumb = trackH * config.visibleRows() / rows.size();
         return Mth.clamp(thumb, 8, trackH - 4);
     }
 
-    private int thumbTop(int ry, int trackH, List<SearchableEntry<T>> rows, int scrollIdx) {
+    private int thumbTop(
+            int ry,
+            int trackH,
+            List<SearchableEntry<T>> rows,
+            int scrollIdx
+    ) {
         int max = maxScrollIndex(rows);
         if (max <= 0) return ry;
         int thumbH = thumbHeight(trackH, rows);
@@ -592,14 +643,24 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         return ry + Mth.floor((double) scrollIdx / max * travel);
     }
 
-    private double resolveScrollbarGrabOffset(double mouseY, int ry, int rbottom, List<SearchableEntry<T>> rows) {
+    private double resolveScrollbarGrabOffset(
+            double mouseY,
+            int ry,
+            int rbottom,
+            List<SearchableEntry<T>> rows
+    ) {
         int rh = rbottom - ry;
         int thumbT = thumbTop(ry, rh, rows, activeScrollIndex());
         int thumbH = thumbHeight(rh, rows);
         return (mouseY >= thumbT && mouseY < thumbT + thumbH) ? mouseY - thumbT : thumbH / 2.0;
     }
 
-    private void scrollToMouse(double mouseY, int ry, int rbottom, List<SearchableEntry<T>> rows) {
+    private void scrollToMouse(
+            double mouseY,
+            int ry,
+            int rbottom,
+            List<SearchableEntry<T>> rows
+    ) {
         int rh = rbottom - ry;
         int thumbH = thumbHeight(rh, rows);
         double track = Math.max(1, rh - thumbH);
@@ -607,7 +668,27 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         setActiveScrollIndex(Mth.clamp((int) Math.round(rel / track * maxScrollIndex(rows)), 0, maxScrollIndex(rows)));
     }
 
-    private static boolean isOver(double mx, double my, int x, int y, int w, int h) {
-        return mx >= x && mx < x + w && my >= y && my < y + h;
+    public enum Tab {BROWSE, SELECTED}
+
+    private final class ModeState {
+        final String id;
+        final Component label;
+        final Button switchButton;
+        final Set<T> selectedValues = new LinkedHashSet<>();
+        final List<SearchableEntry<T>> selectedEntries = new ArrayList<>();
+        Consumer<Set<T>> changeListener = ignored -> {
+        };
+        int scrollSelected = 0;
+
+        ModeState(
+                String id,
+                Component label
+        ) {
+            this.id = id;
+            this.label = label;
+            this.switchButton = Button.builder(label, b -> switchMode(this.id))
+                    .size(0, MODE_SWITCH_HEIGHT)
+                    .build();
+        }
     }
 }

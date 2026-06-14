@@ -13,7 +13,10 @@ public final class LinearLayout implements UILayoutElement {
     private final List<Slot> slots = new ArrayList<>();
     private LayoutRect bounds;
 
-    private LinearLayout(Axis axis, LayoutRect bounds) {
+    private LinearLayout(
+            Axis axis,
+            LayoutRect bounds
+    ) {
         this.axis = axis;
         this.bounds = Objects.requireNonNull(bounds, "bounds");
     }
@@ -31,20 +34,32 @@ public final class LinearLayout implements UILayoutElement {
         return this;
     }
 
-    public LinearLayout fixed(int size, AbstractWidget widget) {
+    public LinearLayout fixed(
+            int size,
+            AbstractWidget widget
+    ) {
         return fixed(size, new WidgetElement(widget));
     }
 
-    public LinearLayout fixed(int size, UILayoutElement element) {
+    public LinearLayout fixed(
+            int size,
+            UILayoutElement element
+    ) {
         slots.add(Slot.fixed(Math.max(0, size), element));
         return this;
     }
 
-    public LinearLayout weight(int weight, AbstractWidget widget) {
+    public LinearLayout weight(
+            int weight,
+            AbstractWidget widget
+    ) {
         return weight(weight, new WidgetElement(widget));
     }
 
-    public LinearLayout weight(int weight, UILayoutElement element) {
+    public LinearLayout weight(
+            int weight,
+            UILayoutElement element
+    ) {
         slots.add(Slot.weight(Math.max(0, weight), element));
         return this;
     }
@@ -118,7 +133,11 @@ public final class LinearLayout implements UILayoutElement {
             }
 
             @Override
-            LayoutRect slice(LayoutRect bounds, int start, int length) {
+            LayoutRect slice(
+                    LayoutRect bounds,
+                    int start,
+                    int length
+            ) {
                 return new LayoutRect(start, bounds.y(), length, bounds.height());
             }
         },
@@ -134,7 +153,11 @@ public final class LinearLayout implements UILayoutElement {
             }
 
             @Override
-            LayoutRect slice(LayoutRect bounds, int start, int length) {
+            LayoutRect slice(
+                    LayoutRect bounds,
+                    int start,
+                    int length
+            ) {
                 return new LayoutRect(bounds.x(), start, bounds.width(), length);
             }
         };
@@ -143,7 +166,11 @@ public final class LinearLayout implements UILayoutElement {
 
         abstract int length(LayoutRect bounds);
 
-        abstract LayoutRect slice(LayoutRect bounds, int start, int length);
+        abstract LayoutRect slice(
+                LayoutRect bounds,
+                int start,
+                int length
+        );
     }
 
     private record Slot(int size, int weight, UILayoutElement element) {
@@ -152,11 +179,17 @@ public final class LinearLayout implements UILayoutElement {
             Objects.requireNonNull(element, "element");
         }
 
-        static Slot fixed(int size, UILayoutElement element) {
+        static Slot fixed(
+                int size,
+                UILayoutElement element
+        ) {
             return new Slot(size, 0, element);
         }
 
-        static Slot weight(int weight, UILayoutElement element) {
+        static Slot weight(
+                int weight,
+                UILayoutElement element
+        ) {
             return new Slot(0, weight, element);
         }
 

@@ -15,7 +15,10 @@ public class ProfilesWriter {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void write(Path file, JsonElement json) throws IOException {
+    public static void write(
+            Path file,
+            JsonElement json
+    ) throws IOException {
         Files.createDirectories(file.getParent());
         Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
 

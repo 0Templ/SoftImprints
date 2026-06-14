@@ -10,7 +10,10 @@ public final class ForcedOverlaySurfaceRenderer {
 
     private static final float SURFACE_OFFSET = 1.0F / 4096.0F;
 
-    public static void emit(ImprintRenderContext context, float forcedY) {
+    public static void emit(
+            ImprintRenderContext context,
+            float forcedY
+    ) {
         var set = context.profile().textureSets().getCurrent();
         if (set == null) return;
 

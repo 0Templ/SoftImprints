@@ -10,4 +10,5 @@ public record ImprintPluginInfo(
         Function<Boolean, Component> title,
         Component tooltip,
         boolean enabledByDefault
-) {}
+) {
+}

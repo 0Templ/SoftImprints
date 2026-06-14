@@ -11,15 +11,14 @@ public class BrushHistory {
 
     private int generation = 0;
 
-    public BrushHistory(){
+    public BrushHistory() {
 
     }
 
-    public void add(BrushStroke s) {
-        strokes.add(s); generation++;
-    }
-
-    public static List<BrushStroke> filterByDistance(List<BrushStroke> strokes, double distance) {
+    public static List<BrushStroke> filterByDistance(
+            List<BrushStroke> strokes,
+            double distance
+    ) {
         var result = new ArrayList<BrushStroke>();
         boolean inDrag = false;
         BrushStroke prev = null;
@@ -28,13 +27,12 @@ public class BrushHistory {
                 result.add(s);
                 inDrag = false;
             } else {
-                if (inDrag){
-                    if (farEnough(prev, s, distance)){
+                if (inDrag) {
+                    if (farEnough(prev, s, distance)) {
                         result.add(s);
                         prev = s;
                     }
-                }
-                else {
+                } else {
                     inDrag = true;
                     prev = s;
                 }
@@ -43,13 +41,20 @@ public class BrushHistory {
         return result;
     }
 
-    private static boolean farEnough(BrushStroke a, BrushStroke b, double minDist) {
+    private static boolean farEnough(
+            BrushStroke a,
+            BrushStroke b,
+            double minDist
+    ) {
         double dx = a.x() - b.x();
         double dy = a.y() - b.y();
         return dx * dx + dy * dy >= minDist * minDist;
     }
 
-    public static List<BrushStroke> deduplicateByCell(List<BrushStroke> strokes, double cellSize) {
+    public static List<BrushStroke> deduplicateByCell(
+            List<BrushStroke> strokes,
+            double cellSize
+    ) {
         Map<Long, BrushStroke> dragByCell = new LinkedHashMap<>();
         var result = new ArrayList<BrushStroke>();
         for (var s : strokes) {
@@ -67,10 +72,15 @@ public class BrushHistory {
         return result;
     }
 
+    public void add(BrushStroke s) {
+        strokes.add(s);
+        generation++;
+    }
 
     public void undo() {
         if (!strokes.isEmpty()) {
-            strokes.removeLast(); generation++;
+            strokes.removeLast();
+            generation++;
         }
     }
 

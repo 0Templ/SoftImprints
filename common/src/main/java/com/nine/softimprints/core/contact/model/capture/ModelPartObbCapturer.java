@@ -17,11 +17,19 @@ public final class ModelPartObbCapturer {
     private ModelPartObbCapturer() {
     }
 
-    public static void capture(ModelPart root, PoseStack poseStack, ModelContactCaptureSession session) {
+    public static void capture(
+            ModelPart root,
+            PoseStack poseStack,
+            ModelContactCaptureSession session
+    ) {
         capturePart(root, poseStack, session);
     }
 
-    private static void capturePart(ModelPart part, PoseStack poseStack, ModelContactCaptureSession session) {
+    private static void capturePart(
+            ModelPart part,
+            PoseStack poseStack,
+            ModelContactCaptureSession session
+    ) {
         if (!part.visible) {
             return;
         }
@@ -48,7 +56,11 @@ public final class ModelPartObbCapturer {
         poseStack.popPose();
     }
 
-    private static void captureCube(Matrix4f pose, ModelPart.Cube cube, ModelContactCaptureSession session) {
+    private static void captureCube(
+            Matrix4f pose,
+            ModelPart.Cube cube,
+            ModelContactCaptureSession session
+    ) {
         double localX = (cube.minX + cube.maxX) * 0.5D * PIXEL_SCALE;
         double localY = (cube.minY + cube.maxY) * 0.5D * PIXEL_SCALE;
         double localZ = (cube.minZ + cube.maxZ) * 0.5D * PIXEL_SCALE;

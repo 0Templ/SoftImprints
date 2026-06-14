@@ -38,7 +38,11 @@ public abstract class AbstractConfigListEntry implements ConfigListEntry {
     }
 
     @Override
-    public void updateEntryLayout(int x, int y, int width) {
+    public void updateEntryLayout(
+            int x,
+            int y,
+            int width
+    ) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -54,22 +58,24 @@ public abstract class AbstractConfigListEntry implements ConfigListEntry {
     }
 
     @Override
-    public final void attachToList(ConfigListWidget list, ListGroup group) {
+    public final void attachToList(
+            ConfigListWidget list,
+            ListGroup group
+    ) {
         this.list = list;
         this.group = group;
         this.onAttached();
         this.requestListLayout();
     }
 
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
 
     @Override
     public void setFocused(boolean focused) {
         this.focused = focused;
-    }
-
-    @Override
-    public boolean isFocused() {
-        return focused;
     }
 
     protected void onEntryResized(int width) {
