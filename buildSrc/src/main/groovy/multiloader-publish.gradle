@@ -10,6 +10,23 @@ def csv = { String value ->
             .findAll { !it.isEmpty() }
 }
 
+def csvPropOrFallback = { String propertyName, String fallbackPropertyName ->
+    def value = project.findProperty(propertyName)
+
+    if (value == null || value.toString().trim().isEmpty()) {
+        value = project.findProperty(fallbackPropertyName)
+    }
+
+    if (value == null || value.toString().trim().isEmpty()) {
+        return []
+    }
+
+    return value.toString()
+            .split(',')
+            .collect { it.trim() }
+            .findAll { !it.isEmpty() }
+}
+
 @SuppressWarnings('UnnecessaryQualifiedReference')
 def changelogProvider = rootProject.ext.releaseChangelogText as Provider<String>
 def extractChangelog = rootProject.ext.extractReleaseChangelog as TaskProvider<?>
@@ -36,7 +53,11 @@ publishMods {
         projectId = curseforge_id
         client = true
         server = false
-        csv(project.publish_game_versions).each { String v ->
+
+        csvPropOrFallback(
+                "publish_game_versions_curseforge",
+                "publish_game_versions"
+        ).each { String v ->
             minecraftVersions.add(v)
         }
     }
@@ -44,7 +65,11 @@ publishMods {
     modrinth {
         accessToken = System.getenv("MODRINTH_TOKEN") ?: project.findProperty("MODRINTH_TOKEN")
         projectId = modrinth_id
-        csv(project.publish_game_versions).each { String v ->
+
+        csvPropOrFallback(
+                "publish_game_versions_modrinth",
+                "publish_game_versions"
+        ).each { String v ->
             minecraftVersions.add(v)
         }
     }
