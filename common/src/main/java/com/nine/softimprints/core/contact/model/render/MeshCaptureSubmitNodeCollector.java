@@ -3,7 +3,6 @@ package com.nine.softimprints.core.contact.model.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nine.softimprints.core.contact.model.ModelContactRenderTypes;
 import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
-import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
@@ -83,25 +82,7 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             return;
         }
         this.capturedBaseModel = true;
-
-        boolean complete = false;
-        try {
-            model.setupAnim(state);
-            model.renderToBuffer(
-                    poseStack,
-                    ModelContactSnapshotCache.wrapActiveVertexConsumer(DiscardingVertexConsumer.INSTANCE),
-                    packedLight,
-                    packedOverlay,
-                    color
-            );
-            complete = true;
-        } finally {
-            if (complete) {
-                ModelContactSnapshotCache.finishLivingCapture();
-            } else {
-                ModelContactSnapshotCache.discardLivingCapture();
-            }
-        }
+        ModelContactSnapshotCache.captureModelGeometry(model, state, poseStack, packedLight, packedOverlay, color);
     }
 
     @Override

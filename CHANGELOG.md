@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.10
+- Minor model capture improvements
+
+
 ## 2.5.01
 - Fixed render issues
 

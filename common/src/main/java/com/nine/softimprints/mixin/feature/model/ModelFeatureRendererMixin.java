@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
-import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
@@ -47,23 +46,6 @@ public abstract class ModelFeatureRendererMixin {
         if (!ModelContactSnapshotCache.tryBeginSubmittedBaseModelCapture(modelSubmit)) {
             return;
         }
-
-        boolean complete = false;
-        try {
-            model.renderToBuffer(
-                    poseStack,
-                    ModelContactSnapshotCache.wrapActiveVertexConsumer(DiscardingVertexConsumer.INSTANCE),
-                    packedLight,
-                    packedOverlay,
-                    color
-            );
-            complete = true;
-        } finally {
-            if (complete) {
-                ModelContactSnapshotCache.finishLivingCapture();
-            } else {
-                ModelContactSnapshotCache.discardLivingCapture();
-            }
-        }
+        ModelContactSnapshotCache.captureModelGeometry(model, poseStack, packedLight, packedOverlay, color);
     }
 }

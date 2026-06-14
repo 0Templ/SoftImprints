@@ -1,13 +1,17 @@
 package com.nine.softimprints.core.contact.model;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.nine.softimprints.config.SIConfig;
+import com.nine.softimprints.core.contact.model.capture.DiscardingVertexConsumer;
 import com.nine.softimprints.core.contact.model.capture.ModelContactCaptureMode;
 import com.nine.softimprints.core.contact.model.capture.ModelContactCapturePolicy;
 import com.nine.softimprints.core.contact.model.capture.ModelContactCaptureSession;
 import com.nine.softimprints.core.contact.model.capture.ModelContactMeshVertexConsumer;
+import com.nine.softimprints.core.contact.model.capture.ModelPartObbCapturer;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshot;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshotStore;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -182,9 +186,65 @@ public final class ModelContactSnapshotCache {
         return entity != null && tryBeginLivingCapture(entity);
     }
 
-    public static VertexConsumer wrapActiveVertexConsumer(VertexConsumer delegate) {
+    public static void captureModelGeometry(
+            Model<?> model,
+            PoseStack poseStack,
+            int packedLight,
+            int packedOverlay,
+            int color
+    ) {
+        captureGeometryInternal(model, null, poseStack, packedLight, packedOverlay, color);
+    }
+
+    public static <S> void captureModelGeometry(
+            Model<? super S> model,
+            S setupState,
+            PoseStack poseStack,
+            int packedLight,
+            int packedOverlay,
+            int color
+    ) {
+        captureGeometryInternal(model, setupState, poseStack, packedLight, packedOverlay, color);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void captureGeometryInternal(
+            Model<?> model,
+            Object setupState,
+            PoseStack poseStack,
+            int packedLight,
+            int packedOverlay,
+            int color
+    ) {
         ModelContactCaptureSession session = ACTIVE_SESSION.get();
-        return session == null ? delegate : new ModelContactMeshVertexConsumer(delegate, session);
+        if (session == null) {
+            return;
+        }
+
+        boolean complete = false;
+        try {
+            if (setupState != null) {
+                ((Model<Object>) model).setupAnim(setupState);
+            }
+            if (SIConfig.Performance.MODEL_CAPTURE_PART_TRAVERSAL.get()) {
+                ModelPartObbCapturer.capture(model.root(), poseStack, session);
+            } else {
+                model.renderToBuffer(
+                        poseStack,
+                        new ModelContactMeshVertexConsumer(DiscardingVertexConsumer.INSTANCE, session),
+                        packedLight,
+                        packedOverlay,
+                        color
+                );
+            }
+            complete = true;
+        } finally {
+            if (complete) {
+                finishLivingCapture();
+            } else {
+                discardLivingCapture();
+            }
+        }
     }
 
     public static boolean tryBeginLivingCapture(Entity entity) {

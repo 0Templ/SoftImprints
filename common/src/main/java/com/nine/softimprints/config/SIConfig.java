@@ -166,6 +166,16 @@ public class SIConfig {
                 );
 
 
+        public static final ConfigValue<Boolean> MODEL_CAPTURE_PART_TRAVERSAL =
+                ConfigImpl.register(
+                        "model_capture_part_traversal",
+                        true,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        ConfigComment.of("Capture model-contact geometry by reading posed model parts directly (fast)")
+                                .line("Disable only if imprint shapes look wrong for entities with heavily customized models")
+                );
+
         public static final ConfigValue<Integer> IMPRINT_SNAPSHOT_INTERVAL =
                 ConfigImpl.register(
                         "imprint_snapshot_interval",

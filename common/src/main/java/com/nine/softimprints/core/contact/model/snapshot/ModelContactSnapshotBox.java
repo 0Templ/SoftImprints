@@ -54,6 +54,66 @@ public record ModelContactSnapshotBox(
         );
     }
 
+    public static ModelContactSnapshotBox fromObb(
+            double centerX, double centerY, double centerZ,
+            double colXx, double colXy, double colXz,
+            double colYx, double colYy, double colYz,
+            double colZx, double colZy, double colZz,
+            double halfX, double halfY, double halfZ
+    ) {
+        if (!allFinite(
+                centerX, centerY, centerZ,
+                colXx, colXy, colXz,
+                colYx, colYy, colYz,
+                colZx, colZy, colZz,
+                halfX, halfY, halfZ
+        )) {
+            return null;
+        }
+
+        double lenX = length(colXx, colXy, colXz);
+        double lenY = length(colYx, colYy, colYz);
+        double lenZ = length(colZx, colZy, colZz);
+        if (lenX <= EPSILON || lenY <= EPSILON || lenZ <= EPSILON) {
+            return null;
+        }
+
+        double extentX = halfX * lenX;
+        double extentY = halfY * lenY;
+        double extentZ = halfZ * lenZ;
+        if (extentX <= MIN_MESH_EXTENT && extentY <= MIN_MESH_EXTENT && extentZ <= MIN_MESH_EXTENT) {
+            return null;
+        }
+        extentX = Math.max(extentX, MIN_MESH_EXTENT);
+        extentY = Math.max(extentY, MIN_MESH_EXTENT);
+        extentZ = Math.max(extentZ, MIN_MESH_EXTENT);
+
+        double axisXx = colXx / lenX;
+        double axisXy = colXy / lenX;
+        double axisXz = colXz / lenX;
+        double axisYx = colYx / lenY;
+        double axisYy = colYy / lenY;
+        double axisYz = colYz / lenY;
+        double axisZx = colZx / lenZ;
+        double axisZy = colZy / lenZ;
+        double axisZz = colZz / lenZ;
+
+        double radiusX = Math.abs(axisXx) * extentX + Math.abs(axisYx) * extentY + Math.abs(axisZx) * extentZ;
+        double radiusY = Math.abs(axisXy) * extentX + Math.abs(axisYy) * extentY + Math.abs(axisZy) * extentZ;
+        double radiusZ = Math.abs(axisXz) * extentX + Math.abs(axisYz) * extentY + Math.abs(axisZz) * extentZ;
+
+        return new ModelContactSnapshotBox(
+                centerX, centerY, centerZ,
+                axisXx, axisXy, axisXz,
+                axisYx, axisYy, axisYz,
+                axisZx, axisZy, axisZz,
+                extentX, extentY, extentZ,
+                centerX - radiusX, centerX + radiusX,
+                centerY - radiusY, centerY + radiusY,
+                centerZ - radiusZ, centerZ + radiusZ
+        );
+    }
+
     public static ModelContactSnapshotBox fromQuad(
             double x0, double y0, double z0,
             double x1, double y1, double z1,

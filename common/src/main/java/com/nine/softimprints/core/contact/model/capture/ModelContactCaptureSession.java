@@ -83,6 +83,31 @@ public final class ModelContactCaptureSession {
         }
     }
 
+    public void captureObb(
+            double centerX, double centerY, double centerZ,
+            double colXx, double colXy, double colXz,
+            double colYx, double colYy, double colYz,
+            double colZx, double colZy, double colZz,
+            double halfX, double halfY, double halfZ
+    ) {
+        if (this.boxes.size() >= MAX_CAPTURED_BOXES) {
+            return;
+        }
+
+        ModelContactSnapshotBox box = ModelContactSnapshotBox.fromObb(
+                centerX + this.cameraToEntityX,
+                centerY + this.cameraToEntityY,
+                centerZ + this.cameraToEntityZ,
+                colXx, colXy, colXz,
+                colYx, colYy, colYz,
+                colZx, colZy, colZz,
+                halfX, halfY, halfZ
+        );
+        if (box != null) {
+            addBox(box);
+        }
+    }
+
     private void addBox(ModelContactSnapshotBox box) {
         if (this.boxes.size() >= MAX_CAPTURED_BOXES) {
             return;

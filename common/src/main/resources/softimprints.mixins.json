@@ -12,6 +12,7 @@
     "feature.model.GameRendererMixin",
     "feature.model.LivingEntityRendererMixin",
     "feature.model.ModelFeatureRendererMixin",
+    "feature.model.ModelPartAccessor",
     "feature.model.ModelFeatureRendererStorageMixin"
   ],
   "server": [],

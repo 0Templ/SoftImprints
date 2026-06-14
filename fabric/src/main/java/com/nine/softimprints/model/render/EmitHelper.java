@@ -43,7 +43,7 @@ public class EmitHelper {
 
     }
 
-    private static void setUvRotated(
+    static void setUvRotated(
             QuadEmitter emitter,
             TextureAtlasSprite sprite,
             int vertex,

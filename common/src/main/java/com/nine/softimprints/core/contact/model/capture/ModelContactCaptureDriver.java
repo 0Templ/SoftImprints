@@ -74,11 +74,7 @@ public final class ModelContactCaptureDriver {
             }
             state.oftenHoldTicks = OFTEN_HOLD_TICKS;
             ModelContactSnapshotCache.requestImmediateCapture(id);
-        } else {
-            ModelContactSnapshotCache.requestImmediateCapture(id);
-        }
-
-        if (!ModelContactSnapshotCache.hasUsableSnapshot(entity)) {
+        } else if (!ModelContactSnapshotCache.hasUsableSnapshot(entity)) {
             ModelContactSnapshotCache.requestImmediateCapture(id);
         }
 
