@@ -1,7 +1,10 @@
 # Changelog
 
-## 2.5.10
+## 2.5.11
+- Small lang changes
+- 26.2 port
 
+## 2.5.10
 - Minor model capture improvements
 
 ## 2.5.01
