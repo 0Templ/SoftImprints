@@ -12,7 +12,7 @@ authors = "${mod_author}"
 description = '''${description}'''
 displayURL = "${sources}"
 modUrl = "${homepage}"
-updateJSONURL = "https://raw.githubusercontent.com/0Templ/ModVersions/refs/heads/main/neoforge/snow-imprints/v1/26.1.2.json"
+updateJSONURL = "https://raw.githubusercontent.com/0Templ/ModVersions/refs/heads/main/neoforge/snow-imprints/v1/26.2.json"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"
