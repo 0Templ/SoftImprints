@@ -87,6 +87,7 @@ jobs:
         if: env.UPLOAD_GITHUB == 'true'
         run: |
           ./gradlew \
+            :neoforge:collectReleaseArtifacts \
             :fabric:collectReleaseArtifacts
 
       - name: Upload artifacts for next jobs
@@ -105,6 +106,7 @@ jobs:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         run: |
           ./gradlew \
+            :neoforge:publishModrinth \
             :fabric:publishModrinth
       - name: Publish to Curse
         if: env.UPLOAD_CURSEFORGE == 'true' && env.DRY_RUN == 'false'
@@ -112,6 +114,7 @@ jobs:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
         run: |
           ./gradlew \
+            :neoforge:publishCurseforge \
             :fabric:publishCurseforge
 
   github-release:
