@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-@SoftImprintsPlugin
+//@SoftImprintsPlugin
 public class EclipticImprintPlugin implements ImprintPlugin {
 
     private static final Identifier ID = Identifier.fromNamespaceAndPath(SICommon.MODID, "ecliptic_seasons");
