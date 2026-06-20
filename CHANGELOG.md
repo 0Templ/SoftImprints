@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.15
+- Updated profiles icon render
+- Updated lang
+
+
+
 ## 2.5.11
 - Small lang changes
 - 26.2 port
