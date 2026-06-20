@@ -137,6 +137,7 @@
   "imprint_profile.issue.unsupported_schema_version.details_0": "Схема профиля: %s. Поддерживается: %s и ниже",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Обновите Soft Imprints или установите совместимый пак профилей",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Профилю нужна более новая версия Soft Imprints",
+  "imprint_profile.issue.icon.wrong": "Не верный путь к иконке профиля: %s",
   "imprint_pack.all": "Все профили",
   "imprint_pack.unknown": "Профили",
   "imprint_pack.softimprints": "Стандартные профили",
