@@ -588,7 +588,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
         TextureAtlasSprite sprite = ((GuiGraphicsExtractorAccessor) graphics).si$guiSprites().getSprite(location);
         if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
             if (hovered){
-                graphics.setTooltipForNextFrame(font, Component.literal("Invalid icon path: " + location), (int) mouseX, (int) mouseY);
                 renderTooltip(graphics,
                         Component.translatable("imprint_profile.issue.icon.wrong",
                                 Component.literal(String.valueOf(location)).withColor(SIColors.SOFT_SOFT_GRAY)),
