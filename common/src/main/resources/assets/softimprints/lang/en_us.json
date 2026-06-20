@@ -145,5 +145,11 @@
   "imprint_pack.debug_imprints.desc": "Test imprint profile",
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Lets Ecliptic Seasons snowy surfaces use matching imprint profiles automatically",
+
+  "imprint_pack.softimprints.debug": "Debug Imprints",
+  "imprint_pack.softimprints.debug.desc": "Test imprint profile",
+  "imprint_profile.debug_imprints.debug": "Debug",
+  "imprint_profile.debug_imprints.debug.default": "Standard",
+
   "___end.": ""
 }
