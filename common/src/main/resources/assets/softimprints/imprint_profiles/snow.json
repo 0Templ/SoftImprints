@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "surface": {
     "mode": "repaint",
     "zero_layer_source": "surface"
@@ -10,7 +10,7 @@
   ],
   "preview": {
     "base": "softimprints:block/imprints/snow/snow_base",
-    "icon": "softimprints:block/imprints/snow/snow_icon"
+    "icon": "softimprints:icon/snow/snow_icon"
   },
   "texture_sets": {
     "selected": "standard",

@@ -137,6 +137,7 @@
   "imprint_profile.issue.unsupported_schema_version.details_0": "Profile schema: %s. Supported: %s and below",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Update Soft Imprints or install a compatible profile pack",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Profile requires a newer Soft Imprints version",
+  "imprint_profile.issue.icon.wrong": "Invalid icon path: %s",
   "imprint_pack.all": "All Profiles",
   "imprint_pack.unknown": "Unknow pack",
   "imprint_pack.softimprints": "Default Profiles",

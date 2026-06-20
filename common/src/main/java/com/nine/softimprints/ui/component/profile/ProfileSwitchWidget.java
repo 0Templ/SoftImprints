@@ -1,10 +1,12 @@
 package com.nine.softimprints.ui.component.profile;
 
 import com.nine.softimprints.SICommon;
+import com.nine.softimprints.mixin.accessor.client.GuiGraphicsExtractorAccessor;
 import com.nine.softimprints.profile.ImprintProfile;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.catalog.entry.InvalidProfileEntry;
 import com.nine.softimprints.profile.catalog.entry.issue.ProfileIssue;
+import com.nine.softimprints.ui.component.preview.widget.ImprintPreviewWidget;
 import com.nine.softimprints.ui.context.EditorContext;
 import com.nine.softimprints.ui.context.ProfilesSession;
 import com.nine.softimprints.ui.util.constant.SIColors;
@@ -20,8 +22,11 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.SpriteId;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
@@ -29,6 +34,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.*;
 
 public class ProfileSwitchWidget extends AbstractWidget {
+
+    private static final Identifier WARNING_ICON = Identifier.fromNamespaceAndPath(SICommon.MODID, "icon/warning");
 
     private static final int LABEL_ARROWS_PADDING = 4;
     private static final int ARROW_ZONE_WIDTH = 12;
@@ -60,6 +67,8 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private Label labelProfile = Label.empty();
     private List<ProfileButtonData> visibleProfiles = List.of();
 
+    private final Font font;
+
     public ProfileSwitchWidget(
             int x,
             int y,
@@ -68,6 +77,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
             EditorContext context
     ) {
         super(x, y, width, height, Component.empty());
+        this.font = Minecraft.getInstance().font;
         this.context = context;
         this.allProfiles = context.session().ids();
         this.groups = buildGroups(context.session());
@@ -462,7 +472,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
             int mouseX,
             int mouseY
     ) {
-        Font font = Minecraft.getInstance().font;
         graphics.setTooltipForNextFrame(font, font.split(tooltip, TOOLTIP_MAX_WIDTH), mouseX, mouseY);
     }
 
@@ -494,7 +503,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
         renderCardBorders(graphics, data, hovered);
         var profile = ImprintProfiles.getProfile(data.identifier());
         if (profile != null) {
-            renderCardIcon(graphics, data, profile);
+            renderCardIcon(graphics, data, profile, hovered, mouseX, mouseY);
         }
         var entry = context.session().entryOrNull(data.identifier);
         if (entry instanceof InvalidProfileEntry invalid) {
@@ -553,7 +562,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
 
         graphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
-                Identifier.fromNamespaceAndPath(SICommon.MODID, "icon/warning"),
+                WARNING_ICON,
                 subBorderX + 2,
                 subBorderY + 2,
                 subBorderSize - 2,
@@ -568,21 +577,29 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private void renderCardIcon(
             GuiGraphicsExtractor graphics,
             ProfileButtonData data,
-            ImprintProfile profile
+            ImprintProfile profile,
+            boolean hovered,
+            double mouseX,
+            double mouseY
     ) {
-        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance()
-                .getTextureManager()
-                .getTexture(TextureAtlas.LOCATION_BLOCKS);
-
-        var icon = iconsCache.computeIfAbsent(profile.id,
+        var location = iconsCache.computeIfAbsent(profile.id,
                 _ -> profile.preview().icon()
         );
-
-        TextureAtlasSprite sprite = atlas.getSprite(icon);
-
+        TextureAtlasSprite sprite = ((GuiGraphicsExtractorAccessor) graphics).si$guiSprites().getSprite(location);
+        if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
+            if (hovered){
+                graphics.setTooltipForNextFrame(font, Component.literal("Invalid icon path: " + location), (int) mouseX, (int) mouseY);
+                renderTooltip(graphics,
+                        Component.translatable("imprint_profile.issue.icon.wrong",
+                                Component.literal(String.valueOf(location)).withColor(SIColors.SOFT_SOFT_GRAY)),
+                        (int) mouseX, (int) mouseY
+                );
+            }
+            location = Identifier.fromNamespaceAndPath(SICommon.MODID, "icon/missing/missing_profile");
+        }
         graphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
-                sprite,
+                location,
                 data.x() + 2,
                 data.y() + 2,
                 data.size() - 4,

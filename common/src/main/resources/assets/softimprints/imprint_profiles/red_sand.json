@@ -8,8 +8,7 @@
     "minecraft:red_sand"
   ],
   "preview": {
-    "base": "softimprints:block/imprints/red_sand/red_sand_base",
-    "icon": "softimprints:block/imprints/red_sand/red_sand_icon"
+    "base": "softimprints:block/imprints/red_sand/red_sand_base"
   },
   "texture_sets": {
     "selected": "standard",
