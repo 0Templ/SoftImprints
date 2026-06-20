@@ -9,7 +9,7 @@
   ],
   "preview": {
     "base": "softimprints:block/imprints/red_sand/red_sand_base",
-    "icon": "softimprints:block/imprints/red_sand/red_sand_icon"
+    "icon": "softimprints:icon/red_sand/red_sand_icon"
   },
   "texture_sets": {
     "selected": "standard",

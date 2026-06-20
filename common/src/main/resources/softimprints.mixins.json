@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_18",
   "mixins": [],
   "client": [
+    "accessor.client.GuiGraphicsExtractorAccessor",
     "feature.cache.ClientLevelMixin",
     "feature.model.EntityRendererMixin",
     "feature.model.EntityRenderStateMixin",

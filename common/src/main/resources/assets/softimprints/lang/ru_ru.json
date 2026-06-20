@@ -136,6 +136,7 @@
   "imprint_profile.issue.unsupported_schema_version.details_0": "Схема профиля: %s. Поддерживается: %s и ниже",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Обновите Soft Imprints или установите совместимый пак профилей",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Профилю нужна более новая версия Soft Imprints",
+  "imprint_profile.issue.icon.wrong": "Неверный путь к иконке профиля: %s",
   "imprint_pack.all": "Все профили",
   "imprint_pack.unknown": "Профили",
   "imprint_pack.softimprints": "Стандартные профили",
@@ -143,5 +144,11 @@
   "imprint_pack.debug_imprints.desc": "Тестовый профиль следов",
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Позволяет заснеженным поверхностям Ecliptic Seasons автоматически использовать подходящие профили следов",
+
+  "imprint_pack.softimprints.debug": "Следы отладки",
+  "imprint_pack.softimprints.debug.desc": "Тестовый профиль",
+  "imprint_profile.debug_imprints.debug": "Отладка",
+  "imprint_profile.debug_imprints.debug.default": "Стандартный",
+
   "___end.": ""
 }

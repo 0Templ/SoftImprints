@@ -137,6 +137,7 @@
   "imprint_profile.issue.unsupported_schema_version.details_0": "Profile schema: %s. Supported: %s and below",
   "imprint_profile.issue.unsupported_schema_version.details_1": "Update Soft Imprints or install a compatible profile pack",
   "imprint_profile.issue.unsupported_schema_version.tooltip": "Profile requires a newer Soft Imprints version",
+  "imprint_profile.issue.icon.wrong": "Invalid icon path: %s",
   "imprint_pack.all": "All Profiles",
   "imprint_pack.unknown": "Unknow pack",
   "imprint_pack.softimprints": "Default Profiles",
@@ -144,5 +145,10 @@
   "imprint_pack.debug_imprints.desc": "Test imprint profile",
   "plugin.softimprints.ecliptic_seasons": "Ecliptic Seasons: %s",
   "plugin.softimprints.ecliptic_seasons.tooltip": "Lets Ecliptic Seasons snowy surfaces use matching imprint profiles automatically",
+
+  "imprint_pack.softimprints.debug": "Debug Imprints",
+  "imprint_pack.softimprints.debug.desc": "Test imprint profile",
+  "imprint_profile.debug_imprints.debug": "Debug",
+  "imprint_profile.debug_imprints.debug.default": "Standard",
   "___end.": ""
 }
