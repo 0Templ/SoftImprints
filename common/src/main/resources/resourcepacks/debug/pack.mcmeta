@@ -4,11 +4,11 @@
       "translate": "imprint_pack.softimprints.debug.desc"
     },
     "min_format": [
-      84,
+      88.0,
       0
     ],
     "max_format": [
-      84,
+      88.0,
       0
     ]
   }
