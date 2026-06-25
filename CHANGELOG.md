@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.5.17
+- Lowered required Fabric-Api version
+
 ## 2.5.15
 - Updated profiles icon render
 - Updated lang
