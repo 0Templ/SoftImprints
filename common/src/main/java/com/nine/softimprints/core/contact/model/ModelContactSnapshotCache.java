@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -261,7 +260,7 @@ public final class ModelContactSnapshotCache {
             return false;
         }
         if (!(entity instanceof LivingEntity living)) {
-            // Todo: add proper non-living support
+            // Todo: add proper non-living support!!!
             return false;
         }
         if (!(entity.level() instanceof ClientLevel clientLevel)) {
@@ -292,19 +291,12 @@ public final class ModelContactSnapshotCache {
             }
         }
 
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         ACTIVE_SESSION.set(new ModelContactCaptureSession(
                 entityId,
                 entity.level().getGameTime(),
                 currentFrame,
                 living.getPose(),
-                living.yBodyRot,
-                entity.getX(),
-                entity.getY(),
-                entity.getZ(),
-                cameraPos.x,
-                cameraPos.y,
-                cameraPos.z
+                living.yBodyRot
         ));
         return true;
     }
