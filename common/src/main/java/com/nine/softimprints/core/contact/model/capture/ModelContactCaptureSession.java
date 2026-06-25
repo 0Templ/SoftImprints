@@ -18,9 +18,6 @@ public final class ModelContactCaptureSession {
 
     private final float captureBodyYaw;
 
-    private final double cameraToEntityX;
-    private final double cameraToEntityY;
-    private final double cameraToEntityZ;
     private final List<ModelContactSnapshotBox> boxes = new ArrayList<>();
 
     private double minX = Double.POSITIVE_INFINITY;
@@ -35,23 +32,17 @@ public final class ModelContactCaptureSession {
             long gameTime,
             long frameIndex,
             Pose capturePose,
-            float captureBodyYaw,
-            double entityX,
-            double entityY,
-            double entityZ,
-            double cameraX,
-            double cameraY,
-            double cameraZ
+            float captureBodyYaw
     ) {
         this.entityId = entityId;
         this.gameTime = gameTime;
         this.frameIndex = frameIndex;
         this.capturePose = capturePose;
         this.captureBodyYaw = captureBodyYaw;
+    }
 
-        this.cameraToEntityX = cameraX - entityX;
-        this.cameraToEntityY = cameraY - entityY;
-        this.cameraToEntityZ = cameraZ - entityZ;
+    public float captureBodyYaw() {
+        return this.captureBodyYaw;
     }
 
     public void captureMeshQuad(
@@ -73,18 +64,10 @@ public final class ModelContactCaptureSession {
         }
 
         ModelContactSnapshotBox box = ModelContactSnapshotBox.fromQuad(
-                x0 + this.cameraToEntityX,
-                y0 + this.cameraToEntityY,
-                z0 + this.cameraToEntityZ,
-                x1 + this.cameraToEntityX,
-                y1 + this.cameraToEntityY,
-                z1 + this.cameraToEntityZ,
-                x2 + this.cameraToEntityX,
-                y2 + this.cameraToEntityY,
-                z2 + this.cameraToEntityZ,
-                x3 + this.cameraToEntityX,
-                y3 + this.cameraToEntityY,
-                z3 + this.cameraToEntityZ
+                x0, y0, z0,
+                x1, y1, z1,
+                x2, y2, z2,
+                x3, y3, z3
         );
         if (box != null) {
             addBox(box);
@@ -113,9 +96,7 @@ public final class ModelContactCaptureSession {
         }
 
         ModelContactSnapshotBox box = ModelContactSnapshotBox.fromObb(
-                centerX + this.cameraToEntityX,
-                centerY + this.cameraToEntityY,
-                centerZ + this.cameraToEntityZ,
+                centerX, centerY, centerZ,
                 colXx, colXy, colXz,
                 colYx, colYy, colYz,
                 colZx, colZy, colZz,

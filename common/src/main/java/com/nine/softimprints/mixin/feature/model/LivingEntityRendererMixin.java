@@ -65,7 +65,7 @@ public abstract class LivingEntityRendererMixin {
         LivingEntity entity = ModelContactSnapshotCache.resolveLivingEntity(renderState);
         if (entity == null
                 || !ModelContactRenderTypes.shouldCapture(renderType)
-                || !ModelContactSnapshotCache.tryBeginLivingCapture(entity)) {
+                || !ModelContactSnapshotCache.tryBeginLivingCapture(entity, cameraRenderState.pos)) {
             return;
         }
         ModelContactSnapshotCache.captureModelGeometry(model, modelState, poseStack, packedLight, packedOverlay, color);

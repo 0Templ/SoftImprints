@@ -34,7 +34,7 @@ public final class FirstPersonContactCapturer {
             return;
         }
 
-        Vec3 cameraPos = client.gameRenderer.mainCamera().position();
+        Vec3 cameraPos = cameraRenderState.pos;
         double renderX = Mth.lerp(partialTick, player.xo, player.getX()) - cameraPos.x;
         double renderY = Mth.lerp(partialTick, player.yo, player.getY()) - cameraPos.y;
         double renderZ = Mth.lerp(partialTick, player.zo, player.getZ()) - cameraPos.z;
@@ -47,7 +47,7 @@ public final class FirstPersonContactCapturer {
                     renderY,
                     renderZ,
                     new PoseStack(),
-                    new MeshCaptureSubmitNodeCollector(player)
+                    new MeshCaptureSubmitNodeCollector(player, cameraPos)
             );
         } catch (RuntimeException ignored) {
             ModelContactSnapshotCache.discardLivingCapture();

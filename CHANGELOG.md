@@ -1,10 +1,12 @@
 # Changelog
 
+## 2.5.17
+- Fixed: wrong stamps placement with shaders
+- Lowered required Fabric-Api version (Fabric only)
+
 ## 2.5.15
 - Updated profiles icon render
 - Updated lang
-
-
 
 ## 2.5.11
 - Small lang changes

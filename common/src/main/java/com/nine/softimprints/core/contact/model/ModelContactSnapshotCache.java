@@ -217,8 +217,14 @@ public final class ModelContactSnapshotCache {
         }
     }
 
-    public static boolean tryBeginLivingCapture(Entity entity) {
+    public static boolean tryBeginLivingCapture(
+            Entity entity,
+            Vec3 cameraPos
+    ) {
         if (!ModelContactSupport.shouldCapture(entity)) {
+            return false;
+        }
+        if (cameraPos == null) {
             return false;
         }
         if (!(entity instanceof LivingEntity living)) {
@@ -253,19 +259,12 @@ public final class ModelContactSnapshotCache {
             }
         }
 
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.mainCamera().position();
         ACTIVE_SESSION.set(new ModelContactCaptureSession(
                 entityId,
                 entity.level().getGameTime(),
                 currentFrame,
                 living.getPose(),
-                living.yBodyRot,
-                entity.getX(),
-                entity.getY(),
-                entity.getZ(),
-                cameraPos.x,
-                cameraPos.y,
-                cameraPos.z
+                living.yBodyRot
         ));
         return true;
     }

@@ -32,10 +32,18 @@ import java.util.List;
 final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
 
     private final Entity entity;
+
+    private final Vec3 cameraPos;
+
+
     private boolean capturedBaseModel;
 
-    MeshCaptureSubmitNodeCollector(Entity entity) {
+    MeshCaptureSubmitNodeCollector(
+            Entity entity,
+            Vec3 cameraPos
+    ) {
         this.entity = entity;
+        this.cameraPos = cameraPos;
     }
 
     @Override
@@ -108,7 +116,7 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     ) {
         if (this.capturedBaseModel
                 || !ModelContactRenderTypes.shouldCapture(renderType)
-                || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity)) {
+                || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity, this.cameraPos)) {
             return;
         }
         this.capturedBaseModel = true;
