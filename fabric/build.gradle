@@ -26,11 +26,16 @@ dependencies {
         implementation it
         shadow it
     }
+
     // Continuity
     implementation "curse.maven:continuity-531351:7901855"
-//
-//    implementation "curse.maven:entity-texture-features-fabric-568563:7930641"
-//    implementation "curse.maven:entity-model-features-844662:8063578"
+
+
+    // Sodium
+    runtimeOnly "curse.maven:sodium-394468:8111041"
+
+    // Iris Shaders
+    runtimeOnly "curse.maven:irisshaders-455508:7867943"
 }
 
 shadowJar {
