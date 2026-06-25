@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2.5.17
+- Fixed: wrong stamps placement with shaders
 - Lowered required Fabric-Api version
 
 ## 2.5.15
