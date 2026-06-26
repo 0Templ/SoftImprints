@@ -15,6 +15,8 @@ import net.minecraft.server.packs.PackType;
 
 public class SIFabricClient implements ClientModInitializer {
 
+
+
     @Override
     public void onInitializeClient() {
         SICommon.init();

@@ -31,4 +31,4 @@ if (projectName == null) {
 
 rootProject.name = projectName
 
-include("common", "fabric", "neoforge")
+include("common", "fabric"/*, "neoforge"*/)

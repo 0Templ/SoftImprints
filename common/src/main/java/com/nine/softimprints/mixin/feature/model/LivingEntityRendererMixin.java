@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.UvMapping;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +25,7 @@ public abstract class LivingEntityRendererMixin {
             method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
+                    target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/UvMapping;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
                     ordinal = 0
             ),
             require = 1,
@@ -39,7 +40,7 @@ public abstract class LivingEntityRendererMixin {
             int packedLight,
             int packedOverlay,
             int color,
-            TextureAtlasSprite textureAtlasSprite,
+            UvMapping uvMapping,
             int outlineColor,
             ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
             Operation<Void> original,
@@ -57,7 +58,7 @@ public abstract class LivingEntityRendererMixin {
                 packedLight,
                 packedOverlay,
                 color,
-                textureAtlasSprite,
+                uvMapping,
                 outlineColor,
                 crumblingOverlay
         );
@@ -68,6 +69,13 @@ public abstract class LivingEntityRendererMixin {
                 || !ModelContactSnapshotCache.tryBeginLivingCapture(entity, cameraRenderState.pos)) {
             return;
         }
-        ModelContactSnapshotCache.captureModelGeometry(model, modelState, poseStack, packedLight, packedOverlay, color);
-    }
-}
+
+        ModelContactSnapshotCache.captureModelGeometry(
+                model,
+                modelState,
+                poseStack,
+                packedLight,
+                packedOverlay,
+                color
+        );
+    }}

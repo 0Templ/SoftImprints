@@ -3,6 +3,7 @@ package com.nine.softimprints.core.contact.model.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
 import com.nine.softimprints.core.contact.model.ModelContactSupport;
+import com.nine.softimprints.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -47,7 +48,7 @@ public final class FirstPersonContactCapturer {
                     renderY,
                     renderZ,
                     new PoseStack(),
-                    new MeshCaptureSubmitNodeCollector(player, cameraPos)
+                    Platform.SPECIFIC.nodeCollector(player, cameraPos)
             );
         } catch (RuntimeException ignored) {
             ModelContactSnapshotCache.discardLivingCapture();
