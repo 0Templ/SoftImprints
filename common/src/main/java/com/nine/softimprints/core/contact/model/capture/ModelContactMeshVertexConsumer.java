@@ -1,8 +1,12 @@
 package com.nine.softimprints.core.contact.model.capture;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.nine.softimprints.core.contact.model.ModelContactSnapshotCache;
 
 public final class ModelContactMeshVertexConsumer implements VertexConsumer {
+
+    private static final float CAPTURE_Y_OFFSET =
+            ModelContactSnapshotCache.captureRenderYOffset();
 
     private final VertexConsumer delegate;
     private final ModelContactCaptureSession session;
@@ -117,7 +121,7 @@ public final class ModelContactMeshVertexConsumer implements VertexConsumer {
     ) {
         int index = this.vertexCount++;
         this.x[index] = x;
-        this.y[index] = y;
+        this.y[index] = y - CAPTURE_Y_OFFSET;
         this.z[index] = z;
 
         if (this.vertexCount < 4) {

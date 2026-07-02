@@ -14,6 +14,17 @@ pluginManagement {
                 includeGroupAndSubgroups('net.fabricmc')
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Forge'
+                    url = uri('https://maven.minecraftforge.net')
+                }
+            }
+            filter {
+                includeGroupAndSubgroups('net.minecraftforge')
+            }
+        }
     }
 }
 
@@ -31,4 +42,4 @@ if (projectName == null) {
 
 rootProject.name = projectName
 
-include("common", "fabric", "neoforge")
+include("common", "fabric", "forge", "neoforge")
