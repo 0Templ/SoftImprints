@@ -108,15 +108,45 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
         super(x, y, width, height, Component.empty());
         this.context = context;
         this.font = Minecraft.getInstance().font;
-        this.decorations = List.of(new Decoration(
-                RAIL_COUNT - 1,
-                0,
-                new TitleObject(
-                        Identifier.fromNamespaceAndPath(SICommon.MODID, "rails/deco_title_top"),
-                        Component.literal("◇")
-                )
-        ));
+
+        this.decorations = getRandomDecorations();
     }
+
+    private List<Decoration> getRandomDecorations(){
+        List<List<Decoration>> list = List.of(
+                List.of(new Decoration(
+                        RAIL_COUNT - 1,
+                        0,
+                        new TitleObject(
+                                Component.literal("◇"), 2.1F
+                        ))
+                ),
+                List.of(new Decoration(
+                        RAIL_COUNT - 2,
+                        0,
+                        new TitleObject(
+                                Component.literal("☀"), 1.8F
+                        ))
+                ),
+                List.of(new Decoration(
+                        RAIL_COUNT - 4,
+                        0,
+                        new TitleObject(
+                                Component.literal("❄"), 1.8F
+                        ))
+                ),
+                List.of(new Decoration(
+                        RAIL_COUNT - 3,
+                        0,
+                        new TitleObject(
+                                Component.literal("🔥"), 1.8F
+                        ))
+                )
+        );
+        Random random = new Random();
+        return list.get(random.nextInt(list.size()));
+    }
+
 
     @Override
     protected void extractWidgetRenderState(
@@ -744,13 +774,19 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
 
         private final Identifier key;
         private final Component text;
+        private final float scale;
+
+        private TitleObject(Component text){
+            this(text, 1);
+        }
 
         private TitleObject(
-                Identifier key,
-                Component text
+                Component text,
+                float scale
         ) {
-            this.key = key;
+            this.key = Identifier.fromNamespaceAndPath(SICommon.MODID, "decor");
             this.text = text;
+            this.scale = scale;
         }
 
         @Override
@@ -766,10 +802,17 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
                 int size,
                 boolean highlighted
         ) {
+            var pose = graphics.pose();
+            pose.pushMatrix();
+
+            pose.scale(scale, scale);
+
             graphics.centeredText(font, text,
                     x + size / 2,
                     y + (size - font.lineHeight) / 2,
                     SIColors.ALMOST_WHITE);
+
+            pose.popMatrix();
         }
     }
 

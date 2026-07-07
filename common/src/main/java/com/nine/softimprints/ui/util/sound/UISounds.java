@@ -32,7 +32,8 @@ public final class UISounds {
 
     public static void chipPlace(@Nullable ImprintProfile profile) {
         SoundEvent event = profile == null ? null : resolve(profile.preview().landingSound());
-        (event == null ? CHIP_PLACE : CHIP_PLACE.withEvent(event)).play();
+        CHIP_PLACE.play();
+        if (event != null) CHIP_PLACE.withEvent(event).play();
     }
 
     @Nullable
