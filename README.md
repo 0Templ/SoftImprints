@@ -13,7 +13,7 @@ The latest stable releases are available on [CurseForge](https://www.curseforge.
 Or here on [Releases](https://github.com/0Templ/SoftImprints/releases) page.
 
 ## Create Imprint Profiles
-Soft Imprints profiles are data-driven JSON files. They can add or customize supported surfaces, textures and layers.
+Imprint profiles are data-driven JSON files. They can add or customize supported surfaces, textures and layers.
 
 See the [Wiki](https://github.com/0Templ/SoftImprints/wiki) page for the profile format and examples.
 
