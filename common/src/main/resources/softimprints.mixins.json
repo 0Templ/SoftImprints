@@ -7,6 +7,7 @@
   "mixins": [],
   "client": [
     "accessor.client.GuiGraphicsExtractorAccessor",
+    "accessor.client.SpriteContentsAccessor",
     "feature.cache.ClientLevelMixin",
     "feature.model.EntityRendererMixin",
     "feature.model.EntityRenderStateMixin",

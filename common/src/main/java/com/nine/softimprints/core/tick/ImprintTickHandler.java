@@ -6,6 +6,7 @@ import com.nine.softimprints.core.cache.CacheAccess;
 import com.nine.softimprints.core.cache.ImprintCache;
 import com.nine.softimprints.core.cache.LevelData;
 import com.nine.softimprints.core.contact.model.capture.ModelContactCaptureDriver;
+import com.nine.softimprints.core.decay.ImprintDecayPass;
 import com.nine.softimprints.core.track.EntityMotionTracker;
 import com.nine.softimprints.core.track.ImprintEntityTracker;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,7 @@ public class ImprintTickHandler {
     private static final EntityMotionTracker motionTracker = new EntityMotionTracker();
     private static final ImprintEntityTracker stampTracker = new ImprintEntityTracker();
     private static final ModelContactCaptureDriver modelCaptureDriver = new ModelContactCaptureDriver();
+    private static final ImprintDecayPass decayPass = new ImprintDecayPass();
     private static ClientLevel level;
     private static long tickCounter;
 
@@ -48,6 +50,8 @@ public class ImprintTickHandler {
                 stampTracker.ackApplied(result.applied());
             }
         }
+
+        decayPass.tick(level, cache, tickCounter);
 
         if (shouldTick(tickCounter, SIConfig.Performance.IMPRINT_CHUNK_REBUILD_TICK_RATE.get())) {
             var cfg = SIConfig.Performance.MAX_SECTIONS_REBUILD_PER_ITERATION;

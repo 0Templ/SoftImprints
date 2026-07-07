@@ -15,8 +15,10 @@ import com.nine.softimprints.ui.draft.DraftHolder;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class PreviewState {
 
@@ -28,6 +30,11 @@ public class PreviewState {
     private boolean dragging = false;
     private double lastX, lastY;
     private double allowedDist;
+
+    private final Set<Long> dirtyColumns = new HashSet<>();
+    private boolean allDirty = true;
+    @Nullable
+    private BrushHistory.Acceptor acceptor;
 
     @Nullable
     private DraftHolder<ImprintProfile> profileDraft;
@@ -118,10 +125,16 @@ public class PreviewState {
             this.lastX = normX;
             this.lastY = normY;
         }
-        history.add(new BrushStroke(normX, normY, size, seed, dragging));
+        BrushStroke stroke = new BrushStroke(normX, normY, size, seed, dragging);
+        history.add(stroke);
 
-        // add checks
-        rebuild();
+        if (acceptor == null) {
+            rebuild();
+            return;
+        }
+        if (profileDraft != null && acceptor.accept(stroke)) {
+            applyStroke(profileDraft.getDraft(), stroke);
+        }
     }
 
     public void clear() {
@@ -131,13 +144,30 @@ public class PreviewState {
 
     public void rebuild() {
         columns.clear();
+        allDirty = true;
+        dirtyColumns.clear();
+        acceptor = new BrushHistory.Acceptor(minAllowedDist * 0.5f, allowedDist);
         if (profileDraft == null) return;
 
-        var strokes = BrushHistory.deduplicateByCell(history.snapshot(), minAllowedDist * 0.5f);
-        strokes = BrushHistory.filterByDistance(strokes, allowedDist);
         var profile = profileDraft.getDraft();
-        strokes.forEach(s -> applyStroke(profile, s));
+        for (BrushStroke stroke : history.snapshot()) {
+            if (acceptor.accept(stroke)) {
+                applyStroke(profile, stroke);
+            }
+        }
+    }
 
+    @Nullable
+    public Set<Long> consumeDirtyColumns() {
+        if (allDirty) {
+            allDirty = false;
+            dirtyColumns.clear();
+            return null;
+        }
+        if (dirtyColumns.isEmpty()) return Set.of();
+        Set<Long> ret = Set.copyOf(dirtyColumns);
+        dirtyColumns.clear();
+        return ret;
     }
 
     private void applyStroke(
@@ -185,6 +215,8 @@ public class PreviewState {
         int blockWidth = Math.ceilDiv(activeWidth, Constants.PREVIEW_BLOCK_RESOLUTION);
         int blockHeight = Math.ceilDiv(activeHeight, Constants.PREVIEW_BLOCK_RESOLUTION);
 
+        long lastDirty = -1L;
+
         for (int sy = 0; sy < h; sy++) {
             int globalY = originY + sy;
             int blockY = Math.floorDiv(globalY, mapSize);
@@ -202,11 +234,16 @@ public class PreviewState {
                 if (blockX >= blockWidth) break;
                 int localX = Math.floorMod(globalX, mapSize);
 
-                byte[] column = columns.computeIfAbsent(columnKey(blockX, blockY), key -> new byte[mapSize * mapSize]);
+                long key = columnKey(blockX, blockY);
+                byte[] column = columns.computeIfAbsent(key, k -> new byte[mapSize * mapSize]);
                 int dstIndex = localY * mapSize + localX;
                 byte cur = column[dstIndex];
                 if (cur == 0 || (value & 0xFF) < (cur & 0xFF)) {
                     column[dstIndex] = value;
+                    if (key != lastDirty) {
+                        dirtyColumns.add(key);
+                        lastDirty = key;
+                    }
                 }
             }
         }

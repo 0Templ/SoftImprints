@@ -11,6 +11,7 @@ public class UICache {
     private static int previewResolution = 64;
     private static double brushSize = 12;
     private static boolean debugPreviewMode = false;
+    private static boolean priorityEditMode = false;
     private static EditorGroup editorGroup = EditorGroup.GENERAL;
     private static BrushHistory brushHistory = new BrushHistory();
 
@@ -36,6 +37,14 @@ public class UICache {
 
     public static void setBrushSize(double value) {
         brushSize = value;
+    }
+
+    public static boolean priorityEditMode() {
+        return priorityEditMode;
+    }
+
+    public static void setPriorityEditMode(boolean value) {
+        priorityEditMode = value;
     }
 
     public static boolean debugPreviewMode() {

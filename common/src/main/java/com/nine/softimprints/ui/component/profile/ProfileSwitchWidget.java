@@ -1,11 +1,11 @@
 package com.nine.softimprints.ui.component.profile;
 
 import com.nine.softimprints.SICommon;
-import com.nine.softimprints.mixin.accessor.client.GuiGraphicsExtractorAccessor;
-import com.nine.softimprints.profile.ImprintProfile;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.catalog.entry.InvalidProfileEntry;
 import com.nine.softimprints.profile.catalog.entry.issue.ProfileIssue;
+import com.nine.softimprints.ui.cache.UICache;
+import com.nine.softimprints.ui.component.group.OptionEntry;
 import com.nine.softimprints.ui.component.preview.widget.ImprintPreviewWidget;
 import com.nine.softimprints.ui.context.EditorContext;
 import com.nine.softimprints.ui.context.ProfilesSession;
@@ -14,6 +14,7 @@ import com.nine.softimprints.ui.util.constant.SITextures;
 import com.nine.softimprints.ui.util.region.BorderSides;
 import com.nine.softimprints.ui.util.region.BoxRenderer;
 import com.nine.softimprints.ui.util.region.BoxSkins;
+import com.nine.softimprints.ui.util.region.ChromeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -22,20 +23,25 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.sprite.SpriteId;
-import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ProfileSwitchWidget extends AbstractWidget {
 
     private static final Identifier WARNING_ICON = Identifier.fromNamespaceAndPath(SICommon.MODID, "icon/warning");
+
+    private static final int CORNER_BUTTON_TEXT_OFFSET_X = 2;
+    private static final int CORNER_BUTTON_TEXT_OFFSET_Y = 3;
+    private static final int CORNER_BUTTON_EXTRA_WIDTH = 5;
+    private static final int CORNER_BUTTON_HEIGHT = 15;
+    private static final int PRIORITY_TEXT_GAP = 3;
+
+    private static final int HEADER_TEXT_PADDING = 2;
+
 
     private static final int LABEL_ARROWS_PADDING = 4;
     private static final int ARROW_ZONE_WIDTH = 12;
@@ -52,7 +58,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private final EditorContext context;
     private final List<Identifier> allProfiles;
     private final List<ProfilesGroup> groups;
-    private final Map<Identifier, Identifier> iconsCache = new HashMap<>();
     private FilterMode filterMode = FilterMode.ALL;
     private int groupIndex;
     private int profileIndex;
@@ -66,6 +71,8 @@ public class ProfileSwitchWidget extends AbstractWidget {
     private Label labelGroup = Label.empty();
     private Label labelProfile = Label.empty();
     private List<ProfileButtonData> visibleProfiles = List.of();
+
+    private Consumer<Boolean> priorityModeListener = mode -> {};
 
     private final Font font;
 
@@ -283,9 +290,8 @@ public class ProfileSwitchWidget extends AbstractWidget {
     }
 
     private void rebuildHeaderLayout() {
-        int padding = 2;
-        int maxWidth = getWidth() - padding * 2;
-        Font font = Minecraft.getInstance().font;
+        int minLabelsX = getX() + cornerButtonWidth(prioButtonText()) + HEADER_TEXT_PADDING;
+        int maxWidth = getX() + getWidth() - HEADER_TEXT_PADDING - minLabelsX;
         Component groupText = groupLabel().copy().append(":");
         Component profileText = profileLabel();
         int spaceWidth = font.width(" ");
@@ -293,9 +299,9 @@ public class ProfileSwitchWidget extends AbstractWidget {
         int profileWidth = font.width(profileText);
         int totalWidth = groupWidth + spaceWidth + profileWidth;
 
-        int labelsX = getX() + (getWidth() - totalWidth) / 2;
+        int labelsX = Math.max(getX() + (getWidth() - totalWidth) / 2, minLabelsX);
         if (totalWidth > maxWidth) {
-            labelsX = getX() + padding;
+            labelsX = minLabelsX;
             groupWidth = (int) Math.min(groupWidth, maxWidth * 0.75F);
             profileWidth = maxWidth - groupWidth - spaceWidth;
 
@@ -410,6 +416,14 @@ public class ProfileSwitchWidget extends AbstractWidget {
             int mouseY,
             float partialTick
     ) {
+        if (UICache.priorityEditMode()) {
+            renderPriorityEditState(graphics, mouseX, mouseY);
+            renderCornerButton(graphics, previewButtonText(),
+                    Component.translatable("gui.softimprints.profile_switch.mode.preview.tooltip"),
+                    mouseX, mouseY);
+            return;
+        }
+
         rebuildHeaderLayout();
         rebuildVisibleProfiles();
 
@@ -425,6 +439,100 @@ public class ProfileSwitchWidget extends AbstractWidget {
         renderProfileCards(graphics, mouseX, mouseY);
         renderHeader(graphics, mouseX, mouseY);
         renderArrows(graphics, left, right);
+        renderCornerButton(graphics, prioButtonText(),
+                Component.translatable("gui.softimprints.profile_switch.mode.priority.tooltip"),
+                mouseX, mouseY);
+    }
+
+
+
+    private void renderPriorityEditState(
+            GuiGraphicsExtractor graphics,
+            int mouseX,
+            int mouseY
+    ) {
+        int left = getX() + HEADER_TEXT_PADDING;
+        int right = getX() + getWidth() - HEADER_TEXT_PADDING;
+        int titleLeft = getX() + cornerButtonWidth(previewButtonText()) + HEADER_TEXT_PADDING;
+        int titleY = getY() + LABEL_Y_OFFSET;
+
+        boolean titleHovered = renderScrollingText(graphics, editingText(), SIColors.ALMOST_WHITE,
+                titleLeft, right, titleY, mouseX, mouseY);
+        if (titleHovered) {
+            renderTooltip(graphics,
+                    Component.translatable("gui.softimprints.profile_switch.priority.editing.tooltip"),
+                    mouseX, mouseY);
+        }
+
+        int titleBottom = titleY + font.lineHeight;
+        int hintsHeight = font.lineHeight * 2 + PRIORITY_TEXT_GAP;
+        int hintsTop = titleBottom + (getY() + getHeight() - titleBottom - hintsHeight) / 2;
+
+        renderScrollingText(graphics,
+                Component.translatable("gui.softimprints.profile_switch.priority.hint.1"),
+                SIColors.SOFT_SOFT_GRAY, left, right, hintsTop, mouseX, mouseY);
+        renderScrollingText(graphics,
+                Component.translatable("gui.softimprints.profile_switch.priority.hint.2"),
+                SIColors.SOFT_SOFT_GRAY, left, right, hintsTop + font.lineHeight + PRIORITY_TEXT_GAP, mouseX, mouseY);
+    }
+
+    private Component editingText() {
+        return Component.translatable("gui.softimprints.profile_switch.priority.editing");
+    }
+
+    private void renderCornerButton(
+            GuiGraphicsExtractor graphics,
+            Component text,
+            Component tooltip,
+            int mouseX,
+            int mouseY
+    ) {
+        boolean hovered = cornerButtonHovered(text, mouseX, mouseY);
+        ChromeRenderer.blackFill(graphics, getX() , getY() , cornerButtonWidth(text) - 2, CORNER_BUTTON_HEIGHT - 2);
+
+
+        graphics.text(font, text,
+                getX() + CORNER_BUTTON_TEXT_OFFSET_X, getY() + CORNER_BUTTON_TEXT_OFFSET_Y,
+                hovered ? SIColors.WHITE : SIColors.SOFT_GRAY);
+        BoxRenderer.render(graphics, BoxSkins.TAB,
+                getX(), getY(), cornerButtonWidth(text), CORNER_BUTTON_HEIGHT,
+                EnumSet.of(BorderSides.RIGHT, BorderSides.BOTTOM));
+
+
+        if (hovered) {
+            renderTooltip(graphics, tooltip, mouseX, mouseY);
+        }
+    }
+
+    private Component prioButtonText() {
+        return Component.translatable("gui.softimprints.profile_switch.mode.prio");
+    }
+
+    private Component previewButtonText() {
+        return Component.translatable("gui.softimprints.profile_switch.mode.preview");
+    }
+
+    private int cornerButtonWidth(Component text) {
+        return font.width(text) + CORNER_BUTTON_EXTRA_WIDTH;
+    }
+
+    private boolean cornerButtonHovered(
+            Component text,
+            double mouseX,
+            double mouseY
+    ) {
+        return mouseX >= getX() && mouseX < getX() + cornerButtonWidth(text)
+                && mouseY >= getY() && mouseY < getY() + CORNER_BUTTON_HEIGHT;
+    }
+
+    private void togglePriorityMode() {
+        boolean next = !UICache.priorityEditMode();
+        UICache.setPriorityEditMode(next);
+        priorityModeListener.accept(next);
+    }
+
+    public void setPriorityModeListener(Consumer<Boolean> listener) {
+        this.priorityModeListener = listener;
     }
 
     private void renderHeader(
@@ -432,28 +540,35 @@ public class ProfileSwitchWidget extends AbstractWidget {
             int mouseX,
             int mouseY
     ) {
-        boolean groupHovered = labelGroupHovered(mouseX, mouseY);
-        boolean profileHovered = labelProfileHovered(mouseX, mouseY);
-
-        renderLabel(graphics, labelGroup, groupHovered);
-        renderLabel(graphics, labelProfile, profileHovered);
+        boolean groupHovered = renderScrollingText(graphics, labelGroup.text(), SIColors.ALMOST_WHITE,
+                labelGroup.x(), labelGroup.x() + labelGroup.width(), labelGroup.y(), mouseX, mouseY);
+        renderScrollingText(graphics, labelProfile.text(), SIColors.ALMOST_WHITE,
+                labelProfile.x(), labelProfile.x() + labelProfile.width(), labelProfile.y(), mouseX, mouseY);
 
         if (groupHovered) {
             renderTooltip(graphics, groupTooltip(), mouseX, mouseY);
         }
     }
 
-    private void renderLabel(
+    private boolean renderScrollingText(
             GuiGraphicsExtractor graphics,
-            Label label,
-            boolean hovered
+            Component text,
+            int baseColor,
+            int x0,
+            int x1,
+            int y,
+            int mouseX,
+            int mouseY
     ) {
-        int color = hovered ? SIColors.WHITE : SIColors.ALMOST_WHITE;
-        graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE)
-                .acceptScrollingWithDefaultCenter(label.text().copy().withColor(color),
-                        label.x(), label.x() + label.width(),
-                        label.y(), label.y() + Minecraft.getInstance().font.lineHeight - 1);
+        int textWidth = Math.min(font.width(text), x1 - x0);
+        int hoverX0 = x0 + (x1 - x0 - textWidth) / 2;
+        boolean hovered = mouseX >= hoverX0 && mouseX < hoverX0 + textWidth
+                && mouseY >= y && mouseY < y + font.lineHeight;
 
+        graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE)
+                .acceptScrollingWithDefaultCenter(text.copy().withColor(hovered ? SIColors.WHITE : baseColor),
+                        x0, x1, y, y + font.lineHeight - 1);
+        return hovered;
     }
 
     private Component groupTooltip() {
@@ -500,10 +615,20 @@ public class ProfileSwitchWidget extends AbstractWidget {
             double mouseY,
             boolean hovered
     ) {
-        renderCardBorders(graphics, data, hovered);
         var profile = ImprintProfiles.getProfile(data.identifier());
-        if (profile != null) {
-            renderCardIcon(graphics, data, profile, hovered, mouseX, mouseY);
+        if (profile == null) {
+            renderCardBorders(graphics, data, hovered);
+        } else {
+            ProfileCards.CardIcon icon = ProfileCards.iconFor(graphics, profile);
+            ProfileCards.render(graphics, hovered ? BoxSkins.TAB_HOVERED : BoxSkins.TAB, icon,
+                    data.x(), data.y(), data.size());
+            if (icon.missing() && hovered) {
+                renderTooltip(graphics,
+                        Component.translatable("imprint_profile.issue.icon.wrong",
+                                Component.literal(String.valueOf(icon.requested())).withColor(SIColors.SOFT_SOFT_GRAY)),
+                        (int) mouseX, (int) mouseY
+                );
+            }
         }
         var entry = context.session().entryOrNull(data.identifier);
         if (entry instanceof InvalidProfileEntry invalid) {
@@ -574,39 +699,6 @@ public class ProfileSwitchWidget extends AbstractWidget {
         }
     }
 
-    private void renderCardIcon(
-            GuiGraphicsExtractor graphics,
-            ProfileButtonData data,
-            ImprintProfile profile,
-            boolean hovered,
-            double mouseX,
-            double mouseY
-    ) {
-        var location = iconsCache.computeIfAbsent(profile.id,
-                _ -> profile.preview().icon()
-        );
-        TextureAtlasSprite sprite = ((GuiGraphicsExtractorAccessor) graphics).si$guiSprites().getSprite(location);
-        if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
-            if (hovered){
-                renderTooltip(graphics,
-                        Component.translatable("imprint_profile.issue.icon.wrong",
-                                Component.literal(String.valueOf(location)).withColor(SIColors.SOFT_SOFT_GRAY)),
-                        (int) mouseX, (int) mouseY
-                );
-            }
-            location = Identifier.fromNamespaceAndPath(SICommon.MODID, "icon/missing/missing_profile");
-        }
-        graphics.blitSprite(
-                RenderPipelines.GUI_TEXTURED,
-                location,
-                data.x() + 2,
-                data.y() + 2,
-                data.size() - 4,
-                data.size() - 4
-        );
-    }
-
-
     private void renderCardBorders(
             GuiGraphicsExtractor graphics,
             ProfileButtonData data,
@@ -664,6 +756,20 @@ public class ProfileSwitchWidget extends AbstractWidget {
         int button = event.button();
         if (!this.active || !this.visible || (button != 0 && button != 1) || !this.isMouseOver(event.x(), event.y())) {
             return false;
+        }
+
+        if (UICache.priorityEditMode()) {
+            if (button == 0 && cornerButtonHovered(previewButtonText(), event.x(), event.y())) {
+                playDownSound(Minecraft.getInstance().getSoundManager());
+                togglePriorityMode();
+            }
+            return true;
+        }
+
+        if (button == 0 && cornerButtonHovered(prioButtonText(), event.x(), event.y())) {
+            playDownSound(Minecraft.getInstance().getSoundManager());
+            togglePriorityMode();
+            return true;
         }
 
         rebuildHeaderLayout();

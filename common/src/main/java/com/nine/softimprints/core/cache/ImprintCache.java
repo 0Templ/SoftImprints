@@ -7,9 +7,11 @@ import com.nine.softimprints.core.placement.BlockMask;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 
 public class ImprintCache {
 
@@ -98,6 +100,43 @@ public class ImprintCache {
                 .limit(toRemove)
                 .map(Map.Entry::getKey)
                 .forEach(m -> removeMap(m, true));
+    }
+
+    public List<Long> positionsSnapshot() {
+        return List.copyOf(maps.keySet());
+    }
+
+    @Nullable
+    public Long lastTouched(long pos) {
+        return lastTouchedTick.get(pos);
+    }
+
+    @Nullable
+    public ImprintBlockMap liveMap(long pos) {
+        return maps.get(pos);
+    }
+
+    public boolean rewriteInPlace(
+            long pos,
+            Predicate<ImprintBlockMap> rewriter
+    ) {
+        ImprintBlockMap map = maps.get(pos);
+        if (map == null) return false;
+        if (!rewriter.test(map)) return false;
+
+        if (isAllZero(map.values())) {
+            removeMap(pos, true);
+        } else {
+            dirtySections.add(sectionOf(pos));
+        }
+        return true;
+    }
+
+    private static boolean isAllZero(byte[] values) {
+        for (byte value : values) {
+            if (value != 0) return false;
+        }
+        return true;
     }
 
     public List<Long> drainSections(int amount) {

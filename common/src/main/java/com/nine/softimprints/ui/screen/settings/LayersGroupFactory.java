@@ -4,6 +4,7 @@ import com.nine.softimprints.config.SIConfig;
 import com.nine.softimprints.core.Constants;
 import com.nine.softimprints.model.SurfaceMode;
 import com.nine.softimprints.profile.catalog.entry.InvalidProfileEntry;
+import com.nine.softimprints.profile.options.decay.ProfileDecaySettings;
 import com.nine.softimprints.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.profile.options.surface.SurfaceSettings;
 import com.nine.softimprints.profile.options.texture.ImprintTextures;
@@ -18,6 +19,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -170,6 +172,84 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         );
     }
 
+    private static void addDecayControls(
+            GroupBuildContext context,
+            GroupBuilder builder,
+            ProfileDecaySettings decay
+    ) {
+        builder.section(Component.translatable("config.softimprints.group.layers.section.decay"));
+
+        boolean enabled = decay.enabled();
+
+        ExtendedSlider graceSlider = decaySlider(context,
+                "config.softimprints.group.layers.decay_grace",
+                0.0D, 600.0D, 1.0D, 0,
+                decay.graceSecondsOrDefault(),
+                (d, v) -> d.withGraceSeconds((int) Math.round(v)));
+        ExtendedSlider rampSlider = decaySlider(context,
+                "config.softimprints.group.layers.decay_ramp",
+                1.0D, 600.0D, 1.0D, 0,
+                decay.rampSecondsOrDefault(),
+                (d, v) -> d.withRampSeconds((int) Math.round(v)));
+        ExtendedSlider chanceSlider = decaySlider(context,
+                "config.softimprints.group.layers.decay_chance",
+                0.005D, 1.0D, 0.005D, 3,
+                decay.chanceOrDefault(),
+                ProfileDecaySettings::withChance);
+        ExtendedSlider depthBiasSlider = decaySlider(context,
+                "config.softimprints.group.layers.decay_depth_bias",
+                0.0D, 1.0D, 0.01D, 2,
+                decay.depthBiasOrDefault(),
+                ProfileDecaySettings::withDepthBias);
+
+        ExtendedSlider[] sliders = {graceSlider, rampSlider, chanceSlider, depthBiasSlider};
+        for (ExtendedSlider slider : sliders) {
+            slider.active = enabled;
+        }
+
+        Button enableButton = Button.builder(decayText(enabled), b ->
+                context.editorContext().requireCurrentDraft().updateDraft(profile -> {
+                    ProfileDecaySettings next = profile.decay().withEnabled(!profile.decay().enabled());
+                    b.setMessage(decayText(next.enabled()));
+                    for (ExtendedSlider slider : sliders) {
+                        slider.active = next.enabled();
+                    }
+                    return profile.toBuilder()
+                            .setDecay(next)
+                            .build();
+                })
+        ).bounds(0, 0, 1, 18).build();
+        enableButton.setTooltip(Tooltip.create(Component.translatable("config.softimprints.group.layers.decay.tooltip")));
+
+        builder.widget(enableButton);
+        builder.rowWidgets(graceSlider, rampSlider);
+        builder.rowWidgets(chanceSlider, depthBiasSlider);
+    }
+
+    private static ExtendedSlider decaySlider(
+            GroupBuildContext context,
+            String labelKey,
+            double min,
+            double max,
+            double step,
+            int precision,
+            double value,
+            BiFunction<ProfileDecaySettings, Double, ProfileDecaySettings> updater
+    ) {
+        return applyTooltip(
+                doubleSlider(labelKey, min, max, value, step, precision, v ->
+                        context.editorContext().requireCurrentDraft().updateDraft(profile ->
+                                profile.toBuilder()
+                                        .setDecay(updater.apply(profile.decay(), v))
+                                        .build())),
+                Component.translatable(labelKey + ".tooltip")
+        );
+    }
+
+    private static Component decayText(boolean enabled) {
+        return Component.translatable("config.softimprints.group.layers.decay", SIText.onOffState(enabled));
+    }
+
     private static Component surfaceModeText(SurfaceSettings surface) {
         var type = surface.mode().toString().toLowerCase();
         return Component.translatable(
@@ -299,6 +379,8 @@ public class LayersGroupFactory implements SettingsGroupFactory {
         }
 
         addLayerTypeButtons(builder, context, profile.surface());
+
+        addDecayControls(context, builder, profile.decay());
 
         builder.spacer(4);
 

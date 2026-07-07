@@ -17,6 +17,7 @@ import com.nine.softimprints.profile.io.json.*;
 import com.nine.softimprints.profile.migrations.ProfileMigrations;
 import com.nine.softimprints.profile.options.ImprintPreviewAssets;
 import com.nine.softimprints.profile.options.block.SurfaceBlock;
+import com.nine.softimprints.profile.options.decay.ProfileDecaySettings;
 import com.nine.softimprints.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.profile.options.resolution.ImprintResolution;
 import com.nine.softimprints.profile.options.surface.SurfaceSettings;
@@ -142,14 +143,24 @@ public class ProfileOperations {
                 profile.resolution.mapSize()
         );
 
+        Identifier landingSound = profile.preview().landingSound();
         JsonImprintPreviewAssets preview = new JsonImprintPreviewAssets(
                 profile.preview().base().toString(),
-                profile.preview().icon().toString()
+                profile.preview().icon().toString(),
+                landingSound == null ? null : landingSound.toString()
         );
 
         int priority = profile.priority();
 
-        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution, preview, priority);
+        JsonDecaySettings decay = new JsonDecaySettings(
+                profile.decay().enabled(),
+                profile.decay().graceSeconds(),
+                profile.decay().rampSeconds(),
+                profile.decay().chance(),
+                profile.decay().depthBias()
+        );
+
+        return new JsonProfile(JsonProfile.CURRENT_SCHEMA, profile.layers, supportedBlocks, surface, sets, resolution, preview, decay, priority);
     }
 
     public static ImprintProfile parseFromRawToDomain(
@@ -170,9 +181,23 @@ public class ProfileOperations {
 
         ImprintPreviewAssets preview = parseImprintPreviewAssets(jp, textureSets);
 
-        int priority = jp.priority();
+        ProfileDecaySettings decay = parseDecay(jp);
 
-        return new ImprintProfile(id, layers, blocks, surface, textureSets, resolution, preview, priority);
+        int priority = jp.priority() != null ? jp.priority() : ImprintProfile.DEFAULT_PRIORITY;
+
+        return new ImprintProfile(id, layers, blocks, surface, textureSets, resolution, preview, decay, priority);
+    }
+
+    private static ProfileDecaySettings parseDecay(JsonProfile jp) {
+        JsonDecaySettings raw = jp.decay();
+        if (raw == null) return ProfileDecaySettings.DISABLED;
+        return new ProfileDecaySettings(
+                Boolean.TRUE.equals(raw.enabled()),
+                raw.graceSeconds(),
+                raw.rampSeconds(),
+                raw.chance(),
+                raw.depthBias()
+        );
     }
 
     private static Set<SurfaceBlock> parseSupportedBlocks(JsonProfile jp) {
@@ -220,18 +245,20 @@ public class ProfileOperations {
             @Nonnull ImprintTextures textureSets
     ) {
         JsonImprintPreviewAssets raw = jp.preview();
-        Identifier icon, base;
+        Identifier icon, base, landingSound;
 
         if (raw == null) {
             icon = textureSets.zeroLayer();
             base = textureSets.zeroLayer();
+            landingSound = null;
         } else {
             if (raw.base() == null) base = textureSets.zeroLayer();
             else base = Identifier.parse(raw.base());
             if (raw.icon() == null) icon = textureSets.zeroLayer();
             else icon = Identifier.parse(raw.icon());
+            landingSound = raw.landingSound() == null ? null : Identifier.parse(raw.landingSound());
         }
-        return new ImprintPreviewAssets(base, icon);
+        return new ImprintPreviewAssets(base, icon, landingSound);
     }
 
     private static SurfaceSettings parseSurfaceSettings(JsonProfile jp) {

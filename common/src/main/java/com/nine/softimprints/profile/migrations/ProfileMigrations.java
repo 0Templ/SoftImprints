@@ -13,7 +13,8 @@ public class ProfileMigrations {
 
     private static final Map<Integer, UnaryOperator<JsonObject>> MIGRATION_STEPS = Map.of(
             1, ProfileMigrations::v0_to_v1,
-            2, ProfileMigrations::v1_to_v2
+            2, ProfileMigrations::v1_to_v2,
+            3, ProfileMigrations::v2_to_v3
     );
 
     public static JsonObject migrate(
@@ -38,6 +39,18 @@ public class ProfileMigrations {
         }
 
         return ret;
+    }
+
+    private static JsonObject v2_to_v3(JsonObject prev) {
+        JsonObject next = prev.deepCopy();
+        JsonElement priority = next.get("priority");
+        if (priority != null && priority.isJsonPrimitive()
+                && priority.getAsJsonPrimitive().isNumber()
+                && priority.getAsInt() == 0) {
+            next.remove("priority");
+        }
+        next.addProperty(JsonProfile.SCHEMA_KEY, 3);
+        return next;
     }
 
     private static JsonObject v1_to_v2(JsonObject prev) {

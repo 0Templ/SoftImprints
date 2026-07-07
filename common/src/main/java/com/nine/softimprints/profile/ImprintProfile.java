@@ -2,6 +2,7 @@ package com.nine.softimprints.profile;
 
 import com.nine.softimprints.profile.options.ImprintPreviewAssets;
 import com.nine.softimprints.profile.options.block.SurfaceBlock;
+import com.nine.softimprints.profile.options.decay.ProfileDecaySettings;
 import com.nine.softimprints.profile.options.layer.ImprintLayer;
 import com.nine.softimprints.profile.options.resolution.ImprintResolution;
 import com.nine.softimprints.profile.options.surface.SurfaceSettings;
@@ -13,6 +14,8 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 
 public final class ImprintProfile {
+
+    public static final int DEFAULT_PRIORITY = 100;
 
     public final Identifier id;
     public final List<ImprintLayer> layers;
@@ -27,6 +30,8 @@ public final class ImprintProfile {
 
     public final ImprintPreviewAssets preview;
 
+    public final ProfileDecaySettings decay;
+
     public final int priority;
 
     public ImprintProfile(
@@ -38,7 +43,7 @@ public final class ImprintProfile {
             ImprintPreviewAssets preview,
             int priority
     ) {
-        this(id, layers, supportedBlocks, SurfaceSettings.DEFAULT, textureSets, resolution, preview, priority);
+        this(id, layers, supportedBlocks, SurfaceSettings.DEFAULT, textureSets, resolution, preview, ProfileDecaySettings.DISABLED, priority);
     }
 
     public ImprintProfile(
@@ -49,6 +54,7 @@ public final class ImprintProfile {
             ImprintTextures textureSets,
             ImprintResolution resolution,
             ImprintPreviewAssets preview,
+            ProfileDecaySettings decay,
             int priority
     ) {
         this.id = id;
@@ -62,6 +68,7 @@ public final class ImprintProfile {
 
         this.resolution = resolution;
         this.preview = preview;
+        this.decay = Objects.requireNonNull(decay, "decay");
         this.priority = priority;
 
         ProfilesHelper.validateLayersAndTextures(this);
@@ -76,6 +83,7 @@ public final class ImprintProfile {
                 this.textureSets,
                 this.resolution,
                 this.preview,
+                this.decay,
                 this.priority
         );
     }
@@ -108,6 +116,10 @@ public final class ImprintProfile {
         return this.preview;
     }
 
+    public ProfileDecaySettings decay() {
+        return this.decay;
+    }
+
     public int priority() {
         return this.priority;
     }
@@ -125,6 +137,7 @@ public final class ImprintProfile {
                 && this.resolution == other.resolution()
 
                 && this.preview == other.preview()
+                && this.decay.equals(other.decay())
                 && this.priority == other.priority()
 
                 ;
@@ -143,12 +156,13 @@ public final class ImprintProfile {
 
         public final ImprintPreviewAssets preview;
         private final Identifier id;
-        private final int priority;
+        private int priority;
         private List<ImprintLayer> layers;
         private Set<SurfaceBlock> supportedBlocks;
         private SurfaceSettings surface;
         private ImprintTextures textureSets;
         private ImprintResolution resolution;
+        private ProfileDecaySettings decay;
 
         private Builder(ImprintProfile src) {
             this.id = src.id;
@@ -157,6 +171,7 @@ public final class ImprintProfile {
             this.surface = src.surface;
             this.textureSets = src.textureSets;
             this.resolution = src.resolution;
+            this.decay = src.decay;
 
             this.preview = src.preview;
             this.priority = src.priority;
@@ -232,8 +247,18 @@ public final class ImprintProfile {
             return this;
         }
 
+        public Builder setDecay(ProfileDecaySettings value) {
+            this.decay = value;
+            return this;
+        }
+
+        public Builder setPriority(int value) {
+            this.priority = value;
+            return this;
+        }
+
         public ImprintProfile build() {
-            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets, resolution, preview, priority);
+            return new ImprintProfile(id, layers, supportedBlocks, surface, textureSets, resolution, preview, decay, priority);
         }
     }
 
