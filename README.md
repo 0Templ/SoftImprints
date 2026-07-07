@@ -41,14 +41,17 @@ This profile adds imprints for `minecraft:mud`, with a `standard` and a `wet` te
 
 ```json
 {
-  "version": 2,
-  "priority": 0,
+  "version": 3,
+  "priority": 100,
   "resolution": {
     "map_size": 16
   },
   "surface": {
     "mode": "repaint",
     "zero_layer_source": "surface"
+  },
+  "decay": {
+    "enabled": true
   },
   "supported_blocks": [
     "minecraft:mud"
@@ -98,8 +101,8 @@ This profile adds imprints for `minecraft:mud`, with a `standard` and a `wet` te
 
 | Field                 |  Required   | Description                                                                                                                                                                    |
 |-----------------------|:-----------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `version`             | Recommended | Profile schema version. Use `2` for new profiles. If missing, the loader treats the file as an older profile and migrates it in memory                                         |
-| `priority`            |     No      | Resolves conflicts when several profiles support the same block. Higher priority wins. Defaults to `0`                                                                         |
+| `version`             | Recommended | Profile schema version. Use `3` for new profiles. If missing, the loader treats the file as an older profile and migrates it in memory                                         |
+| `priority`            |     No      | Resolves conflicts when several profiles support the same block. Higher priority wins. Defaults to `100`                                                                       |
 | `supported_blocks`    |     No      | Blocks that can receive this profile. Empty or missing keeps the profile available but does not assign it to blocks by default                                                 |
 | `resolution.map_size` |     No      | Internal mask size per block. Defaults to `16`. Intended to match the surface texture resolution — use a higher value for textures larger than 16x16, a lower one for smaller. |
 
@@ -110,12 +113,26 @@ This profile adds imprints for `minecraft:mud`, with a `standard` and a `wet` te
 | `surface.mode`              |    No    | `repaint` redraws the top surface. `overlay` keeps the block model and draws imprints slightly above it. |
 | `surface.zero_layer_source` |    No    | `surface` uses the block's current top texture as the base. `profile` uses `texture_sets.zero_layer`     |
 
+### `decay`
+
+Optional. A profile without this block never decays. All values except `enabled` may be omitted — the defaults below apply
+until the profile overrides them. Decay also requires the global switch in the mod's General settings to be on.
+
+| Field                | Required | Description                                                                                                              |
+|----------------------|:--------:|--------------------------------------------------------------------------------------------------------------------------|
+| `decay.enabled`      |   Yes    | Turns decay on for this profile's imprints.                                                                              |
+| `decay.grace_seconds`|    No    | How long an imprint block stays untouched before it starts to decay. Default `30`.                                       |
+| `decay.ramp_seconds` |    No    | Seconds over which decay accelerates from zero to full speed after the grace period. Default `30`.                       |
+| `decay.chance`       |    No    | Chance per pass, per shallower neighbour, for an edge cell to step one layer shallower. Default `0.04`.                  |
+| `decay.depth_bias`   |    No    | How much deeper layers resist decay: `0` = all layers melt equally, `1` = the deepest layer barely melts. Default `0.5`. |
+
 ### `preview`
 
-| Field          | Required | Description                                                                   |
-|----------------|:--------:|-------------------------------------------------------------------------------|
-| `preview.base` |    No    | Base texture for the config preview. Falls back to `texture_sets.zero_layer`. |
-| `preview.icon` |    No    | Icon for profile selectors. Falls back to `texture_sets.zero_layer`.          |
+| Field                   | Required | Description                                                                              |
+|-------------------------|:--------:|-------------------------------------------------------------------------------------------|
+| `preview.base`          |    No    | Base texture for the config preview. Falls back to `texture_sets.zero_layer`.            |
+| `preview.icon`          |    No    | Icon for profile selectors. Falls back to `texture_sets.zero_layer`.                     |
+| `preview.landing_sound` |    No    | Sound event id played when this profile's chip is dropped in the priority editor.        |
 
 ### `texture_sets`
 
@@ -164,6 +181,6 @@ The translation keys should follow the pattern:
 
 Soft Imprints includes built-in migrations for older profiles. They are applied **in memory** while profiles load.
 
-- Profiles **older** than the current schema (`2`) are migrated automatically at load time.
+- Profiles **older** than the current schema (`3`) are migrated automatically at load time.
 - Profiles with a schema version **newer** than the installed mod supports are rejected by the current loader.
 

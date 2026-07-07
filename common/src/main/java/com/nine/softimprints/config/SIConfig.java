@@ -81,12 +81,74 @@ public class SIConfig {
         public static final ConfigValue<Double> IMPRINT_ROTATION_STEP_DEGREES =
                 ConfigImpl.register(
                         "imprint_rotation_step_degrees",
-                        10.0D,
+                        11.0D,
                         ConfigSection.GENERAL,
                         ConfigSide.CLIENT,
                         new ConfigRange<>(0.0D, 360D),
                         ConfigComment.of("Minimum body rotation before placing a new model-contact stamp.")
                                 .line("0.0 disables rotation-triggered updates.")
+                );
+
+    }
+
+    public static final class Decay {
+
+        public static final ConfigValue<Boolean> ENABLE_IMPRINT_DECAY =
+                ConfigImpl.register(
+                        "enable_imprint_decay",
+                        true,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        ConfigComment.of("Master switch for imprint decay.")
+                                .line("Profiles opt in individually and carry their own grace/ramp/chance values.")
+                );
+
+        public static final ConfigValue<Integer> IMPRINT_DECAY_TICK_RATE =
+                ConfigImpl.register(
+                        "imprint_decay_tick_rate",
+                        3,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        new ConfigRange<>(1, 40),
+                        ConfigComment.of("Ticks between decay passes.")
+                                .line("Lower = smoother melting but more frequent section rebuilds.")
+                );
+
+        public static final ConfigValue<Integer> IMPRINT_DECAY_CELL_PHASES =
+                ConfigImpl.register(
+                        "imprint_decay_cell_phases",
+                        4,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        new ConfigRange<>(1, 16),
+                        ConfigComment.of("Sub-phases each map's cells are split across within one decay pass.")
+                                .line("Only ~1/N of a map's cells are eligible to melt per pass, staggered by a")
+                                .line("per-cell offset, so melting looks like continuous seeping instead of the")
+                                .line("whole block stepping at once. Chances are scaled up by N to keep the")
+                                .line("overall decay speed unchanged. 1 = old synchronous behaviour.")
+                );
+
+        public static final ConfigValue<Double> IMPRINT_DECAY_WARP_RATE_MIN =
+                ConfigImpl.register(
+                        "imprint_decay_warp_rate_min",
+                        0.35D,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        new ConfigRange<>(0.0D, 1.0D),
+                        ConfigComment.of("Slowest melt-rate multiplier the warp noise applies to the front.")
+                                .line("Lower = stronger contrast between weak and strong stretches (more organic")
+                                .line("tongues); at 1.0 with span 0 the warp is off and the front is uniform.")
+                );
+
+        public static final ConfigValue<Double> IMPRINT_DECAY_WARP_RATE_SPAN =
+                ConfigImpl.register(
+                        "imprint_decay_warp_rate_span",
+                        1.3D,
+                        ConfigSection.GENERAL,
+                        ConfigSide.CLIENT,
+                        new ConfigRange<>(0.0D, 3.0D),
+                        ConfigComment.of("Range the warp noise adds on top of the minimum melt-rate multiplier.")
+                                .line("Melt rate varies across the front within [min, min + span].")
                 );
 
     }

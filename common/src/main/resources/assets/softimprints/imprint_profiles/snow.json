@@ -1,8 +1,15 @@
 {
-  "version": 2,
+  "version": 3,
   "surface": {
     "mode": "repaint",
     "zero_layer_source": "surface"
+  },
+  "decay": {
+    "enabled": true,
+    "grace_seconds": 62,
+    "ramp_seconds": 21,
+    "chance": 0.135,
+    "depth_bias": 0.22
   },
   "supported_blocks": [
     "minecraft:snow",
@@ -10,7 +17,8 @@
   ],
   "preview": {
     "base": "softimprints:block/imprints/snow/snow_base",
-    "icon": "softimprints:icon/snow/snow_icon"
+    "icon": "softimprints:icon/snow/snow_icon",
+    "landing_sound": "minecraft:block.snow.place"
   },
   "texture_sets": {
     "selected": "standard",

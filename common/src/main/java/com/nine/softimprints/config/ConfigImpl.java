@@ -32,7 +32,11 @@ public class ConfigImpl {
     private static final List<String> DEPRECATED_CLIENT_KEYS = List.of(
             OLD_ENABLE_ALL_ENTITIES_KEY,
             OLD_CUSTOM_ENTITIES_KEY,
-            OLD_ACCUMULATE_SNAPSHOTS_KEY
+            OLD_ACCUMULATE_SNAPSHOTS_KEY,
+            "general.imprint_decay_grace_seconds",
+            "general.imprint_decay_ramp_seconds",
+            "general.imprint_decay_chance",
+            "general.max_decay_blocks_per_pass"
     );
     private static final List<ConfigValue<?>> REGISTERED_VALUES = new ArrayList<>();
 

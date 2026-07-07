@@ -22,10 +22,8 @@ import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Set;
 
 public class ImprintPreviewWidget extends AbstractWidget {
 
@@ -35,8 +33,9 @@ public class ImprintPreviewWidget extends AbstractWidget {
     private final PreviewSettings previewSettings;
     private final PreviewState previewState;
 
-    private final Map<Byte, TextureAtlasSprite> spritesByValue = new HashMap<>();
-    private final List<RenderColumn> renderColumns = new ArrayList<>();
+    private final TextureAtlasSprite[] spritesByValue = new TextureAtlasSprite[128];
+    private final PreviewCanvas canvas = new PreviewCanvas("editor");
+    private int maxLayerSpriteSize = 1;
 
     private int viewX;
     private int viewY;
@@ -75,6 +74,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         editorContext.addSelectedProfileListener(this::syncProfileState);
         editorContext.addSelectedProfileDraftListener(this::syncProfileState);
         editorContext.addOnCloseListeners(() -> UICache.setBrushHistory(previewState.history));
+        editorContext.addOnCloseListeners(canvas::close);
     }
 
     private void onStepDistanceChanged() {
@@ -119,48 +119,52 @@ public class ImprintPreviewWidget extends AbstractWidget {
     }
 
     private void rebuildRenderCache() {
-        spritesByValue.clear();
-        renderColumns.clear();
+        previewState.consumeDirtyColumns();
+        Arrays.fill(spritesByValue, null);
+        this.maxLayerSpriteSize = 1;
         var profile = editorContext.currentProfile();
         if (profile != null) {
             updateSpriteCache(profile);
-            updateRenderCache();
         }
+
+        canvas.reset(blocksX(), blocksY(), previewState.mapSize(), maxLayerSpriteSize);
+        if (profile != null) {
+            var columns = previewState.columns();
+            for (var column : columns.entrySet()) {
+                composeColumn(column.getKey(), column.getValue());
+            }
+        }
+        canvas.uploadIfDirty();
     }
 
-    private void updateRenderCache() {
-        int mapSize = previewState.mapSize();
-        var columns = previewState.columns();
-
-        for (var column : columns.entrySet()) {
-            int blockX = PreviewState.columnX(column.getKey());
-            int blockY = PreviewState.columnY(column.getKey());
-
-            var map = column.getValue();
-
-            List<MaskRect> rects = new ArrayList<>();
-
-            for (int y = 0; y < mapSize; y++) {
-                int row = y * mapSize;
-                int x = 0;
-
-                while (x < mapSize) {
-                    byte value = map[row + x];
-                    int x0 = x++;
-
-                    while (x < mapSize && map[row + x] == value) {
-                        x++;
-                    }
-                    if (value != 0) {
-                        rects.add(new MaskRect(value, x0, y, x, y + 1));
-                    }
-                }
-            }
-            if (!rects.isEmpty()) {
-                RenderColumn columnMask = new RenderColumn(blockX, blockY, mapSize, rects);
-                renderColumns.add(columnMask);
-            }
+    private void syncRenderCache() {
+        Set<Long> dirty = previewState.consumeDirtyColumns();
+        if (dirty == null) {
+            rebuildRenderCache();
+            return;
         }
+        if (dirty.isEmpty() || !canvas.isReady()) return;
+
+        var columns = previewState.columns();
+        for (long key : dirty) {
+            composeColumn(key, columns.get(key));
+        }
+        canvas.uploadIfDirty();
+    }
+
+    private void composeColumn(
+            long key,
+            byte[] map
+    ) {
+        canvas.composeColumn(PreviewState.columnX(key), PreviewState.columnY(key), map, spritesByValue);
+    }
+
+    private int blocksX() {
+        return Math.ceilDiv(previewState.activeWidth(), Constants.PREVIEW_BLOCK_RESOLUTION);
+    }
+
+    private int blocksY() {
+        return Math.ceilDiv(previewState.activeHeight(), Constants.PREVIEW_BLOCK_RESOLUTION);
     }
 
     private void updateSpriteCache(@Nonnull ImprintProfile profile) {
@@ -170,9 +174,17 @@ public class ImprintPreviewWidget extends AbstractWidget {
         if (textureSet == null) {
             return;
         }
-        textureSet.texturesByValue().keySet().forEach(key -> spritesByValue.put(key, textureSet.spriteFor(key)));
+        for (byte value : textureSet.texturesByValue().keySet()) {
+            TextureAtlasSprite sprite = textureSet.spriteFor(value);
+            spritesByValue[value] = sprite;
+            if (sprite != null) {
+                var contents = sprite.contents();
+                this.maxLayerSpriteSize = Math.max(maxLayerSpriteSize,
+                        Math.max(contents.width(), contents.height()));
+            }
+        }
         var atlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS);
-        spritesByValue.put((byte) 0, atlas.getSprite(profile.preview.base()));
+        spritesByValue[0] = atlas.getSprite(profile.preview.base());
     }
 
     public void clearPreview() {
@@ -242,7 +254,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
             GuiGraphicsExtractor graphics,
             int mapSize
     ) {
-        TextureAtlasSprite sprite = spritesByValue.get((byte) 0);
+        TextureAtlasSprite sprite = spritesByValue[0];
         if (sprite == null) return;
 
         int blockRes = Constants.PREVIEW_BLOCK_RESOLUTION;
@@ -270,49 +282,15 @@ public class ImprintPreviewWidget extends AbstractWidget {
     }
 
     private void renderPreviewLayers(GuiGraphicsExtractor graphics) {
-        int blockRes = Constants.PREVIEW_BLOCK_RESOLUTION;
-        int viewX1 = viewX + visibleWidth();
-        int viewY1 = viewY + visibleHeight();
-
-        for (var column : renderColumns) {
-            int blockPreviewX = column.blockX() * blockRes;
-            int blockPreviewY = column.blockY() * blockRes;
-            if (blockPreviewX + blockRes <= viewX
-                    || blockPreviewY + blockRes <= viewY
-                    || blockPreviewX >= viewX1
-                    || blockPreviewY >= viewY1) {
-                continue;
-            }
-
-            for (var rect : column.rectList) {
-                int blockMapX = column.blockX() * column.mapSize();
-                int blockMapY = column.blockY() * column.mapSize();
-                renderRect(graphics, rect, blockMapX, blockMapY, column.mapSize());
-            }
-        }
-    }
-
-    private void renderRect(
-            GuiGraphicsExtractor graphics,
-            MaskRect rect,
-            int x,
-            int y,
-            int mapSize
-    ) {
-        var sprite = spritesByValue.get(rect.value());
-        if (sprite == null) return;
-
-        float u0 = sprite.getU(rect.x0() / (float) mapSize);
-        float u1 = sprite.getU(rect.x1() / (float) mapSize);
-        float v0 = sprite.getV(rect.y0() / (float) mapSize);
-        float v1 = sprite.getV(rect.y1() / (float) mapSize);
-
-        int x0 = x + rect.x0();
-        int y0 = y + rect.y0();
-        int x1 = x + rect.x1();
-        int y1 = y + rect.y1();
-
-        graphics.blit(sprite.atlasLocation(), x0, y0, x1, y1, u0, u1, v0, v1);
+        if (!canvas.isReady()) return;
+        int mapSize = previewState.mapSize();
+        graphics.blit(
+                canvas.location(),
+                0, 0,
+                blocksX() * mapSize, blocksY() * mapSize,
+                0.0F, 1.0F,
+                0.0F, 1.0F
+        );
     }
 
     @Override
@@ -366,7 +344,7 @@ public class ImprintPreviewWidget extends AbstractWidget {
         if (point == null) return false;
         previewState.addStroke(point.x(), point.y(), previewSettings.brushSize());
 
-        refreshRenderCache();
+        syncRenderCache();
 
         return true;
     }
@@ -436,16 +414,6 @@ public class ImprintPreviewWidget extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
-    }
-
-    private record RenderColumn(int blockX, int blockY, int mapSize, List<MaskRect> rectList) {
-    }
-
-    private record MaskRect(
-            byte value,
-            int x0, int y0,
-            int x1, int y1
-    ) {
     }
 
     private record MapPoint(double x, double y) {

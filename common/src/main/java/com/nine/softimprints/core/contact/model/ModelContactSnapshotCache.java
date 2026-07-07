@@ -31,7 +31,6 @@ public final class ModelContactSnapshotCache {
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
     private static final long MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS = 80L;
     private static final double MAX_YAW_DELTA_RADIANS = 0.35D;
-    private static final float CAPTURE_RENDER_Y_OFFSET = -4096.0F;
     private static long frameIndex;
     private static ClientLevel activeLevel;
 
@@ -195,10 +194,6 @@ public final class ModelContactSnapshotCache {
         return entity != null && tryBeginLivingCapture(entity);
     }
 
-    public static float captureRenderYOffset() {
-        return CAPTURE_RENDER_Y_OFFSET;
-    }
-
     public static void captureModelGeometry(
             Model<?> model,
             PoseStack poseStack,
@@ -242,19 +237,13 @@ public final class ModelContactSnapshotCache {
             if (SIConfig.Performance.MODEL_CAPTURE_PART_TRAVERSAL.get()) {
                 ModelPartObbCapturer.capture(model.root(), poseStack, session);
             } else {
-                poseStack.pushPose();
-                try {
-                    poseStack.last().pose().translate(0.0F, captureRenderYOffset(), 0.0F);
-                    model.renderToBuffer(
-                            poseStack,
-                            new ModelContactMeshVertexConsumer(DiscardingVertexConsumer.INSTANCE, session),
-                            packedLight,
-                            packedOverlay,
-                            color
-                    );
-                } finally {
-                    poseStack.popPose();
-                }
+                model.renderToBuffer(
+                        poseStack,
+                        new ModelContactMeshVertexConsumer(DiscardingVertexConsumer.INSTANCE, session),
+                        packedLight,
+                        packedOverlay,
+                        color
+                );
             }
             complete = true;
         } finally {

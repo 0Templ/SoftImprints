@@ -10,6 +10,7 @@ import com.nine.softimprints.ui.component.group.OptionEntry;
 import com.nine.softimprints.ui.component.group.TabEdge;
 import com.nine.softimprints.ui.component.list.ConfigListWidget;
 import com.nine.softimprints.ui.component.preview.widget.ImprintPreviewWidget;
+import com.nine.softimprints.ui.component.priority.ProfilePriorityRailsWidget;
 import com.nine.softimprints.ui.component.profile.ProfileSwitchWidget;
 import com.nine.softimprints.ui.component.slider.ExtendedSlider;
 import com.nine.softimprints.ui.component.widget.button.ApproveButton;
@@ -75,6 +76,7 @@ public class SIConfigScreen extends Screen {
     private GroupSwitcher<EditorGroup> bottomLeftGroupSwitcher;
 
     private ImprintPreviewWidget previewWidget;
+    private ProfilePriorityRailsWidget priorityRailsWidget;
     private ProfileSwitchWidget profileSwitchWidget;
 
     private Layout layout;
@@ -202,6 +204,13 @@ public class SIConfigScreen extends Screen {
         );
         this.addRenderableWidget(previewWidget);
 
+        this.priorityRailsWidget = new ProfilePriorityRailsWidget(
+                previewBounds.x(), previewBounds.y(),
+                previewBounds.width(), previewBounds.height(),
+                this.context
+        );
+        this.addRenderableWidget(priorityRailsWidget);
+
         LayoutRect switcherBounds = layout.profileSwitcher();
         this.profileSwitchWidget = new ProfileSwitchWidget(
                 switcherBounds.x(), switcherBounds.y(),
@@ -209,6 +218,13 @@ public class SIConfigScreen extends Screen {
                 this.context
         );
         this.addRenderableWidget(profileSwitchWidget);
+
+        profileSwitchWidget.setPriorityModeListener(active -> {
+            previewWidget.visible = !active;
+            priorityRailsWidget.visible = active;
+        });
+        previewWidget.visible = !UICache.priorityEditMode();
+        priorityRailsWidget.visible = UICache.priorityEditMode();
     }
 
     private void setupRightControls(Layout layout) {

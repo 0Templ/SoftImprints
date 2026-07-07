@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.nine.softimprints.ui.screen.settings.SettingsControls.booleanButton;
 import static com.nine.softimprints.ui.screen.settings.SettingsControls.doubleSlider;
+import static com.nine.softimprints.ui.screen.settings.SettingsControls.intSlider;
 
 public class GeneralGroupFactory implements SettingsGroupFactory {
 
@@ -47,6 +48,24 @@ public class GeneralGroupFactory implements SettingsGroupFactory {
                 applyTooltip(
                         doubleSlider(context, "config.softimprints.group.general.contact_band_height", SIConfig.General.IMPRINT_CONTACT_BAND_HEIGHT, 0.01D, 2),
                         Component.translatable("config.softimprints.group.general.contact_band_height.tooltip")
+                )
+        );
+        builder.spacer(4);
+    }
+
+    private static void addDecay(
+            GroupBuildContext context,
+            GroupBuilder builder
+    ) {
+        builder.section(Component.translatable("config.softimprints.group.general.section.decay"));
+        builder.rowWidgets(
+                applyTooltip(
+                        booleanButton(context, "config.softimprints.group.general.enable_decay", SIConfig.Decay.ENABLE_IMPRINT_DECAY),
+                        Component.translatable("config.softimprints.group.general.enable_decay.tooltip")
+                ),
+                applyTooltip(
+                        intSlider(context, "config.softimprints.group.general.decay_tick_rate", SIConfig.Decay.IMPRINT_DECAY_TICK_RATE),
+                        Component.translatable("config.softimprints.group.general.decay_tick_rate.tooltip")
                 )
         );
         builder.spacer(4);
@@ -146,6 +165,7 @@ public class GeneralGroupFactory implements SettingsGroupFactory {
 
         addCore(context, builder);
         addModelContact(context, builder);
+        addDecay(context, builder);
         addCompat(context, builder);
 
         return builder.build();

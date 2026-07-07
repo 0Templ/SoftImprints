@@ -1,15 +1,23 @@
 {
-  "version": 2,
+  "version": 3,
   "surface": {
     "mode": "repaint",
     "zero_layer_source": "surface"
+  },
+  "decay": {
+    "enabled": true,
+    "grace_seconds": 78,
+    "ramp_seconds": 23,
+    "chance": 0.045,
+    "depth_bias": 0.34
   },
   "supported_blocks": [
     "minecraft:sand"
   ],
   "preview": {
     "base": "softimprints:block/imprints/sand/sand_base",
-    "icon": "softimprints:icon/sand/sand_icon"
+    "icon": "softimprints:icon/sand/sand_icon",
+    "landing_sound": "minecraft:block.sand.place"
   },
   "texture_sets": {
     "selected": "standard",
