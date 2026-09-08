@@ -20,6 +20,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.NonNull;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -155,6 +156,7 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
             int mouseY,
             float partialTick
     ) {
+        cancelOrphanedDrag();
         double dt = frameDelta();
         animTime += dt;
 
@@ -622,10 +624,7 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
 
         Identifier id = draggedId;
         boolean moved = dragMoved;
-        draggedId = null;
-        dragMoved = false;
-        dragConflicts = Set.of();
-        conflictTints = Map.of();
+        cancelDrag();
 
         if (!moved) {
             context.setCurrent(id);
@@ -633,6 +632,7 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
         }
 
         if (!isMouseOver(event.x(), event.y())) {
+            cancelDrag();
             UISounds.chipCancel();
             return true;
         }
@@ -652,6 +652,21 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
         var draft = context.session().draft(id);
         UISounds.chipPlace(draft == null ? null : draft.getDraft());
         return true;
+    }
+
+    private void cancelOrphanedDrag() {
+        if (draggedId == null) return;
+        long handle = Minecraft.getInstance().getWindow().handle();
+        if (GLFW.glfwGetMouseButton(handle, GLFW.GLFW_MOUSE_BUTTON_LEFT) != GLFW.GLFW_RELEASE) return;
+        cancelDrag();
+        UISounds.chipCancel();
+    }
+
+    private void cancelDrag() {
+        draggedId = null;
+        dragMoved = false;
+        dragConflicts = Set.of();
+        conflictTints = Map.of();
     }
 
     private void rememberDecorationSlots(List<List<RailObject>> rails) {
