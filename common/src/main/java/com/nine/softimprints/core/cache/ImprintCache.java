@@ -60,7 +60,6 @@ public class ImprintCache {
             List<BlockMask> masks,
             long gameTime
     ) {
-        boolean changed = false;
         for (var mask : masks) {
 //            var current = maps.get(mask.blockPos());
 //            if (current == null || current.mapSize() != mask.mapSize()) {
@@ -71,7 +70,6 @@ public class ImprintCache {
                 map = new ImprintBlockMap(
                         mask.mapSize(),
                         new byte[mask.mapSize() * mask.mapSize()]);
-                maps.put(mask.blockPos(), map);
             }
 //            ImprintBlockMap map = maps.computeIfAbsent(mask.blockPos(),
 //                    pos -> {
@@ -80,25 +78,23 @@ public class ImprintCache {
 //                                new byte[mask.mapSize() * mask.mapSize()]);
 //                    });
             if (rasterize(map, mask)) {
+                maps.put(mask.blockPos(), map);
                 dirtySections.add(sectionOf(mask.blockPos()));
                 lastTouchedTick.put(mask.blockPos(), gameTime);
-                changed = true;
             }
         }
-        if (changed) evictOverflow();
+        enforceLimit();
     }
 
-    private void evictOverflow() {
-        int max = SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.get();
-        if (max == SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.max().intValue()
-                || max <= 0 || maps.size() <= max) return;
+    public void enforceLimit() {
+        int max = Math.max(1, SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS.get());
+        if (maps.size() <= max) return;
 
         int toRemove = maps.size() - max;
 
-        lastTouchedTick.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+        maps.keySet().stream()
+                .sorted(Comparator.comparingLong(pos -> lastTouchedTick.getOrDefault(pos, Long.MIN_VALUE)))
                 .limit(toRemove)
-                .map(Map.Entry::getKey)
                 .forEach(m -> removeMap(m, true));
     }
 

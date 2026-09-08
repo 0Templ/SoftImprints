@@ -42,6 +42,9 @@ public class ImprintTickHandler {
 
         ImprintCache cache = levelData.getImprintCache();
         if (cache == null) return;
+
+        cache.enforceLimit();
+
         if (shouldTick(tickCounter, SIConfig.Performance.IMPRINT_WRITE_CHECK_TICK_RATE.get())) {
             var ids = stampTracker.pendingIds();
             if (!ids.isEmpty()) {

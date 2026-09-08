@@ -118,10 +118,11 @@ public class StorageGroupFactory implements SettingsGroupFactory {
                 Component.translatable("config.softimprints.group.storage.clear_on_chunk_unload.tooltip")
         ));
 
-        var blocksLimSlider = maxAsUnlimitedSlider(
+        var blocksLimSlider = configSlider(
                 context,
                 "config.softimprints.group.storage.max_cached_imprint_blocks",
                 SIConfig.Performance.MAX_CACHED_IMPRINT_BLOCKS,
+                value -> Component.literal(String.valueOf(Math.round(value))),
                 128.0D,
                 0
         );
