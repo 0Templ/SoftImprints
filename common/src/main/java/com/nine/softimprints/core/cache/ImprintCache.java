@@ -10,6 +10,7 @@ import net.minecraft.core.SectionPos;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.LongConsumer;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
@@ -19,9 +20,14 @@ public class ImprintCache {
     private final ConcurrentHashMap<Long, Long> lastTouchedTick = new ConcurrentHashMap<>();
 
     private final Set<Long> dirtySections = new HashSet<>();
+    private final LongConsumer onMapRemoved;
 
     public ImprintCache() {
+        this(pos -> {});
+    }
 
+    public ImprintCache(LongConsumer onMapRemoved) {
+        this.onMapRemoved = Objects.requireNonNull(onMapRemoved);
     }
 
     private static long sectionOf(long pos) {
@@ -173,7 +179,9 @@ public class ImprintCache {
     ) {
         ImprintBlockMap removed = maps.remove(blockPos);
         lastTouchedTick.remove(blockPos);
-        if (removed != null && markDirty) {
+        if (removed == null) return;
+        onMapRemoved.accept(blockPos);
+        if (markDirty) {
             dirtySections.add(sectionOf(blockPos));
         }
     }
