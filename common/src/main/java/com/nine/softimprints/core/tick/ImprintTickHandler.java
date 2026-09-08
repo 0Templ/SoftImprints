@@ -112,6 +112,10 @@ public class ImprintTickHandler {
             return false;
         }
 
+        if (client.isPaused()) {
+            return false;
+        }
+
         tickCounter += 1L;
         return true;
     }

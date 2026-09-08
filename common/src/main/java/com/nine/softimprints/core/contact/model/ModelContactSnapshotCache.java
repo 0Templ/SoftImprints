@@ -40,6 +40,9 @@ public final class ModelContactSnapshotCache {
             clearInternal();
             activeLevel = client.level;
         }
+        if (client.isPaused()) {
+            return;
+        }
         if (client.level != null) {
             STORE.prune(client.level.getGameTime());
         }
@@ -221,6 +224,10 @@ public final class ModelContactSnapshotCache {
             Entity entity,
             Vec3 cameraPos
     ) {
+        // Do not consume pending capture requests while the world is paused.
+        if (Minecraft.getInstance().isPaused()) {
+            return false;
+        }
         if (!ModelContactSupport.shouldCapture(entity)) {
             return false;
         }
