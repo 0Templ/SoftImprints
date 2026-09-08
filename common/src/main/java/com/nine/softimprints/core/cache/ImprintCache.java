@@ -175,9 +175,9 @@ public class ImprintCache {
             long blockPos,
             boolean markDirty
     ) {
-        maps.remove(blockPos);
+        ImprintBlockMap removed = maps.remove(blockPos);
         lastTouchedTick.remove(blockPos);
-        if (markDirty) {
+        if (removed != null && markDirty) {
             dirtySections.add(sectionOf(blockPos));
         }
     }
