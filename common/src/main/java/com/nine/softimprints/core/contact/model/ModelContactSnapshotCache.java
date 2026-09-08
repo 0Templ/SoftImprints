@@ -24,10 +24,10 @@ public final class ModelContactSnapshotCache {
     private static final ModelContactCapturePolicy POLICY = new ModelContactCapturePolicy();
     private static final ThreadLocal<ModelContactCaptureSession> ACTIVE_SESSION = new ThreadLocal<>();
     private static final ThreadLocal<LivingEntity> BASE_MODEL_SUBMIT_ENTITY = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> BASE_MODEL_SUBMIT_DEPTH = ThreadLocal.withInitial(() -> 0);
     private static final Map<SubmitNodeStorage.ModelSubmit<?>, LivingEntity> BASE_MODEL_SUBMITS =
             new IdentityHashMap<>();
 
-    // To cfg? Tests
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
     private static final long MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS = 80L;
     private static final double MAX_YAW_DELTA_RADIANS = 0.35D;
@@ -67,6 +67,7 @@ public final class ModelContactSnapshotCache {
         POLICY.clear();
         ACTIVE_SESSION.remove();
         BASE_MODEL_SUBMIT_ENTITY.remove();
+        BASE_MODEL_SUBMIT_DEPTH.remove();
         BASE_MODEL_SUBMITS.clear();
         activeLevel = null;
         frameIndex = 0L;
@@ -171,10 +172,17 @@ public final class ModelContactSnapshotCache {
 
     public static void beginBaseModelSubmit(LivingEntity entity) {
         BASE_MODEL_SUBMIT_ENTITY.set(entity);
+        BASE_MODEL_SUBMIT_DEPTH.set(BASE_MODEL_SUBMIT_DEPTH.get() + 1);
     }
 
     public static void finishBaseModelSubmit() {
-        BASE_MODEL_SUBMIT_ENTITY.remove();
+        int depth = BASE_MODEL_SUBMIT_DEPTH.get() - 1;
+        if (depth <= 0) {
+            BASE_MODEL_SUBMIT_DEPTH.remove();
+            BASE_MODEL_SUBMIT_ENTITY.remove();
+        } else {
+            BASE_MODEL_SUBMIT_DEPTH.set(depth);
+        }
     }
 
     public static void markSubmittedBaseModel(
@@ -193,8 +201,15 @@ public final class ModelContactSnapshotCache {
     }
 
     public static boolean tryBeginSubmittedBaseModelCapture(SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
-        LivingEntity entity = BASE_MODEL_SUBMITS.remove(modelSubmit);
-        return entity != null && tryBeginLivingCapture(entity);
+        LivingEntity entity = BASE_MODEL_SUBMITS.get(modelSubmit);
+        if (entity == null) {
+            return false;
+        }
+        if (!tryBeginLivingCapture(entity)) {
+            return false;
+        }
+        BASE_MODEL_SUBMITS.remove(modelSubmit);
+        return true;
     }
 
     public static void captureModelGeometry(
@@ -249,7 +264,8 @@ public final class ModelContactSnapshotCache {
                 );
             }
             complete = true;
-        } finally {
+        } catch (RuntimeException ignored) {}
+        finally {
             if (complete) {
                 finishLivingCapture();
             } else {
