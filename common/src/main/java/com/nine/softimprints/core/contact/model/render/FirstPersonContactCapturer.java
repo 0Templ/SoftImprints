@@ -18,7 +18,7 @@ public final class FirstPersonContactCapturer {
     public static void captureIfApplicable(float partialTick) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
-        if (player == null || client.level == null) {
+        if (player == null || client.level == null || client.isPaused()) {
             return;
         }
         if (!ModelContactSupport.shouldCapture(player)) {

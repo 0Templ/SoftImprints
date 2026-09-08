@@ -47,6 +47,9 @@ public final class ModelContactSnapshotCache {
             clearInternal();
             activeLevel = client.level;
         }
+        if (client.isPaused()) {
+            return;
+        }
         if (client.level != null) {
             STORE.prune(client.level.getGameTime());
         }
@@ -256,11 +259,15 @@ public final class ModelContactSnapshotCache {
     }
 
     public static boolean tryBeginLivingCapture(Entity entity) {
+        // Do not consume pending capture requests while the world is paused.
+        if (Minecraft.getInstance().isPaused()) {
+            return false;
+        }
         if (!ModelContactSupport.shouldCapture(entity)) {
             return false;
         }
         if (!(entity instanceof LivingEntity living)) {
-            // Todo: add proper non-living support!!!
+            // Todo: add proper non-living support!!!!!
             return false;
         }
         if (!(entity.level() instanceof ClientLevel clientLevel)) {
