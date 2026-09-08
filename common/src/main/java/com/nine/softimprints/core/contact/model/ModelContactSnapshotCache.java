@@ -20,7 +20,6 @@ public final class ModelContactSnapshotCache {
     private static final ModelContactCapturePolicy POLICY = new ModelContactCapturePolicy();
     private static final ThreadLocal<ModelContactCaptureSession> ACTIVE_SESSION = new ThreadLocal<>();
 
-    // To cfg? Tests
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
     private static final long MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS = 80L;
     private static final double MAX_YAW_DELTA_RADIANS = 0.35D;
@@ -211,7 +210,8 @@ public final class ModelContactSnapshotCache {
                 );
             }
             complete = true;
-        } finally {
+        } catch (RuntimeException ignored) {}
+        finally {
             if (complete) {
                 finishLivingCapture();
             } else {
