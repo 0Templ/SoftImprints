@@ -257,6 +257,15 @@ public class ImprintPreviewWidget extends AbstractWidget {
         TextureAtlasSprite sprite = spritesByValue[0];
         if (sprite == null) return;
 
+        float iu = (sprite.getU1() - sprite.getU0()) / 32.0F;
+        float iv = (sprite.getV1() - sprite.getV0()) / 32.0F;
+
+
+        float u0 = sprite.getU0() + iu;
+        float u1 = sprite.getU1() - iu;
+        float v0 = sprite.getV0() + iv;
+        float v1 = sprite.getV1() - iv;
+
         int blockRes = Constants.PREVIEW_BLOCK_RESOLUTION;
         int viewX1 = viewX + visibleWidth();
         int viewY1 = viewY + visibleHeight();
@@ -273,8 +282,8 @@ public class ImprintPreviewWidget extends AbstractWidget {
                         sprite.atlasLocation(),
                         x0, y0,
                         x0 + mapSize, y0 + mapSize,
-                        sprite.getU0(), sprite.getU1(),
-                        sprite.getV0(), sprite.getV1()
+                        u0, u1,
+                        v0, v1
                 );
             }
         }
