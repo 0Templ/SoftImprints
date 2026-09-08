@@ -4,8 +4,12 @@ import net.minecraft.core.BlockPos;
 
 public class LevelData {
 
-    private final ImprintCache maps = new ImprintCache();
-    private final BlockRenderCache models = new BlockRenderCache();
+    private final BlockRenderCache models = new BlockRenderCache(this::hasImprint);
+    private final ImprintCache maps = new ImprintCache(models::clearAt);
+
+    private boolean hasImprint(long pos) {
+        return maps.liveMap(pos) != null;
+    }
 
     public ImprintCache getImprintCache() {
         return maps;

@@ -11,13 +11,25 @@ import java.util.function.LongPredicate;
 public class BlockRenderCache {
 
     private final ConcurrentHashMap<Long, BlockRenderData> models = new ConcurrentHashMap<>();
+    private final LongPredicate hasImprint;
+
+    public BlockRenderCache() {
+        this(pos -> true);
+    }
+
+    public BlockRenderCache(LongPredicate hasImprint) {
+        this.hasImprint = hasImprint;
+    }
 
     public BlockRenderData get(
             Long pos,
             BlockStateModel wrapped,
             BlockState state
     ) {
-        return models.computeIfAbsent(pos, k -> BlockRenderData.compute(BlockPos.of(pos), wrapped, state));
+        BlockRenderData data = models.computeIfAbsent(pos, k -> hasImprint.test(k)
+                ? BlockRenderData.compute(BlockPos.of(k), wrapped, state)
+                : null);
+        return data != null ? data : BlockRenderData.compute(BlockPos.of(pos), wrapped, state);
     }
 
     public void clearAt(Long pos) {
