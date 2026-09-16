@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.8.1
+## 2.8.01
 - 26.3 port
-- 
+
 ## 2.8.0
 - Added profile imprint decay with per-profile tuning and a global decay switch
 - Added profile priority controls for resolving conflicts when several profiles support the same block
