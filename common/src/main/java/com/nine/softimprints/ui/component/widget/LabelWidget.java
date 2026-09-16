@@ -1,5 +1,7 @@
 package com.nine.softimprints.ui.component.widget;
 
+import com.mojang.blaze3d.Blaze3D;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.nine.softimprints.ui.util.constant.SIColors;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.Util;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -189,11 +190,11 @@ public class LabelWidget extends AbstractWidget {
         minecraft.gui.setScreen(new ConfirmLinkScreen(
                 confirmed -> {
                     if (confirmed) {
-                        Util.getPlatform().openUri(uri);
+                        Blaze3D.openUri(uri);
                     }
                     minecraft.gui.setScreen(previous);
                 },
-                uri.toString(),
+                uri,
                 true
         ));
     }
@@ -369,7 +370,7 @@ public class LabelWidget extends AbstractWidget {
             MouseButtonEvent event,
             boolean doubleClick
     ) {
-        if (event.button() == 0 && onClickAction != null && isMouseOverText((int) event.x(), (int) event.y())) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && onClickAction != null && isMouseOverText((int) event.x(), (int) event.y())) {
             onClickAction.run();
             return true;
         }

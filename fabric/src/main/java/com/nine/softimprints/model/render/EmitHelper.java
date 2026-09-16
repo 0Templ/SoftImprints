@@ -36,7 +36,6 @@ public class EmitHelper {
         emitter.atlas(QuadAtlas.BLOCK);
 
         emitter.color(-1, -1, -1, -1);
-        emitter.diffuseShade(true);
         emitter.ambientOcclusion(TriState.DEFAULT);
 
         emitter.emit();

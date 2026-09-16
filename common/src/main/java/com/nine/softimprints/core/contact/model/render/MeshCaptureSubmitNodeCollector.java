@@ -17,8 +17,8 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.texture.UvMapping;
+import net.minecraft.client.resources.model.geometry.ItemQuads;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
@@ -79,10 +79,23 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             FormattedCharSequence text,
             boolean dropShadow,
             Font.DisplayMode displayMode,
-            int backgroundColor,
+            int lightCoords,
             int color,
-            int light,
-            int order
+            int backgroundColor,
+            int outlineColor
+    ) {
+    }
+
+    @Override
+    public void submitTextBackground(
+            PoseStack poseStack,
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            int color,
+            Font.DisplayMode displayMode,
+            int lightCoords
     ) {
     }
 
@@ -110,9 +123,8 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             int packedLight,
             int packedOverlay,
             int color,
-            TextureAtlasSprite textureAtlasSprite,
-            int outlineColor,
-            ModelFeatureRenderer.CrumblingOverlay crumblingOverlay
+            UvMapping uvMapping,
+            int outlineColor
     ) {
         if (this.capturedBaseModel
                 || !ModelContactRenderTypes.shouldCapture(renderType)
@@ -124,15 +136,27 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     }
 
     @Override
+    public <S> void submitCrumblingOverlay(
+            Model<? super S> model,
+            S state,
+            PoseStack poseStack,
+            RenderType renderType,
+            int lightCoords,
+            int overlayCoords,
+            int tintedColor,
+            ModelFeatureRenderer.CrumblingOverlay crumblingOverlay
+    ) {
+    }
+
+    @Override
     public void submitModelPart(
             ModelPart modelPart,
             PoseStack poseStack,
             RenderType renderType,
-            int packedLight,
-            int packedOverlay,
-            TextureAtlasSprite textureAtlasSprite,
-            int color,
-            ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
+            int lightCoords,
+            int overlayCoords,
+            UvMapping uvMapping,
+            int tintedColor,
             int outlineColor
     ) {
     }
@@ -161,7 +185,8 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
     public void submitBreakingBlockModel(
             PoseStack poseStack,
             List<BlockStateModelPart> parts,
-            int progress
+            int progress,
+            boolean isBlockTranslucent
     ) {
     }
 
@@ -184,7 +209,7 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             int packedOverlay,
             int color,
             int[] tints,
-            List<BakedQuad> quads,
+            ItemQuads quads,
             ItemStackRenderState.FoilType foilType
     ) {
     }

@@ -35,7 +35,6 @@ public final class EmitHelper {
         builder.setDirection(Direction.UP);
         builder.setSprite(new Material.Baked(sprite, false), Transparency.TRANSPARENT);
         builder.setTintIndex(-1);
-        builder.setShade(true);
         builder.setAmbientOcclusion(true);
 
         emitCorner(builder, sprite, x0, topY, z0, spriteU0, spriteV0, rotation);

@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.component.group;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -143,7 +144,7 @@ public class GroupSwitcher<T> extends AbstractWidget {
         double mouseX = event.x();
         double mouseY = event.y();
         int button = event.button();
-        if (!this.active || !this.visible || button != 0 || !this.isMouseOver(mouseX, mouseY)) {
+        if (!this.active || !this.visible || button != InputConstants.MOUSE_BUTTON_LEFT || !this.isMouseOver(mouseX, mouseY)) {
             return false;
         }
 

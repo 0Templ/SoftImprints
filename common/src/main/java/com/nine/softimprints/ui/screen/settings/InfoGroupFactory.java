@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.screen.settings;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.nine.softimprints.api.meta.distribution.Distribution;
 import com.nine.softimprints.api.meta.update.SIUpdateCandidate;
 import com.nine.softimprints.api.meta.update.SIUpdateService;
@@ -16,23 +17,24 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
 
+import java.net.URI;
 import java.util.Map;
 
 public class InfoGroupFactory implements SettingsGroupFactory {
 
     public static void openLinkPrompt(String url) {
+        URI uri = URI.create(url);
         Minecraft minecraft = Minecraft.getInstance();
         Screen previous = minecraft.gui.screen();
         minecraft.gui.setScreen(new ConfirmLinkScreen(
                 confirmed -> {
                     if (confirmed) {
-                        Util.getPlatform().openUri(url);
+                        Blaze3D.openUri(uri);
                     }
                     minecraft.gui.setScreen(previous);
                 },
-                url,
+                uri,
                 true
         ));
     }

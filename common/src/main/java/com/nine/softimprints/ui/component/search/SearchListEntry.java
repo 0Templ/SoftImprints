@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.component.search;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.nine.softimprints.ui.component.list.element.AbstractConfigListEntry;
 import com.nine.softimprints.ui.screen.SIConfigScreen;
 import com.nine.softimprints.ui.util.constant.SIColors;
@@ -291,7 +292,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         List<SearchableEntry<T>> rows = activeRows();
         boolean withScroll = hasScrollbar(rows);
 
-        if (button == 0 && withScroll && mx >= scrollbarX(getX() + 1, lw)) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && withScroll && mx >= scrollbarX(getX() + 1, lw)) {
             scrollbarDragging = true;
             scrollbarGrabOffset = resolveScrollbarGrabOffset(my, rowsY, rowsY + rowsH, rows);
             scrollToMouse(my, rowsY, rowsY + rowsH, rows);
@@ -301,7 +302,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
         int rowsX = rowsContentX(getX());
         int rowAreaW = rowsContentWidth(lw, withScroll);
 
-        if (button == 0 && !rows.isEmpty() && isOver(mx, my, rowsX, rowsY, rowAreaW, rowsH)) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && !rows.isEmpty() && isOver(mx, my, rowsX, rowsY, rowAreaW, rowsH)) {
             int scrollIdx = activeScrollIndex();
             int relY = (int) my - rowsY;
             int idx = scrollIdx + relY / config.rowHeight();
@@ -325,7 +326,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (event.button() == 0 && scrollbarDragging) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && scrollbarDragging) {
             scrollbarDragging = false;
             scrollbarGrabOffset = 0;
             return true;
@@ -339,7 +340,7 @@ public final class SearchListEntry<T> extends AbstractConfigListEntry {
             double dragX,
             double dragY
     ) {
-        if (event.button() == 0 && scrollbarDragging) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && scrollbarDragging) {
             int rowsY = listAreaY() + LIST_PADDING;
             int rowsH = listAreaHeight() - LIST_PADDING * 2;
             scrollToMouse(event.y(), rowsY, rowsY + rowsH, activeRows());

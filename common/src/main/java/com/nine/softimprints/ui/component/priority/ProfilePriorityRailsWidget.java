@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.component.priority;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.profile.ImprintProfile;
 import com.nine.softimprints.profile.options.block.SurfaceBlock;
@@ -20,7 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -578,7 +579,7 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
             MouseButtonEvent event,
             boolean doubleClick
     ) {
-        if (!this.active || !this.visible || event.button() != 0 || !this.isMouseOver(event.x(), event.y())) {
+        if (!this.active || !this.visible || event.button() != InputConstants.MOUSE_BUTTON_LEFT || !this.isMouseOver(event.x(), event.y())) {
             return false;
         }
 
@@ -656,8 +657,7 @@ public class ProfilePriorityRailsWidget extends AbstractWidget {
 
     private void cancelOrphanedDrag() {
         if (draggedId == null) return;
-        long handle = Minecraft.getInstance().getWindow().handle();
-        if (GLFW.glfwGetMouseButton(handle, GLFW.GLFW_MOUSE_BUTTON_LEFT) != GLFW.GLFW_RELEASE) return;
+        if ((SDLMouse.SDL_GetMouseState(null, null) & SDLMouse.SDL_BUTTON_LMASK) != 0) return;
         cancelDrag();
         UISounds.chipCancel();
     }

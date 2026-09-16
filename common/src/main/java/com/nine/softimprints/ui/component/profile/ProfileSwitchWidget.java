@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.component.profile;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.nine.softimprints.SICommon;
 import com.nine.softimprints.profile.ImprintProfiles;
 import com.nine.softimprints.profile.catalog.entry.InvalidProfileEntry;
@@ -754,19 +755,19 @@ public class ProfileSwitchWidget extends AbstractWidget {
             boolean doubleClick
     ) {
         int button = event.button();
-        if (!this.active || !this.visible || (button != 0 && button != 1) || !this.isMouseOver(event.x(), event.y())) {
+        if (!this.active || !this.visible || (button != InputConstants.MOUSE_BUTTON_LEFT && button != InputConstants.MOUSE_BUTTON_RIGHT) || !this.isMouseOver(event.x(), event.y())) {
             return false;
         }
 
         if (UICache.priorityEditMode()) {
-            if (button == 0 && cornerButtonHovered(previewButtonText(), event.x(), event.y())) {
+            if (button == InputConstants.MOUSE_BUTTON_LEFT && cornerButtonHovered(previewButtonText(), event.x(), event.y())) {
                 playDownSound(Minecraft.getInstance().getSoundManager());
                 togglePriorityMode();
             }
             return true;
         }
 
-        if (button == 0 && cornerButtonHovered(prioButtonText(), event.x(), event.y())) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && cornerButtonHovered(prioButtonText(), event.x(), event.y())) {
             playDownSound(Minecraft.getInstance().getSoundManager());
             togglePriorityMode();
             return true;
@@ -777,7 +778,7 @@ public class ProfileSwitchWidget extends AbstractWidget {
 
         if (labelGroupHovered(event.x(), event.y())) {
             playDownSound(Minecraft.getInstance().getSoundManager());
-            if (button == 1) {
+            if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                 showAllProfiles();
             } else {
                 cycleFilterGroup(1);
@@ -787,11 +788,11 @@ public class ProfileSwitchWidget extends AbstractWidget {
 
         if (labelProfileHovered(event.x(), event.y())) {
             playDownSound(Minecraft.getInstance().getSoundManager());
-            switchProfile(button == 1 ? -1 : 1);
+            switchProfile(button == InputConstants.MOUSE_BUTTON_RIGHT ? -1 : 1);
             return true;
         }
 
-        if (button != 0) {
+        if (button != InputConstants.MOUSE_BUTTON_LEFT) {
             return false;
         }
 

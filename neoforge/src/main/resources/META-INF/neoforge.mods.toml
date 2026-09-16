@@ -6,13 +6,14 @@ license = "${license}"
 modId = "${mod_id}"
 version = "${version}"
 displayName = "${mod_name}"
-logoFile = "assets/softimprints/textures/icon/icon.png"
-logoBlur = false
+bannerFile = "assets/softimprints/textures/icon/icon.png"
+iconFile = "assets/softimprints/textures/icon/icon.png"
+iconBlur = false
 authors = "${mod_author}"
 description = '''${description}'''
 displayURL = "${sources}"
 modUrl = "${homepage}"
-updateJSONURL = "https://raw.githubusercontent.com/0Templ/ModVersions/refs/heads/main/neoforge/snow-imprints/v1/26.2.json"
+updateJSONURL = "https://raw.githubusercontent.com/0Templ/ModVersions/refs/heads/main/neoforge/snow-imprints/v1/26.3.json"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"

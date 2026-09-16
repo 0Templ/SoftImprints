@@ -1,5 +1,6 @@
 package com.nine.softimprints.ui.component.list;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.nine.softimprints.ui.component.list.element.ConfigListEntry;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -196,7 +197,7 @@ public class ConfigListWidget extends AbstractWidget {
         double mouseY = event.y();
         int button = event.button();
 
-        if (button == 0) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
             this.scrolling = false;
             this.scrollbarGrabOffset = 0.0D;
             this.activeMouseEntry = null;
@@ -212,7 +213,7 @@ public class ConfigListWidget extends AbstractWidget {
 
         this.ensureLayout();
 
-        if (button == 0 && this.isScrollbarVisible()) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && this.isScrollbarVisible()) {
             int scrollbarLeft = right - SCROLLBAR_WIDTH;
             if (mouseX >= scrollbarLeft && mouseX < right) {
                 this.scrolling = true;
@@ -231,7 +232,7 @@ public class ConfigListWidget extends AbstractWidget {
                 continue;
             }
             if (entry.mouseClicked(event, doubleClick)) {
-                if (button == 0) {
+                if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                     this.setFocusedEntry(entry);
                     this.activeMouseEntry = entry;
                     this.setFocused(true);
@@ -244,14 +245,14 @@ public class ConfigListWidget extends AbstractWidget {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (event.button() == 0 && this.scrolling) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.scrolling) {
             this.scrolling = false;
             this.scrollbarGrabOffset = 0.0D;
             return true;
         }
 
         ConfigListEntry activeEntry = this.activeMouseEntry;
-        if (event.button() == 0) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             this.activeMouseEntry = null;
         }
 
@@ -265,7 +266,7 @@ public class ConfigListWidget extends AbstractWidget {
             double dragX,
             double dragY
     ) {
-        if (event.button() == 0 && this.scrolling) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.scrolling) {
             this.scrollToMouse(event.y(), this.getY(), this.getY() + this.getHeight());
             return true;
         }
