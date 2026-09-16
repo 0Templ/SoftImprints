@@ -1,13 +1,12 @@
 package com.nine.softimprints.model.render;
 
 import com.mojang.blaze3d.platform.Transparency;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nine.softimprints.core.map.ImprintStrip;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.neoforged.neoforge.client.model.pipeline.QuadBakingVertexConsumer;
+import net.neoforged.neoforge.client.model.quad.MutableQuad;
 
 public final class EmitHelper {
 
@@ -31,22 +30,23 @@ public final class EmitHelper {
         float spriteV0 = strip.y0() / (float) mapSize;
         float spriteV1 = (strip.y0() + 1) / (float) mapSize;
 
-        QuadBakingVertexConsumer builder = new QuadBakingVertexConsumer();
-        builder.setDirection(Direction.UP);
-        builder.setSprite(new Material.Baked(sprite, false), Transparency.TRANSPARENT);
-        builder.setTintIndex(-1);
-        builder.setAmbientOcclusion(true);
+        MutableQuad quad = new MutableQuad()
+                .setDirection(Direction.UP)
+                .setSprite(new Material.Baked(sprite, false), Transparency.TRANSPARENT)
+                .setTintIndex(-1)
+                .setAmbientOcclusion(true);
 
-        emitCorner(builder, sprite, x0, topY, z0, spriteU0, spriteV0, rotation);
-        emitCorner(builder, sprite, x0, topY, z1, spriteU0, spriteV1, rotation);
-        emitCorner(builder, sprite, x1, topY, z1, spriteU1, spriteV1, rotation);
-        emitCorner(builder, sprite, x1, topY, z0, spriteU1, spriteV0, rotation);
+        emitCorner(quad, 0, sprite, x0, topY, z0, spriteU0, spriteV0, rotation);
+        emitCorner(quad, 1, sprite, x0, topY, z1, spriteU0, spriteV1, rotation);
+        emitCorner(quad, 2, sprite, x1, topY, z1, spriteU1, spriteV1, rotation);
+        emitCorner(quad, 3, sprite, x1, topY, z0, spriteU1, spriteV0, rotation);
 
-        return builder.bakeQuad();
+        return quad.toBakedQuad();
     }
 
     private static void emitCorner(
-            VertexConsumer consumer,
+            MutableQuad quad,
+            int vertexIndex,
             TextureAtlasSprite sprite,
             float x,
             float y,
@@ -78,9 +78,9 @@ public final class EmitHelper {
         float atlasU = sprite.getU0() + ru * (sprite.getU1() - sprite.getU0());
         float atlasV = sprite.getV0() + rv * (sprite.getV1() - sprite.getV0());
 
-        consumer.addVertex(x, y, z)
-                .setColor(255, 255, 255, 255)
-                .setUv(atlasU, atlasV)
-                .setNormal(0.0f, 1.0f, 0.0f);
+        quad.setPosition(vertexIndex, x, y, z)
+                .setColor(vertexIndex, 255, 255, 255, 255)
+                .setUv(vertexIndex, atlasU, atlasV)
+                .setNormal(vertexIndex, 0.0f, 1.0f, 0.0f);
     }
 }
