@@ -14,7 +14,10 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.joml.Matrix4f;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -23,10 +26,11 @@ public final class ModelContactSnapshotCache {
     private static final ModelContactSnapshotStore STORE = new ModelContactSnapshotStore();
     private static final ModelContactCapturePolicy POLICY = new ModelContactCapturePolicy();
     private static final ThreadLocal<ModelContactCaptureSession> ACTIVE_SESSION = new ThreadLocal<>();
-    private static final ThreadLocal<LivingEntity> BASE_MODEL_SUBMIT_ENTITY = new ThreadLocal<>();
-    private static final ThreadLocal<Integer> BASE_MODEL_SUBMIT_DEPTH = ThreadLocal.withInitial(() -> 0);
-    private static final Map<SubmitNodeStorage.ModelSubmit<?>, LivingEntity> BASE_MODEL_SUBMITS =
-            new IdentityHashMap<>();
+    private record RenderOrigin(LivingEntity entity, Matrix4f pose) {}
+    private record ModelSubject(LivingEntity entity, Matrix4f localPose) {}
+    private static final ThreadLocal<Deque<RenderOrigin>> RENDER_ORIGINS = new ThreadLocal<>();
+    private static final ThreadLocal<Deque<LivingEntity>> BASE_MODEL_SUBMITS_ACTIVE = new ThreadLocal<>();
+    private static final Map<SubmitNodeStorage.ModelSubmit<?>, ModelSubject> BASE_MODEL_SUBMITS = new IdentityHashMap<>();
 
     private static final long MAX_USABLE_SNAPSHOT_AGE_TICKS = 40L;
     private static final long MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS = 80L;
@@ -66,8 +70,8 @@ public final class ModelContactSnapshotCache {
         STORE.clear();
         POLICY.clear();
         ACTIVE_SESSION.remove();
-        BASE_MODEL_SUBMIT_ENTITY.remove();
-        BASE_MODEL_SUBMIT_DEPTH.remove();
+        BASE_MODEL_SUBMITS_ACTIVE.remove();
+        RENDER_ORIGINS.remove();
         BASE_MODEL_SUBMITS.clear();
         activeLevel = null;
         frameIndex = 0L;
@@ -144,6 +148,7 @@ public final class ModelContactSnapshotCache {
         if (snapshot == null || snapshot.isEmpty()) {
             return false;
         }
+        if (!snapshot.matchesDimensions(entity.getBbWidth(), entity.getBbHeight())) return false;
         if (snapshot.capturePose() != entity.getPose()) {
             return false;
         }
@@ -164,25 +169,54 @@ public final class ModelContactSnapshotCache {
         if (snapshot == null || snapshot.isEmpty()) {
             return false;
         }
+        if (!snapshot.matchesDimensions(entity.getBbWidth(), entity.getBbHeight())) return false;
         if (snapshot.capturePose() != entity.getPose()) {
             return false;
         }
         return entity.level().getGameTime() - snapshot.gameTime() <= MAX_LAST_SNAPSHOT_FALLBACK_AGE_TICKS;
     }
 
+    public static void beginEntityRender(LivingEntity entity, PoseStack poses) {
+        var origins = RENDER_ORIGINS.get();
+        if (origins == null) { origins = new ArrayDeque<>(); RENDER_ORIGINS.set(origins); }
+        origins.push(new RenderOrigin(entity, new Matrix4f(poses.last().pose())));
+    }
+
+    public static void finishEntityRender() {
+        var origins = RENDER_ORIGINS.get();
+        if (origins == null || origins.isEmpty()) return;
+        origins.pop();
+        if (origins.isEmpty()) RENDER_ORIGINS.remove();
+    }
+
     public static void beginBaseModelSubmit(LivingEntity entity) {
-        BASE_MODEL_SUBMIT_ENTITY.set(entity);
-        BASE_MODEL_SUBMIT_DEPTH.set(BASE_MODEL_SUBMIT_DEPTH.get() + 1);
+        var submissions = BASE_MODEL_SUBMITS_ACTIVE.get();
+        if (submissions == null) { submissions = new ArrayDeque<>(); BASE_MODEL_SUBMITS_ACTIVE.set(submissions); }
+        submissions.push(entity);
     }
 
     public static void finishBaseModelSubmit() {
-        int depth = BASE_MODEL_SUBMIT_DEPTH.get() - 1;
-        if (depth <= 0) {
-            BASE_MODEL_SUBMIT_DEPTH.remove();
-            BASE_MODEL_SUBMIT_ENTITY.remove();
-        } else {
-            BASE_MODEL_SUBMIT_DEPTH.set(depth);
-        }
+        var submissions = BASE_MODEL_SUBMITS_ACTIVE.get();
+        if (submissions == null || submissions.isEmpty()) return;
+        submissions.pop();
+        if (submissions.isEmpty()) BASE_MODEL_SUBMITS_ACTIVE.remove();
+    }
+
+    public static boolean isBaseModelSubmitFor(Entity entity) {
+        return currentBaseModelSubmitEntity() == entity;
+    }
+
+    private static LivingEntity currentBaseModelSubmitEntity() {
+        var subjects = BASE_MODEL_SUBMITS_ACTIVE.get();
+        return subjects == null ? null : subjects.peek();
+    }
+
+    private static Matrix4f relativePose(Entity entity, PoseStack.Pose submitted) {
+        var origins = RENDER_ORIGINS.get();
+        var origin = origins == null ? null : origins.peek();
+        if (origin == null || origin.entity() != entity) return null;
+        try { return ModelContactPose.relative(origin.pose(), submitted.pose()); }
+        catch (IllegalArgumentException ignored) { return null; }
     }
 
     public static void markSubmittedBaseModel(
@@ -193,19 +227,18 @@ public final class ModelContactSnapshotCache {
             return;
         }
 
-        LivingEntity entity = BASE_MODEL_SUBMIT_ENTITY.get();
-        if (entity == null) {
-            return;
-        }
-        BASE_MODEL_SUBMITS.put(modelSubmit, entity);
+        var entity = currentBaseModelSubmitEntity();
+        if (entity == null) return;
+        var local = relativePose(entity, modelSubmit.pose());
+        if (local != null) BASE_MODEL_SUBMITS.put(modelSubmit, new ModelSubject(entity, local));
     }
 
     public static boolean tryBeginSubmittedBaseModelCapture(SubmitNodeStorage.ModelSubmit<?> modelSubmit) {
-        LivingEntity entity = BASE_MODEL_SUBMITS.get(modelSubmit);
-        if (entity == null) {
+        var subject = BASE_MODEL_SUBMITS.get(modelSubmit);
+        if (subject == null) {
             return false;
         }
-        if (!tryBeginLivingCapture(entity)) {
+        if (!tryBeginLivingCapture(subject.entity(), subject.localPose())) {
             return false;
         }
         BASE_MODEL_SUBMITS.remove(modelSubmit);
@@ -248,7 +281,11 @@ public final class ModelContactSnapshotCache {
         }
 
         boolean complete = false;
+        ModelPoseGuard guard = setupState == null ? null : new ModelPoseGuard(model.root());
+        poseStack.pushPose();
         try {
+            poseStack.last().pose().set(session.modelPose());
+            poseStack.last().normal().identity();
             if (setupState != null) {
                 ((Model<Object>) model).setupAnim(setupState);
             }
@@ -266,6 +303,8 @@ public final class ModelContactSnapshotCache {
             complete = true;
         } catch (RuntimeException ignored) {}
         finally {
+            poseStack.popPose();
+            if (guard != null) guard.close();
             if (complete) {
                 finishLivingCapture();
             } else {
@@ -274,7 +313,13 @@ public final class ModelContactSnapshotCache {
         }
     }
 
-    public static boolean tryBeginLivingCapture(Entity entity) {
+    public static boolean tryBeginLivingCapture(Entity entity, PoseStack poses) {
+        if (!isBaseModelSubmitFor(entity)) return false;
+        var local = relativePose(entity, poses.last());
+        return local != null && tryBeginLivingCapture(entity, local);
+    }
+
+    private static boolean tryBeginLivingCapture(Entity entity, Matrix4f localPose) {
         // Do not consume pending capture requests while the world is paused.
         if (Minecraft.getInstance().isPaused()) {
             return false;
@@ -319,7 +364,7 @@ public final class ModelContactSnapshotCache {
                 entity.level().getGameTime(),
                 currentFrame,
                 living.getPose(),
-                living.yBodyRot
+                living.yBodyRot, localPose, living.getBbWidth(), living.getBbHeight()
         ));
         return true;
     }

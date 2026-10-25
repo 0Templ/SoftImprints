@@ -22,19 +22,8 @@ public final class ModelPartObbCapturer {
             PoseStack poseStack,
             ModelContactCaptureSession session
     ) {
-        //
-        poseStack.pushPose();
-        var pose = poseStack.last();
-        pose.pose().identity();
-        pose.normal().identity();
-        pose.pose().rotateY((float) Math.toRadians(180.0F - session.captureBodyYaw()));
-        pose.pose().scale(-1.0F, -1.0F, 1.0F);
-
-        pose.normal().rotateY((float) Math.toRadians(180.0F - session.captureBodyYaw()));
-
+        // The caller supplies the renderer's entity-local pose, including scale and squish.
         capturePart(root, poseStack, session);
-
-        poseStack.popPose();
     }
 
     private static void capturePart(

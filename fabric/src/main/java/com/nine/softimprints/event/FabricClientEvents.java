@@ -13,8 +13,12 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.resources.Identifier;
 
 public class FabricClientEvents {
+
+    private static final Identifier IMPRINT_WRAP_PHASE =
+            Identifier.fromNamespaceAndPath("softimprints", "wrap_imprints");
 
     public static void init() {
         registerLifecycleEvents();
@@ -36,8 +40,11 @@ public class FabricClientEvents {
 
 
     private static void registerModelWrapEvent() {
-        ModelLoadingPlugin.register(context -> context.modifyBlockModelAfterBake()
-                .register(ModelModifier.WRAP_PHASE, FabricClientEvents::wrapModels));
+        ModelLoadingPlugin.register(context -> {
+            var event = context.modifyBlockModelAfterBake();
+            event.addPhaseOrdering(ModelModifier.WRAP_LAST_PHASE, IMPRINT_WRAP_PHASE);
+            event.register(IMPRINT_WRAP_PHASE, FabricClientEvents::wrapModels);
+        });
     }
 
     private static BlockStateModel wrapModels(

@@ -27,7 +27,7 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
+final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector, ModelContactCaptureCollector {
 
     private final Entity entity;
     private boolean capturedBaseModel;
@@ -106,8 +106,9 @@ final class MeshCaptureSubmitNodeCollector implements SubmitNodeCollector {
             ModelFeatureRenderer.CrumblingOverlay crumblingOverlay
     ) {
         if (this.capturedBaseModel
+                || !ModelContactSnapshotCache.isBaseModelSubmitFor(this.entity)
                 || !ModelContactRenderTypes.shouldCapture(renderType)
-                || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity)) {
+                || !ModelContactSnapshotCache.tryBeginLivingCapture(this.entity, poseStack)) {
             return;
         }
         this.capturedBaseModel = true;

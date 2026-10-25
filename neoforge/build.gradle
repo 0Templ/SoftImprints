@@ -55,11 +55,14 @@ dependencies {
     compileOnly "com.electronwill.night-config:toml:${night_config_version}"
 
     // Aether
-    implementation "curse.maven:aether-ii-223796:8045002"
+    // implementation "curse.maven:aether-ii-223796:8045002"
 
     // neoContinuity
     implementation "curse.maven:neocontinuity-1377279:8071996"
 
+    // ETF+EMF
+    implementation "maven.modrinth:BVzZfTc1:a7uMZcFz"
+    implementation "maven.modrinth:4I1XuqiY:v73lmOrj"
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'

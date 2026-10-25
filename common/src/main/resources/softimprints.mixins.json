@@ -10,6 +10,7 @@
     "accessor.client.SpriteContentsAccessor",
     "feature.cache.ClientLevelMixin",
     "feature.model.EntityRendererMixin",
+    "feature.model.EntityRenderDispatcherCaptureMixin",
     "feature.model.EntityRenderStateMixin",
     "feature.model.GameRendererMixin",
     "feature.model.LivingEntityRendererMixin",

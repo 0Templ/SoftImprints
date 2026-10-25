@@ -3,6 +3,8 @@ package com.nine.softimprints.core.contact.model.capture;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshot;
 import com.nine.softimprints.core.contact.model.snapshot.ModelContactSnapshotBox;
 import net.minecraft.world.entity.Pose;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,8 @@ public final class ModelContactCaptureSession {
     private final Pose capturePose;
 
     private final float captureBodyYaw;
+    private final Matrix4f modelPose;
+    private final double captureWidth, captureHeight;
 
     private final List<ModelContactSnapshotBox> boxes = new ArrayList<>();
 
@@ -34,12 +38,22 @@ public final class ModelContactCaptureSession {
             Pose capturePose,
             float captureBodyYaw
     ) {
+        this(entityId, gameTime, frameIndex, capturePose, captureBodyYaw, new Matrix4f(), Double.NaN, Double.NaN);
+    }
+
+    public ModelContactCaptureSession(int entityId, long gameTime, long frameIndex, Pose capturePose,
+                                      float captureBodyYaw, Matrix4fc modelPose, double width, double height) {
         this.entityId = entityId;
         this.gameTime = gameTime;
         this.frameIndex = frameIndex;
         this.capturePose = capturePose;
         this.captureBodyYaw = captureBodyYaw;
+        this.modelPose = new Matrix4f(modelPose);
+        this.captureWidth = width;
+        this.captureHeight = height;
     }
+
+    public Matrix4f modelPose() { return new Matrix4f(modelPose); }
 
 
 
@@ -140,7 +154,7 @@ public final class ModelContactCaptureSession {
                 this.maxY,
                 this.minZ,
                 this.maxZ,
-                this.boxes
+                this.boxes, this.captureWidth, this.captureHeight
         );
     }
 }
