@@ -10,8 +10,10 @@ import java.util.function.LongPredicate;
 
 public class BlockRenderCache {
 
-    private final ConcurrentHashMap<Long, BlockRenderData> models = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Entry> models = new ConcurrentHashMap<>();
     private final LongPredicate hasImprint;
+
+    private record Entry(BlockStateModel model, BlockState state, BlockRenderData data) {}
 
     public BlockRenderCache() {
         this(pos -> true);
@@ -26,10 +28,22 @@ public class BlockRenderCache {
             BlockStateModel wrapped,
             BlockState state
     ) {
-        BlockRenderData data = models.computeIfAbsent(pos, k -> hasImprint.test(k)
-                ? BlockRenderData.compute(BlockPos.of(k), wrapped, state)
-                : null);
-        return data != null ? data : BlockRenderData.compute(BlockPos.of(pos), wrapped, state);
+        Entry current = models.get(pos);
+        if (current != null && current.model() == wrapped && current.state() == state) {
+            return current.data();
+        }
+
+        Entry entry = models.compute(pos, (k, cached) -> {
+            if (cached != null && cached.model() == wrapped && cached.state() == state) {
+                return cached;
+            }
+            // Keep this check inside compute so removed imprints are not cached again.
+            if (!hasImprint.test(k)) {
+                return null;
+            }
+            return new Entry(wrapped, state, BlockRenderData.compute(BlockPos.of(k), wrapped, state));
+        });
+        return entry != null ? entry.data() : BlockRenderData.compute(BlockPos.of(pos), wrapped, state);
     }
 
     public void clearAt(Long pos) {

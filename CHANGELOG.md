@@ -1,7 +1,10 @@
 # Changelog
 
-## 2.8.0
+## 2.9.0
+-
 
+
+## 2.8.0
 - Added profile imprint decay with per-profile tuning and a global decay switch
 - Added profile priority controls for resolving conflicts when several profiles support the same block
 - Updated built-in profiles to schema v3 with decay
